@@ -3,159 +3,165 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>欢迎访问风的小窝</title>
+    <title>欢迎访问风的小窝 - 樱花限定版</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap');
         
-        body {
-            font-family: 'Noto Sans SC', sans-serif;
-            background: #0f172a; /* 深色底色 */
-            overflow-x: hidden;
-            margin: 0;
+        :root {
+            --sakura-pink: #ffb7c5;
+            --soft-pink: #ffe4e1;
         }
 
-        /* 动态星空背景 */
-        #star-canvas {
+        body {
+            background: linear-gradient(135deg, #fff5f7 0%, #ffdee9 100%);
+            font-family: 'ZCOOL KuaiLe', cursive;
+            overflow-x: hidden;
+            min-h-screen;
+        }
+
+        /* 萌系毛玻璃卡片 */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            border: 3px dashed var(--sakura-pink);
+            border-radius: 2.5rem;
+            box-shadow: 0 10px 25px rgba(255, 183, 197, 0.3);
+        }
+
+        /* 统一按钮风格 */
+        .cute-btn {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 2px solid transparent;
+        }
+        .cute-btn:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 15px 20px rgba(255, 183, 197, 0.4);
+        }
+
+        /* 樱花掉落画布 */
+        #sakura-canvas {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
+            pointer-events: none;
+            z-index: 99;
         }
 
-        /* 毛玻璃卡片效果 */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        }
-
-        /* 按钮流光动画 */
-        .shimmer-btn {
-            position: relative;
-            overflow: hidden;
-        }
-        .shimmer-btn::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -60%;
-            width: 20%;
-            height: 200%;
-            background: rgba(255, 255, 255, 0.4);
-            transform: rotate(30deg);
-            transition: none;
-            animation: shimmer 4s infinite;
-        }
-        @keyframes shimmer {
-            0% { left: -60%; }
-            20% { left: 120%; }
-            100% { left: 120%; }
+        /* 计数器装饰 */
+        .counter-box {
+            background: rgba(255, 183, 197, 0.2);
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            border: 2px solid var(--sakura-pink);
         }
 
         /* 头像呼吸灯 */
         .avatar-glow {
-            box-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
-            animation: pulse-glow 3s infinite;
+            border: 4px solid white;
+            box-shadow: 0 0 20px var(--sakura-pink);
+            animation: heartBeat 2s infinite;
         }
-        @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 15px rgba(56, 189, 248, 0.5); }
-            50% { box-shadow: 0 0 30px rgba(56, 189, 248, 0.8); }
+        @keyframes heartBeat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); box-shadow: 0 0 30px #ff8fa3; }
+            100% { transform: scale(1); }
         }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen p-4">
+<body class="flex items-center justify-center py-10 px-4">
 
-    <canvas id="star-canvas"></canvas>
+    <canvas id="sakura-canvas"></canvas>
 
-    <div class="glass-card w-full max-w-[400px] rounded-[2.5rem] p-8 text-center transition-all duration-500 hover:scale-[1.02]">
+    <div class="glass-card w-full max-w-[450px] p-8 text-center relative z-10">
         
-        <div class="relative w-28 h-28 mx-auto mb-6">
-            <div class="absolute inset-0 rounded-full bg-sky-400/20 blur-xl"></div>
-            <img src="tx.jpg" alt="Avatar" class="relative w-full h-full rounded-full border-2 border-sky-400 object-cover avatar-glow">
+        <div class="relative w-32 h-32 mx-auto mb-6">
+            <img src="tx.jpg" class="w-full h-full rounded-full object-cover avatar-glow">
+            <span class="absolute bottom-0 right-0 text-3xl">🌸</span>
         </div>
 
-        <h1 class="text-2xl font-bold text-white mb-2 tracking-tight">
-            欢迎访问风的小窝
-        </h1>
-        <p class="text-gray-400 text-sm italic mb-8 px-4">
-            “为了那些死去的、还活着的人，战斗下去。”
-        </p>
+        <h1 class="text-3xl font-bold text-[#ff6b81] mb-2">风的小窝</h1>
+        <p class="text-[#ff8fa3] text-sm mb-8 tracking-wider">“为了那些死去的、还活着的人，战斗下去。”</p>
 
-        <a href="https://qun.qq.com/universal-share/share?ac=1&authKey=nCwUHaC3AVeA0RSLe1B7dnc9MMTMd0whPyVT8%2BMVldRvQghELh2VoY%2BRDyzpAA8o&busi_data=eyJncm91cENvZGUiOiI2OTExMDUzODEiLCJ0b2tlbiI6IkxESjkxUFdyTGpXdzZYTFZOb0swc1VJc0hsZzdoQVJFbGw5U3EvQWZrcDJxM2lVOXFtYk9IemRJUjRsRm50ZzUiLCJ1aW4iOiIyOTAyOTM5NjkyIn0%3D&data=PGhMgcOxFZMISEqisn8K4Zb6cModQF8nsQUzziUtGNDN0NhgHwtLE8WZKMQcLVC1o-zkBYLN4y2nae-82zvEtQ&svctype=4&tempid=h5_group_info" 
-           target="_blank"
-           class="shimmer-btn block w-full bg-white text-slate-900 font-bold py-4 rounded-2xl mb-4 shadow-xl active:scale-95 transition-transform flex items-center justify-center gap-2">
-            <span>🚀</span> 一键加入 QQ 交流群
-        </a>
+        <div class="space-y-4">
+            <a href="https://qun.qq.com/universal-share/share?ac=1&authKey=nCwUHaC3AVeA0RSLe1B7dnc9MMTMd0whPyVT8%2BMVldRvQghELh2VoY%2BRDyzpAA8o&busi_data=eyJncm91cENvZGUiOiI2OTExMDUzODEiLCJ0b2tlbiI6IkxESjkxUFdyTGpXdzZYTFZOb0swc1VJc0hsZzdoQVJFbGw5U3EvQWZrcDJxM2lVOXFtYk9IemRJUjRsRm50ZzUiLCJ1aW4iOiIyOTAyOTM5NjkyIn0%3D&data=PGhMgcOxFZMISEqisn8K4Zb6cModQF8nsQUzziUtGNDN0NhgHwtLE8WZKMQcLVC1o-zkBYLN4y2nae-82zvEtQ&svctype=4&tempid=h5_group_info" 
+               target="_blank"
+               class="cute-btn block w-full bg-[#ff8fa3] text-white font-bold py-4 rounded-2xl shadow-lg flex items-center justify-center gap-2">
+                <span>💗</span> 一键加入 QQ 交流群
+            </a>
 
-        <a href="tutorial.html" class="block w-full py-3 rounded-2xl text-gray-300 hover:bg-white/10 transition-colors flex items-center justify-center gap-2 text-sm border border-white/5">
-            📖 科学上网·操作全手册
-        </a>
-
-        <div class="my-10 border-t border-white/10 relative">
-            <span class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#1a2235] px-4 text-[10px] text-gray-500 tracking-[0.2em] uppercase">Stats</span>
+            <a href="tutorial.html" 
+               class="cute-btn block w-full bg-white text-[#ff8fa3] border-2 border-[#ff8fa3] font-bold py-4 rounded-2xl flex items-center justify-center gap-2">
+                <span>📚</span> 科学上网·操作全手册
+            </a>
         </div>
 
-        <div class="inline-block p-3 rounded-xl bg-black/20">
-            <img src="https://count.getloli.com/get/@:feng-180.github.io?theme=asoul" alt="MoeCounter" class="h-8">
+        <div class="mt-10 counter-box">
+            <p class="text-[#ff6b81] text-xs font-bold uppercase tracking-widest mb-3">✨ 我们的契约次数 (访客统计) ✨</p>
+            <div class="flex justify-center transform scale-125 origin-center my-2">
+                <img src="https://count.getloli.com/get/@:feng-180.github.io?theme=asoul" alt="MoeCounter">
+            </div>
+            <p class="text-[#ff8fa3] text-[10px] mt-2 italic">你是第 00000 位的守护者</p>
         </div>
 
-        <p class="mt-6 text-[11px] text-gray-500">
-            若跳转失败，请长按并在浏览器中打开
-        </p>
+        <p class="mt-6 text-[11px] text-[#ffb7c5]">若跳转失败，请长按并在浏览器中打开</p>
     </div>
 
     <script>
-        const canvas = document.getElementById('star-canvas');
+        // 极简樱花特效脚本
+        const canvas = document.getElementById('sakura-canvas');
         const ctx = canvas.getContext('2d');
-        let stars = [];
+        let sakuraArray = [];
 
         function resize() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
         }
 
-        class Star {
+        class Sakura {
             constructor() {
                 this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 1.5;
-                this.opacity = Math.random();
-                this.speed = 0.05 + Math.random() * 0.1;
+                this.y = Math.random() * canvas.height - canvas.height;
+                this.size = Math.random() * 10 + 5;
+                this.speedX = Math.random() * 1.5 - 0.5;
+                this.speedY = Math.random() * 1 + 1;
+                this.angle = Math.random() * 360;
+                this.spin = Math.random() * 2 - 1;
             }
             draw() {
-                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.angle * Math.PI / 180);
+                ctx.fillStyle = '#ffb7c5';
                 ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.ellipse(0, 0, this.size, this.size/2, 0, 0, Math.PI * 2);
                 ctx.fill();
+                ctx.restore();
             }
             update() {
-                this.opacity += this.speed;
-                if (this.opacity > 1 || this.opacity < 0) this.speed = -this.speed;
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.angle += this.spin;
+                if (this.y > canvas.height) {
+                    this.y = -20;
+                    this.x = Math.random() * canvas.width;
+                }
             }
         }
 
         function init() {
             resize();
-            for (let i = 0; i < 100; i++) stars.push(new Star());
+            for (let i = 0; i < 30; i++) sakuraArray.push(new Sakura());
         }
 
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            stars.forEach(star => {
-                star.update();
-                star.draw();
-            });
+            sakuraArray.forEach(s => { s.update(); s.draw(); });
             requestAnimationFrame(animate);
         }
 
         window.addEventListener('resize', resize);
-        init();
-        animate();
+        init(); animate();
     </script>
 </body>
 </html>
