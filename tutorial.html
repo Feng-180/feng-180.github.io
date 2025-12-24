@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>小窝教程中心</title>
+    <title>小窝教程中心 - 科学上网配置</title>
     <style>
+        /* 延续主页风格的动态渐变 */
         body {
             font-family: -apple-system, sans-serif;
             margin: 0;
@@ -12,35 +13,106 @@
             background-size: 400% 400%;
             animation: gradientBG 15s ease infinite;
             background-attachment: fixed;
+            color: #333;
             text-align: center;
         }
         @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
-        .card {
-            max-width: 600px;
+        .tutorial-container {
+            max-width: 650px;
             margin: 30px auto;
             padding: 30px 20px;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
         }
-        .back-link { display: inline-block; margin-bottom: 20px; color: #e73c7e; text-decoration: none; font-weight: bold; }
-        .content-box { text-align: left; padding: 10px 20px; line-height: 1.8; color: #444; }
-        h2 { color: #333; }
-        .step { background: #f0f0f0; padding: 10px; border-radius: 10px; margin-bottom: 10px; border-left: 5px solid #e73c7e; }
+
+        .back-home { display: inline-block; margin-bottom: 20px; text-decoration: none; color: #e73c7e; font-weight: bold; }
+        
+        /* 教程卡片样式 */
+        .step-card {
+            text-align: left;
+            background: #fff;
+            padding: 20px;
+            border-radius: 18px;
+            margin-bottom: 20px;
+            border-left: 6px solid #23a6d5;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .step-num {
+            display: inline-block;
+            background: #23a6d5;
+            color: #fff;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 28px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .step-title { font-weight: bold; font-size: 18px; color: #333; }
+        .step-desc { margin-top: 12px; color: #555; font-size: 14px; line-height: 1.6; }
+
+        /* 软件标签 */
+        .platform-tag {
+            background: #f0f2f5;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #e73c7e;
+            font-weight: bold;
+            margin-right: 5px;
+            display: inline-block;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
-    <div class="card">
-        <a href="index.html" class="back-link">⬅ 返回主页</a>
-        <h2>📖 使用教程与资源说明</h2>
-        <div class="content-box">
-            <div class="step"><strong>1. 加入群聊：</strong>点击主页按钮，加入我们的官方交流群。</div>
-            <div class="step"><strong>2. 查看公告：</strong>进群后第一时间查看“群公告”，内含所有订阅链接。</div>
-            <div class="step"><strong>3. 软件下载：</strong>根据你的设备（iOS/安卓/电脑）在群文件中下载对应客户端。</div>
-            <div class="step"><strong>4. 导入配置：</strong>复制订阅地址，在软件中点击“从剪贴板导入”即可。</div>
+
+    <div class="tutorial-container">
+        <a href="index.html" class="back-home">⬅ 返回主页</a>
+        <h1 style="color: #1a1a1a;">🚀 科学上网全平台配置教程</h1>
+        <p style="color: #888; font-size: 14px; margin-bottom: 30px;">极速连接 · 自由访问 · 隐私安全</p>
+
+        <div class="step-card">
+            <span class="step-num">1</span>
+            <span class="step-title">获取订阅节点</span>
+            <div class="step-desc">
+                首先请回到主页点击<b>【一键加入QQ群】</b>。进群后查看<b>群公告</b>，复制分发的“订阅链接”（通常是一段以 http 开头的长网址）。
+            </div>
         </div>
-        <p style="font-size: 12px; color: #999; margin-top: 20px;">更新于：2025年12月</p>
+
+        <div class="step-card" style="border-left-color: #e73c7e;">
+            <span class="step-num" style="background:#e73c7e;">2</span>
+            <span class="step-title">下载匹配工具</span>
+            <div class="step-desc">
+                根据您的设备在群文件中下载对应的客户端：<br>
+                <span class="platform-tag">苹果 iOS</span> Shadowrocket (小火箭)<br>
+                <span class="platform-tag">安卓 Android</span> Clash Meta / v2rayNG<br>
+                <span class="platform-tag">电脑 Windows</span> Clash Verge / Clash for Windows<br>
+                <span class="platform-tag">电脑 Mac</span> Clash Verge / Stash
+            </div>
+        </div>
+
+        <div class="step-card" style="border-left-color: #23d5ab;">
+            <span class="step-num" style="background:#23d5ab;">3</span>
+            <span class="step-title">导入订阅与连接</span>
+            <div class="step-desc">
+                1. 打开软件，找到 <b>"配置/订阅"</b> 选项。<br>
+                2. 粘贴刚才复制的 <b>订阅链接</b> 并点击保存/同步。<br>
+                3. 在节点列表中选择一个 <b>延迟较低</b> 的节点（如香港或新加坡）。<br>
+                4. 点击 <b>"开启/连接"</b> 按钮，即可开始畅游。
+            </div>
+        </div>
+
+        <div style="background: rgba(231, 60, 126, 0.1); padding: 15px; border-radius: 15px; color: #e73c7e; font-size: 13px; margin-top: 25px;">
+            ⚠️ <b>注意：</b> 请务必遵守当地法律法规。本教程仅供网络技术研究与科研学习使用，严禁用于非法用途。
+        </div>
+
+        <p style="font-size: 11px; color: #bbb; margin-top: 30px;">© 2025 风的小窝 · 感谢支持</p>
     </div>
+
 </body>
 </html>
