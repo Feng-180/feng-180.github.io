@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>欢迎访问风的小窝</title>
     <style>
-        /* 1. 动态背景 */
+        /* 1. 动态流动背景 */
         body {
             font-family: -apple-system, sans-serif;
             margin: 0;
@@ -15,7 +15,7 @@
             background-attachment: fixed;
             color: #333;
             text-align: center;
-            overflow-x: hidden;
+            overflow: hidden; /* 防止樱花导致滚动条乱跳 */
         }
         @keyframes gradientBG {
             0% { background-position: 0% 50%; }
@@ -25,6 +25,8 @@
 
         /* 2. 顶部导航 */
         .top-bar {
+            position: relative;
+            z-index: 10; /* 确保在樱花上方 */
             background: rgba(0, 0, 0, 0.7);
             backdrop-filter: blur(10px);
             color: #fff;
@@ -46,12 +48,15 @@
 
         /* 4. 主体卡片 */
         .container {
+            position: relative;
+            z-index: 10;
             max-width: 600px;
             margin: 20px auto;
             padding: 40px 20px;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.85); /* 稍微增加透明度，透出樱花 */
             border-radius: 30px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            backdrop-filter: blur(5px);
         }
 
         /* 5. 按钮样式 */
@@ -75,23 +80,18 @@
             text-decoration: none;
             font-size: 14px;
             margin-bottom: 30px;
+            font-weight: 500;
         }
 
-        /* 6. 音乐提示框 */
-        .music-card {
-            margin-bottom: 35px;
-            padding: 15px;
-            background: rgba(0,0,0,0.06);
-            border-radius: 20px;
-        }
-
-        /* 7. 设备与底部 */
+        /* 6. 设备与底部 */
         .device-list { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 40px; }
         .device-item img { width: 45px; height: 45px; margin-bottom: 8px; }
         .device-item p { margin: 0; font-size: 12px; font-weight: bold; }
         .footer { padding: 20px; color: #666; font-size: 14px; border-top: 1px solid #eee; }
         
         .counter-section {
+            position: relative;
+            z-index: 10;
             margin: 20px auto 40px auto;
             padding: 15px;
             background: rgba(0, 0, 0, 0.2);
@@ -99,9 +99,22 @@
             border-radius: 15px;
             backdrop-filter: blur(5px);
         }
+
+        /* 7. 樱花画布样式 */
+        #sakura {
+            pointer-events: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
     </style>
 </head>
-<body onclick="forcePlay()" ontouchstart="forcePlay()" onscroll="forcePlay()">
+<body>
+
+    <canvas id="sakura"></canvas>
 
     <div class="top-bar">
         <span id="greeting" style="font-weight: bold; color: #ffeb3b;">✨ 欢迎光临</span><br>
@@ -115,10 +128,6 @@
         </a>
 
         <a href="tutorial.html" class="sub-link">📖 查看详细使用教程 & 资源说明</a>
-
-        <div class="music-card">
-            <p id="music-status" style="font-size: 13px; color: #555; margin: 0;">🎵 触摸屏幕开启背景音乐</p>
-        </div>
 
         <h2 style="font-size: 18px; margin-bottom: 25px;">支持设备</h2>
         <div class="device-list">
@@ -138,29 +147,70 @@
         <img src="https://count.getloli.com/get/@feng-180-xiaowo?theme=rule734" alt="访客计数器">
     </div>
 
-    <audio id="bgm" loop preload="auto">
-        <source src="https://api.uomg.com/api/rand.music?sort=热歌榜&format=mp3" type="audio/mpeg">
-    </audio>
-
     <script>
-        // 动态时间问候
+        // 1. 动态问候语
         const hr = new Date().getHours();
-        const greet = hr<6?"🌙 凌晨了，注意休息":hr<12?"🌅 早上好":hr<18?"☕ 下午好":"✨ 晚上好";
-        document.getElementById("greeting").innerText = greet;
+        document.getElementById("greeting").innerText = hr<6?"🌙 凌晨了，注意休息":hr<12?"🌅 早上好":hr<18?"☕ 下午好":"✨ 晚上好";
 
-        // 🎵 强制播放逻辑
-        let played = false;
-        function forcePlay() {
-            if (played) return;
-            const audio = document.getElementById('bgm');
-            // 尝试播放
-            audio.play().then(() => {
-                document.getElementById('music-status').innerText = "🎵 正在为你播放随机热歌...";
-                played = true;
-            }).catch(e => {
-                console.log("正在等待用户操作激活音频...");
-            });
+        // 2. 樱花飘落脚本
+        const canvas = document.getElementById('sakura');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let sakuraArray = [];
+        class Sakura {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height - canvas.height;
+                this.size = Math.random() * 7 + 3;
+                this.speed = Math.random() * 2 + 1;
+                this.angle = Math.random() * 360;
+                this.spin = Math.random() * 0.2 - 0.1;
+            }
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.angle * Math.PI / 180);
+                ctx.fillStyle = 'rgba(255, 183, 197, 0.8)';
+                ctx.beginPath();
+                ctx.ellipse(0, 0, this.size, this.size / 2, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+            update() {
+                this.y += this.speed;
+                this.x += Math.sin(this.y / 30);
+                this.angle += this.spin;
+                if (this.y > canvas.height) {
+                    this.y = -10;
+                    this.x = Math.random() * canvas.width;
+                }
+            }
         }
+
+        function init() {
+            for (let i = 0; i < 50; i++) {
+                sakuraArray.push(new Sakura());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            sakuraArray.forEach(sakura => {
+                sakura.update();
+                sakura.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+
+        init();
+        animate();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
     </script>
 </body>
 </html>
