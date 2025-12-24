@@ -1,47 +1,63 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>操作指南</title>
+    <title>科学上网攻略手册</title>
     <style>
-        body { font-family: -apple-system, sans-serif; background: #0b0e14; color: #fff; line-height: 1.8; margin: 0; padding: 20px; }
-        .box { max-width: 550px; margin: 20px auto; background: rgba(255,255,255,0.05); padding: 30px; border-radius: 30px; border: 1px solid rgba(255,255,255,0.1); }
-        .back { text-decoration: none; color: #3498db; font-size: 14px; margin-bottom: 25px; display: inline-block; }
-        h1 { font-size: 24px; color: #fff; margin-bottom: 30px; text-align: center; }
-        .step-card { background: rgba(255,255,255,0.03); border-radius: 20px; padding: 20px; margin-bottom: 20px; border-left: 4px solid #3498db; }
-        .step-card h2 { font-size: 17px; margin: 0 0 10px 0; color: #3498db; }
-        .step-card p { font-size: 14px; margin: 0; color: rgba(255,255,255,0.7); }
-        code { background: rgba(231, 76, 60, 0.2); color: #e74c3c; padding: 2px 6px; border-radius: 4px; font-family: monospace; }
-        .warning { background: rgba(255, 193, 7, 0.1); color: #ffc107; padding: 15px; border-radius: 15px; font-size: 13px; margin-top: 30px; }
+        body { font-family: -apple-system, sans-serif; background: #0b0e14; color: #d1d5db; line-height: 1.8; margin: 0; padding: 20px; }
+        .page-wrap { max-width: 600px; margin: 0 auto; }
+        .back-link { color: #00d2ff; text-decoration: none; font-size: 14px; margin-bottom: 25px; display: inline-block; }
+        
+        .guide-card { background: rgba(255,255,255,0.05); padding: 25px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
+        h1 { font-size: 24px; color: #fff; text-align: center; margin-bottom: 30px; }
+        h2 { font-size: 18px; color: #00d2ff; border-left: 4px solid #00d2ff; padding-left: 12px; margin-top: 0; }
+        
+        .step-list { padding-left: 20px; }
+        .step-list li { margin-bottom: 15px; }
+        b { color: #fff; }
+        code { background: rgba(231, 76, 60, 0.2); color: #ff4d4d; padding: 2px 6px; border-radius: 4px; font-family: monospace; }
+        
+        .status-tag { display: inline-block; padding: 2px 8px; border-radius: 5px; font-size: 12px; font-weight: bold; background: #27ae60; color: #fff; margin-bottom: 10px; }
     </style>
 </head>
 <body>
-    <div class="box">
-        <a href="index.html" class="back">⇠ 返回主页</a>
-        <h1>🚀 科学上网全流程攻略</h1>
+    <div class="page-wrap">
+        <a href="index.html" class="back-link">⇠ 返回风的小窝</a>
+        <h1>🚀 科学上网全流程指引</h1>
 
-        <div class="step-card">
-            <h2>Step 01. 获取订阅链接</h2>
-            <p>成功入群后，在<b>群公告</b>中找到以 <code>http://</code> 开头的专属链接，点击并完整复制。此链接包含所有高速节点信息。</p>
+        <div class="guide-card">
+            <span class="status-tag">第一步：加入组织</span>
+            <h2>获取订阅链接</h2>
+            <ul class="step-list">
+                <li>通过首页按钮加入 <b>QQ 交流群</b>。</li>
+                <li>进入群聊后，查看<b>群公告</b>。</li>
+                <li>找到以 <code>http://</code> 开头的一串长字符链接，完整复制。</li>
+            </ul>
         </div>
 
-        <div class="step-card">
-            <h2>Step 02. 下载对应客户端</h2>
-            <p>• <b>Android:</b> 群文件下载 <code>Clash Meta</code><br>
-               • <b>iOS:</b> 海外 ID 商店搜索 <code>Shadowrocket</code><br>
-               • <b>Windows:</b> 推荐使用 <code>Clash Verge</code></p>
+        <div class="guide-card">
+            <span class="status-tag">第二步：选择工具</span>
+            <h2>下载对应客户端</h2>
+            <ul class="step-list">
+                <li><b>iOS (iPhone):</b> 在 App Store 搜索 <code>Shadowrocket</code> (需海外 ID)。</li>
+                <li><b>Android:</b> 群文件搜索并下载 <code>Clash Meta</code> 或 <code>v2rayNG</code>。</li>
+                <li><b>Windows/Mac:</b> 推荐使用 <code>Clash Verge</code> 极简版。</li>
+            </ul>
         </div>
 
-        <div class="step-card">
-            <h2>Step 03. 导入并启动</h2>
-            <p>打开软件，进入配置界面，粘贴订阅链接并点击“同步/保存”。在节点列表中开启测速，选择延迟最低的绿色节点即可。</p>
+        <div class="guide-card">
+            <span class="status-tag">第三步：开启新世界</span>
+            <h2>配置并连接</h2>
+            <ul class="step-list">
+                <li>打开软件，找到“添加订阅”或“配置导入”。</li>
+                <li>粘贴第一步复制的链接，点击<b>保存/更新</b>。</li>
+                <li>在节点列表中选择一个延迟低的节点，点击<b>连接/开启</b>。</li>
+            </ul>
         </div>
 
-        <div class="warning">
-            <b>💡 常见问题：</b><br>
-            1. 无法连接？尝试在设置中开启“系统代理”。<br>
-            2. 节点超时？请务必点击“更新订阅”以同步最新节点。
+        <div style="text-align: center; color: rgba(255,255,255,0.3); font-size: 12px; margin-top: 40px;">
+            温馨提示：资源均收集自互联网，仅供学习交流使用。
         </div>
     </div>
 </body>
