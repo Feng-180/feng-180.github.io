@@ -5,98 +5,72 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>欢迎访问风的小窝</title>
     <style>
-        :root { --primary-color: #00d2ff; --secondary-color: #3a7bd5; --text-color: #ffffff; }
+        :root { --primary: #00d2ff; --secondary: #3a7bd5; --card-bg: rgba(20, 25, 40, 0.85); }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
         body {
-            margin: 0; padding: 0; font-family: -apple-system, "Noto Sans SC", "Microsoft YaHei", sans-serif;
-            background: #050a1a; color: var(--text-color); min-height: 100vh;
-            display: flex; align-items: center; justify-content: center; overflow: hidden;
+            margin: 0; padding: 0; min-height: 100vh;
+            background: #050a1a linear-gradient(135deg, #050a1a 0%, #1a2a6c 100%);
+            color: #fff; font-family: -apple-system, system-ui, sans-serif;
+            display: flex; align-items: center; justify-content: center;
         }
 
-        /* 极光背景特效 */
-        .aurora-bg {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-            background: radial-gradient(circle at 50% 50%, #1a2a6c, #b21f1f, #fdbb2d);
-            background-size: 400% 400%; animation: auroraShift 15s ease infinite; opacity: 0.4;
-        }
-        @keyframes auroraShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-
-        /* 主容器卡片 */
+        /* 修复计数器黑白问题：移除滤镜干扰 */
         .main-card {
-            width: 90%; max-width: 400px; padding: 40px 25px;
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border-radius: 30px; border: 1px solid rgba(255, 255, 255, 0.15);
-            text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-            animation: fadeIn 0.8s ease-out;
+            width: 90%; max-width: 400px; padding: 35px 25px;
+            background: var(--card-bg); border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* 头像设计 */
-        .avatar-box {
-            position: relative; width: 120px; height: 120px; margin: 0 auto 25px;
+        /* 增强头像显示：增加备用路径 */
+        .avatar-container {
+            width: 120px; height: 120px; margin: 0 auto 20px;
+            border-radius: 50%; border: 3px solid #fff;
+            box-shadow: 0 0 20px rgba(0, 210, 255, 0.4);
+            overflow: hidden; background: #1a1f2c;
         }
-        .avatar-box::after {
-            content: ""; position: absolute; top: -5px; left: -5px; right: -5px; bottom: -5px;
-            border: 2px solid var(--primary-color); border-radius: 50%; opacity: 0.5;
-            animation: breathe 3s ease-in-out infinite;
-        }
-        .avatar-img {
-            width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
-            border: 3px solid #fff; position: relative; z-index: 1;
-        }
-        @keyframes breathe { 0%, 100% { transform: scale(1); opacity: 0.3; } 50% { transform: scale(1.1); opacity: 0.7; } }
+        .avatar-img { width: 100%; height: 100%; object-fit: cover; }
 
-        .title { font-size: 26px; font-weight: 800; letter-spacing: 1px; margin-bottom: 10px; background: linear-gradient(to right, #fff, var(--primary-color)); -webkit-background-clip: text; color: transparent; }
-        .motto { font-size: 13px; color: rgba(255,255,255,0.6); margin-bottom: 35px; font-style: italic; }
+        .title { font-size: 24px; font-weight: 800; margin-bottom: 8px; color: #fff; }
+        .quote { font-size: 13px; color: rgba(255,255,255,0.6); margin-bottom: 30px; }
 
-        /* 按钮组 */
-        .btn-stack { display: flex; flex-direction: column; gap: 18px; }
+        /* 按钮组：优化跳转逻辑 */
         .btn {
-            padding: 16px; border-radius: 15px; text-decoration: none; font-weight: bold; font-size: 16px;
-            transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;
+            display: block; width: 100%; padding: 15px; border-radius: 15px;
+            text-decoration: none; font-weight: bold; margin-bottom: 15px;
+            transition: 0.3s; font-size: 16px;
         }
-        .btn-join { background: #fff; color: #000; box-shadow: 0 10px 20px rgba(255,255,255,0.1); }
-        .btn-doc { background: rgba(0, 210, 255, 0.15); color: var(--primary-color); border: 1px solid rgba(0, 210, 255, 0.3); }
-        .btn:active { transform: scale(0.96); opacity: 0.8; }
+        .btn-qq { background: #fff; color: #000; }
+        .btn-doc { background: rgba(255,255,255,0.1); color: var(--primary); border: 1px solid var(--primary); }
+        .btn:active { transform: scale(0.97); opacity: 0.8; }
 
-        .footer { margin-top: 35px; }
-        .visitor-count { filter: grayscale(1) invert(1) brightness(2); zoom: 0.85; opacity: 0.7; }
-        .browser-tip { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 15px; }
+        /* 计数器：修复安卓下变黑白的问题 */
+        .counter-box { margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 25px; }
+        .counter-img { height: 45px; filter: none !important; } /* 强制取消滤镜 */
+
+        .tip { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 15px; }
     </style>
 </head>
 <body>
-    <div class="aurora-bg"></div>
-
     <div class="main-card">
-        <div class="avatar-box">
-            <img src="tx.jpg" class="avatar-img" alt="头像">
+        <div class="avatar-container">
+            <img src="./tx.jpg" class="avatar-img" alt="头像" onerror="this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=Aki'">
         </div>
+        
         <div class="title">欢迎访问风的小窝</div>
-        <div class="motto">“为了那些死去的、还活着的，战斗下去。”</div>
+        <div class="quote">“为了那些死去的、还活着的，战斗下去。”</div>
 
-        <div class="btn-stack">
-            <a href="https://qm.qq.com/cgi-bin/qm/qr?k=51TTjkRn9IWbdBziVbzoFhampaQX_NKJ&authKey=51TTjkRn9IWbdBziVbzoFhampaQX/NKJMC46b1JIMI9hh3dwf4cpqfPn335S1Ywh&noverify=0" class="btn btn-join" id="qqBtn">
-                🚀 一键加入 QQ 交流群
-            </a>
-            <a href="tutorial.html" class="btn btn-doc">📖 科学上网·操作全手册</a>
-        </div>
+        <a href="mqqopensdkapi://bizAgent/qm/qr?url=http%3A%2F%2Fqm.qq.com%2Fcgi-bin%2Fqm%2Fqr%3Ffrom%3Dapp%26p%3Dandroid%26jump_from%3Dwebapi%26k%3D51TTjkRn9IWbdBziVbzoFhampaQX_NKJ" class="btn btn-qq">🚀 一键加入 QQ 交流群</a>
+        
+        <a href="tutorial.html" class="btn btn-doc">📖 科学上网·全攻略手册</a>
 
-        <div class="footer">
-            <img src="https://count.getloli.com/get/@feng-180-xiaowo?theme=rule734" class="visitor-count">
-            <div class="browser-tip">若点击加群无效，请在手机自带浏览器中打开</div>
+        <div class="counter-box">
+            <img src="https://count.getloli.com/get/@feng-180-xiaowo?theme=rule734" class="counter-img">
         </div>
+        
+        <div class="tip">温馨提示：若跳转失败，请长按按钮在手机浏览器打开</div>
     </div>
-
-    <script>
-        // 自动检测并引导
-        document.getElementById('qqBtn').onclick = function(e) {
-            setTimeout(function() {
-                if (!document.hidden) {
-                    alert("如果未自动跳转，请长按此按钮选择“在浏览器中打开”，或手动搜索群号。");
-                }
-            }, 2500);
-        };
-    </script>
 </body>
 </html>
