@@ -3,66 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>配置指南 - 风的小窝</title>
+    <title>科学上网操作流程</title>
     <style>
-        body { font-family: sans-serif; background: #f4f6f9; margin: 0; color: #333; line-height: 1.5; }
-        .header { background: #2c3e50; color: white; padding: 25px 15px; text-align: center; }
-        .back-link { position: absolute; top: 20px; left: 15px; color: #fff; text-decoration: none; font-size: 14px; }
-        
-        .main { max-width: 600px; margin: 0 auto; padding: 15px; }
-        .card { background: #fff; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); overflow: hidden; }
-        .card-h { padding: 15px; border-bottom: 1px solid #eee; font-weight: bold; color: #3498db; }
-        .card-b { padding: 15px; font-size: 14px; }
-        
-        /* 图片展示区域优化 */
-        .step-img { width: 100%; background: #fcfcfc; border-top: 1px solid #eee; display: block; }
-        
-        .download-btn {
-            display: inline-block; background: #3498db; color: white; 
-            padding: 8px 16px; border-radius: 6px; text-decoration: none; 
-            font-size: 13px; margin: 5px 5px 0 0;
-        }
+        body { font-family: -apple-system, sans-serif; background: #f4f7f9; color: #333; line-height: 1.8; margin: 0; padding: 20px; }
+        .content { max-width: 600px; margin: 0 auto; background: #fff; padding: 30px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .back { display: inline-block; margin-bottom: 20px; color: #e73c7e; text-decoration: none; font-weight: bold; }
+        h2 { border-bottom: 2px solid #e73c7e; padding-bottom: 10px; color: #1a1a1a; }
+        .step { margin-bottom: 30px; }
+        .step-num { color: #e73c7e; font-weight: bold; font-size: 20px; margin-right: 10px; }
+        code { background: #f0f0f0; padding: 2px 6px; border-radius: 4px; color: #d63384; font-family: monospace; }
+        .platform { background: #eef2ff; padding: 10px; border-radius: 8px; font-size: 14px; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <a href="index.html" class="back-link">⇠ 返回</a>
-        <h2 style="margin:0">科学上网全流程指南</h2>
-    </div>
+    <div class="content">
+        <a href="index.html" class="back">⇠ 返回小窝</a>
+        <h2>🚀 科学上网文字操作指引</h2>
 
-    <div class="main">
-        <div class="card">
-            <div class="card-h">第一步：获取群公告配置</div>
-            <div class="card-b">
-                入群后点击右上角<b>公告</b>，复制以 <code style="color:#e74c3c">http://</code> 开头的订阅链接。
-            </div>
-            <img src="https://shadowrocket.org/wp-content/uploads/2023/05/shadowrocket-subscription.png" class="step-img" alt="导入示意图">
+        <div class="step">
+            <span class="step-num">01.</span> <b>获取订阅链接</b>
+            <p>请首先通过主页按钮加入 QQ 交流群。进入群聊后，查看【群公告】，找到以 <code>http://</code> 开头的长链接，长按完整复制。</p>
         </div>
 
-        <div class="card">
-            <div class="card-h">第二步：下载对应软件</div>
-            <div class="card-b">
-                请根据您的系统下载对应的客户端：<br><br>
-                <a href="https://github.com/Dreamacro/clash/releases" class="download-btn">Windows 版</a>
-                <a href="https://github.com/Kr328/ClashForAndroid/releases" class="download-btn">Android 版</a>
-                <p style="font-size:12px; color:#999; margin-top:10px;">iOS 用户请去外区商店搜索 Shadowrocket</p>
+        <div class="step">
+            <span class="step-num">02.</span> <b>下载对应工具</b>
+            <p>根据您的设备在群文件或官网下载客户端：</p>
+            <div class="platform">
+                • <b>iOS (苹果):</b> Shadowrocket (小火箭)<br>
+                • <b>Android (安卓):</b> Clash Meta 或 v2rayNG<br>
+                • <b>Windows (电脑):</b> Clash Verge 或 Clash for Windows
             </div>
         </div>
 
-        <div class="card">
-            <div class="card-h">第三步：导入并开启连接</div>
-            <div class="card-b">
-                1. 点击软件内的“配置”或“订阅”<br>
-                2. 粘贴链接并点击“同步/下载”<br>
-                3. 选择一个延迟较低的节点，拨动开关即可。
-            </div>
-            <img src="https://clashforandroid.com/wp-content/uploads/2022/07/clash-for-android-select-proxy.png" class="step-img" alt="连接示意图">
+        <div class="step">
+            <span class="step-num">03.</span> <b>导入并连接</b>
+            <p>1. 打开已下载的软件，找到“添加订阅”或“导入 URL”选项。<br>
+               2. 将第一步复制的链接粘贴进去，点击“保存”并点击“更新/同步”。<br>
+               3. 在节点列表中点击“测速”，挑选一个绿色延迟的节点点击连接。<br>
+               4. 拨动开启按钮，即可开始访问。</p>
         </div>
 
-        <div style="text-align:center; padding: 20px; color:#999; font-size:12px;">
-            ⚠️ 教程仅供学习交流，请遵守当地法律
-        </div>
+        <p style="text-align: center; color: #999; font-size: 12px; margin-top: 50px;">
+            温馨提示：资源仅供科研与学习使用，请遵守当地法律法规。
+        </p>
     </div>
 
 </body>
