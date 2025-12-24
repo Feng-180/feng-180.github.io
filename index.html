@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>欢迎访问风的小窝</title>
     <style>
-        /* 1. 动态流动背景 */
         body {
             font-family: -apple-system, sans-serif;
             margin: 0;
@@ -15,7 +14,7 @@
             background-attachment: fixed;
             color: #333;
             text-align: center;
-            overflow: hidden; /* 防止樱花导致滚动条乱跳 */
+            overflow-x: hidden;
         }
         @keyframes gradientBG {
             0% { background-position: 0% 50%; }
@@ -23,19 +22,16 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* 2. 顶部导航 */
         .top-bar {
             position: relative;
-            z-index: 10; /* 确保在樱花上方 */
+            z-index: 10;
             background: rgba(0, 0, 0, 0.7);
             backdrop-filter: blur(10px);
             color: #fff;
             padding: 20px;
             font-size: 14px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
 
-        /* 3. 渐变标题 */
         .gradient-text {
             font-size: 26px;
             font-weight: 800;
@@ -46,20 +42,19 @@
             margin: 10px 0;
         }
 
-        /* 4. 主体卡片 */
         .container {
             position: relative;
             z-index: 10;
             max-width: 600px;
             margin: 20px auto;
             padding: 40px 20px;
-            background: rgba(255, 255, 255, 0.85); /* 稍微增加透明度，透出樱花 */
+            background: rgba(255, 255, 255, 0.88);
             border-radius: 30px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.2);
             backdrop-filter: blur(5px);
         }
 
-        /* 5. 按钮样式 */
+        /* 🚀 强化主加群按钮 */
         .join-btn {
             background: #1a1a1a;
             color: #fff;
@@ -70,23 +65,35 @@
             font-weight: bold;
             text-decoration: none;
             display: inline-block;
-            margin-bottom: 15px;
+            margin-bottom: 25px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            transition: 0.3s;
         }
+        .join-btn:active { transform: scale(0.95); }
 
-        .sub-link {
-            display: block;
-            color: #666;
+        /* 📖 升级版教程跳转按钮 */
+        .tutorial-btn-box { margin-bottom: 30px; }
+        .tutorial-link {
+            display: inline-block;
+            padding: 12px 30px;
+            background: rgba(231, 60, 126, 0.15);
+            color: #e73c7e;
             text-decoration: none;
-            font-size: 14px;
-            margin-bottom: 30px;
-            font-weight: 500;
+            border-radius: 50px;
+            font-size: 15px;
+            font-weight: bold;
+            border: 1px solid rgba(231, 60, 126, 0.3);
+            transition: all 0.3s ease;
+        }
+        .tutorial-link:hover {
+            background: rgba(231, 60, 126, 0.25);
+            transform: translateY(-2px);
         }
 
-        /* 6. 设备与底部 */
         .device-list { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 40px; }
         .device-item img { width: 45px; height: 45px; margin-bottom: 8px; }
         .device-item p { margin: 0; font-size: 12px; font-weight: bold; }
+        
         .footer { padding: 20px; color: #666; font-size: 14px; border-top: 1px solid #eee; }
         
         .counter-section {
@@ -94,52 +101,37 @@
             z-index: 10;
             margin: 20px auto 40px auto;
             padding: 15px;
-            background: rgba(0, 0, 0, 0.2);
+            background: rgba(0, 0, 0, 0.15);
             display: inline-block;
             border-radius: 15px;
             backdrop-filter: blur(5px);
         }
 
-        /* 7. 樱花画布样式 */
-        #sakura {
-            pointer-events: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
+        #sakura { pointer-events: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
     </style>
 </head>
 <body>
-
     <canvas id="sakura"></canvas>
-
     <div class="top-bar">
         <span id="greeting" style="font-weight: bold; color: #ffeb3b;">✨ 欢迎光临</span><br>
-        <span class="gradient-text">欢迎访问风的小窝</span><br>
-        获取订阅最新配置请点击下方加群
+        <span class="gradient-text">欢迎访问风的小窝</span>
     </div>
 
     <div class="container">
-        <a href="https://qun.qq.com/universal-share/share?ac=1&authKey=51TTjkRn9IWbdBziVbzoFhampaQX%2FNKJMC46b1JIMI9hh3dwf4cpqfPn335S1Ywh&busi_data=eyJncm91cENvZGUiOiI2OTExMDUzODEiLCJ0b2tlbiI6ImYvbGNmcStPZ1d4NDF5RHcxQndzVmF3L2VlTTN3N0JpRVU0TUluZGxHSTVPOWlKb3RuZHVTQTJndElMMmU5KzYiLCJ1aW4iOiIyOTAyOTM5NjkyIn0%3D&data=HpIiNjIkV-nHDLHYs_ZyP8lHClGCHZYGazVE4ZsqwSJHfyn-CmVrIDdzRr0HW96MaraXSQxGISdMw15W4IT2qQ&svctype=4&tempid=h5_group_info" class="join-btn">
-            🚀 一键加入QQ群
-        </a>
+        <a href="https://qun.qq.com/universal-share/share?ac=1&authKey=51TTjkRn9IWbdBziVbzoFhampaQX%2FNKJMC46b1JIMI9hh3dwf4cpqfPn335S1Ywh&busi_data=eyJncm91cENvZGUiOiI2OTExMDUzODEiLCJ0b2tlbiI6ImYvbGNmcStPZ1d4NDF5RHcxQndzVmF3L2VlTTN3N0JpRVU0TUluZGxHSTVPOWlKb3RuZHVTQTJndElMMmU5KzYiLCJ1aW4iOiIyOTAyOTM5NjkyIn0%3D&data=HpIiNjIkV-nHDLHYs_ZyP8lHClGCHZYGazVE4ZsqwSJHfyn-CmVrIDdzRr0HW96MaraXSQxGISdMw15W4IT2qQ&svctype=4&tempid=h5_group_info" class="join-btn">🚀 一键加入QQ群</a>
 
-        <a href="tutorial.html" class="sub-link">📖 查看详细使用教程 & 资源说明</a>
+        <div class="tutorial-btn-box">
+            <a href="tutorial.html" class="tutorial-link">📖 查看详细图文教程</a>
+        </div>
 
-        <h2 style="font-size: 18px; margin-bottom: 25px;">支持设备</h2>
+        <h2 style="font-size: 18px; margin-bottom: 25px; color: #444;">支持设备</h2>
         <div class="device-list">
             <div class="device-item"><img src="https://img.icons8.com/ios-filled/100/000000/iphone.png"><p>iPhone</p></div>
             <div class="device-item"><img src="https://img.icons8.com/ios-filled/100/000000/android-os.png"><p>Android</p></div>
             <div class="device-item"><img src="https://img.icons8.com/ios-filled/100/000000/windows-10.png"><p>Windows</p></div>
             <div class="device-item"><img src="https://img.icons8.com/ios-filled/100/000000/mac-os.png"><p>Macbook</p></div>
         </div>
-
-        <div class="footer">
-            温馨提示：资源已在 <span style="color:#e73c7e; font-weight:bold;">群公告</span> 整理完毕。
-        </div>
+        <div class="footer">温馨提示：资源已在 <span style="color:#e73c7e; font-weight:bold;">群公告</span> 整理完毕。</div>
     </div>
 
     <div class="counter-section">
@@ -148,22 +140,19 @@
     </div>
 
     <script>
-        // 1. 动态问候语
         const hr = new Date().getHours();
         document.getElementById("greeting").innerText = hr<6?"🌙 凌晨了，注意休息":hr<12?"🌅 早上好":hr<18?"☕ 下午好":"✨ 晚上好";
 
-        // 2. 樱花飘落脚本
         const canvas = document.getElementById('sakura');
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-
         let sakuraArray = [];
         class Sakura {
             constructor() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height - canvas.height;
-                this.size = Math.random() * 7 + 3;
+                this.size = Math.random() * 7 + 2;
                 this.speed = Math.random() * 2 + 1;
                 this.angle = Math.random() * 360;
                 this.spin = Math.random() * 0.2 - 0.1;
@@ -172,7 +161,7 @@
                 ctx.save();
                 ctx.translate(this.x, this.y);
                 ctx.rotate(this.angle * Math.PI / 180);
-                ctx.fillStyle = 'rgba(255, 183, 197, 0.8)';
+                ctx.fillStyle = 'rgba(255, 183, 197, 0.7)';
                 ctx.beginPath();
                 ctx.ellipse(0, 0, this.size, this.size / 2, 0, 0, Math.PI * 2);
                 ctx.fill();
@@ -188,29 +177,14 @@
                 }
             }
         }
-
-        function init() {
-            for (let i = 0; i < 50; i++) {
-                sakuraArray.push(new Sakura());
-            }
-        }
-
+        function init() { for (let i = 0; i < 40; i++) sakuraArray.push(new Sakura()); }
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            sakuraArray.forEach(sakura => {
-                sakura.update();
-                sakura.draw();
-            });
+            sakuraArray.forEach(s => { s.update(); s.draw(); });
             requestAnimationFrame(animate);
         }
-
-        init();
-        animate();
-
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
+        init(); animate();
+        window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; });
     </script>
 </body>
 </html>
