@@ -3,55 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的作品集</title>
+    <title>资源中心 - 风的小窝</title>
     <style>
-        body { font-family: 'Helvetica Neue', sans-serif; margin: 0; background: #f4f4f4; color: #333; }
-        header { background: #fff; padding: 40px 20px; text-align: center; border-bottom: 1px solid #ddd; }
-        .container { padding: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; }
-        .card { background: #fff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: 0.3s; }
-        .card img { width: 100%; height: 200px; object-fit: cover; background: #eee; }
-        .card-info { padding: 15px; }
-        .card-info h3 { margin: 0 0 10px 0; font-size: 18px; }
-        .card-info p { font-size: 14px; color: #666; line-height: 1.5; }
-        footer { text-align: center; padding: 40px; color: #999; font-size: 12px; }
+        body { font-family: -apple-system, sans-serif; margin: 0; background: #fff; color: #333; }
+        .top-bar { background: #1a1a1a; color: #ccc; padding: 10px; text-align: center; font-size: 13px; line-height: 1.6; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        h1 { font-size: 28px; text-align: center; margin-top: 40px; }
+        .sub-title { text-align: center; color: #666; margin-bottom: 40px; }
+        .item { display: flex; align-items: flex-start; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #f0f0f0; }
+        .icon { width: 50px; height: 50px; margin-right: 20px; flex-shrink: 0; }
+        .info { flex-grow: 1; }
+        .info h3 { margin: 0; font-size: 18px; }
+        .links { margin-top: 8px; color: #666; font-size: 14px; }
+        .links a { color: #007bff; text-decoration: none; margin: 0 5px; }
+        .links a:hover { text-decoration: underline; }
+        .copy-btn { background: #000; color: #fff; border: none; padding: 8px 20px; border-radius: 5px; margin: 10px auto; display: block; }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>风的小窝</h1>
-    <p>寻找风的方向</p>
-</header>
-
-<div class="container">
-    <div class="card">
-        <img src="IMG_5160.jpeg" alt="实用网站">
-        <div class="card-info">
-            <h3>实用网站</h3>
-            <p>暂时没有</p>
-        </div>
+    <div class="top-bar">
+        为公平使用，每天零点重置一次配置<br>
+        如遇无法使用，请更新订阅获取最新配置
     </div>
 
-    <div class="card">
-        <img src="IMG_5161.jpeg" alt="实用软件">
-        <div class="card-info">
-            <h3>实用软件</h3>
-            <p>暂时也没有</p>
+    <div class="container">
+        <button class="copy-btn">立即复制订阅地址</button>
+
+        <h1>下载一款软件或者App，<br>立即开始</h1>
+        <p class="sub-title">根据您的设备，选择下载软件或App，添加订阅，更新订阅，就这么简单</p>
+
+        <div class="item">
+            <img class="icon" src="https://img.icons8.com/ios-filled/50/000000/iphone.png" alt="ios">
+            <div class="info">
+                <h3>iPhone/iPad</h3>
+                <div class="links">
+                    Shadowrocket -- <a href="#">Appstore购买</a> -- <a href="#">网上购买</a> -- <a href="#">教程</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="item">
+            <img class="icon" src="https://img.icons8.com/ios-filled/50/000000/android-os.png" alt="android">
+            <div class="info">
+                <h3>Android</h3>
+                <div class="links">
+                    V2rayNG -- <a href="你的文件名.apk">下载</a> -- <a href="#">教程</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="item">
+            <img class="icon" src="https://img.icons8.com/ios-filled/50/000000/windows-10.png" alt="windows">
+            <div class="info">
+                <h3>Windows</h3>
+                <div class="links">
+                    V2rayN -- <a href="#">下载</a> -- <a href="#">教程</a>
+                </div>
+            </div>
         </div>
     </div>
-
-    <div class="card">
-        <img src="IMG_5162.jpeg" alt="我的照片">
-        <div class="card-info">
-            <h3>项目教学</h3>
-            <p>这个真没有</p>
-        </div>
-    </div>
-</div>
-
-<footer>
-    &copy; 2025 由 GitHub Pages 强力驱动
-</footer>
 
 </body>
 </html>
