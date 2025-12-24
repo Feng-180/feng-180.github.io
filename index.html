@@ -57,22 +57,23 @@
             font-weight: bold;
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
         .copy-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
         .copy-btn:active { transform: scale(0.95); }
 
         /* 5. 播放器容器 */
         .music-wrap {
-            margin: 10px auto 30px auto;
+            margin: 0 auto 30px auto;
             width: 100%;
             max-width: 450px;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            background: rgba(0,0,0,0.05);
+            padding: 15px;
+            border-radius: 18px;
+            box-sizing: border-box;
         }
 
-        /* 6. 图标与列表 */
+        /* 6. 设备列表 */
         .device-list { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 40px; }
         .device-item { width: 85px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .device-item:hover { transform: translateY(-12px) scale(1.1); }
@@ -87,7 +88,7 @@
 <body>
 
     <div class="top-bar">
-        <span id="greeting">✨ 正在为您连接小窝...</span><br>
+        <span id="greeting">✨ 正在连接...</span><br>
         <span style="font-size: 18px; font-weight: bold;">风的小窝</span><br>
         获取订阅最新配置请点击下方加群
     </div>
@@ -98,9 +99,11 @@
         </a>
 
         <div class="music-wrap">
-    <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="100%" height="86" 
-        src="https://music.163.com/outchain/player?type=2&id=496869685&auto=0&height=66">
-    </iframe>
+            <p style="font-size: 12px; margin: 0 0 10px 0; color: #666;">🎵 正在播放：打上花火 - Daoko/米津玄師</p>
+            <audio controls style="width: 100%; height: 40px;">
+                <source src="https://music.163.com/song/media/outer/url?id=496869685.mp3" type="audio/mpeg">
+                您的浏览器不支持播放音乐
+            </audio>
         </div>
 
         <h2 style="font-size: 22px; margin-bottom: 20px;">支持设备</h2>
