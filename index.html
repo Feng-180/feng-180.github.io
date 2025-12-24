@@ -27,6 +27,7 @@
             backdrop-filter: blur(10px);
         }
 
+        /* 重点：这里关联你刚刚上传的 Tx.jpg */
         .avatar {
             width: 100px; height: 100px;
             border-radius: 50%;
@@ -68,7 +69,6 @@
             padding: 10px 25px;
             border: 1px solid #e73c7e;
             border-radius: 50px;
-            margin-top: 10px;
         }
 
         #sakura { pointer-events: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
@@ -78,7 +78,7 @@
     <canvas id="sakura"></canvas>
 
     <div class="container" style="position: relative; z-index: 10;">
-        <img src="Tx.jpg.webp" class="avatar" alt="早川秋">
+        <img src="Tx.jpg" class="avatar" alt="早川秋">
         
         <div class="welcome-title">欢迎访问风的小窝</div>
         <p style="color: #666; font-size: 14px;">获取订阅最新配置请点击下方加群</p>
