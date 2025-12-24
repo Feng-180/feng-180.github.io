@@ -62,14 +62,14 @@
         .copy-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
         .copy-btn:active { transform: scale(0.95); }
 
-        /* 5. Spotify 播放器容器 */
-        .spotify-wrap {
-            margin: 10px auto 40px auto;
+        /* 5. 播放器容器 */
+        .music-wrap {
+            margin: 10px auto 30px auto;
             width: 100%;
-            max-width: 400px;
+            max-width: 450px;
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
         /* 6. 图标与列表 */
@@ -97,15 +97,9 @@
             <button class="copy-btn">🚀 一键加入QQ群</button>
         </a>
 
-        <div class="spotify-wrap">
-            <iframe style="border-radius:12px" 
-                src="https://open.spotify.com/home" 
-                width="100%" 
-                height="152" 
-                frameBorder="0" 
-                allowfullscreen="" 
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" 
-                loading="lazy">
+        <div class="music-wrap">
+            <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="100%" height="86" 
+                src="//music.163.com/outchain/player?type=2&id=496869685&auto=0&height=66">
             </iframe>
         </div>
 
