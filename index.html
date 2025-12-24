@@ -60,7 +60,6 @@
             margin-bottom: 25px;
         }
         .copy-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
-        .copy-btn:active { transform: scale(0.95); }
 
         /* 5. 播放器容器 */
         .music-wrap {
@@ -76,7 +75,6 @@
         /* 6. 设备列表 */
         .device-list { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 40px; }
         .device-item { width: 85px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .device-item:hover { transform: translateY(-12px) scale(1.1); }
         .device-item img { width: 50px; height: 50px; margin-bottom: 10px; }
         .device-item p { margin: 0; font-size: 13px; font-weight: bold; }
 
@@ -85,25 +83,24 @@
         .counter-section { margin-top: 10px; padding-bottom: 30px; opacity: 0.8; }
     </style>
 </head>
-<body>
-
-    <div class="top-bar">
-        <span id="greeting">✨ 正在连接...</span><br>
+<body onclick="forcePlay()"> <div class="top-bar">
+        <span id="greeting">✨ 欢迎光临...</span><br>
         <span style="font-size: 18px; font-weight: bold;">风的小窝</span><br>
         获取订阅最新配置请点击下方加群
     </div>
 
     <div class="container">
-        <a href="https://qun.qq.com/universal-share/share?ac=1&authKey=%2FkQd9KPlS47IwqNEzMR7x4qgpXzq1le8LkhxuNrpRINdqBNAqynRsMTsmlaNMkyn&busi_data=eyJncm91cENvZGUiOiI2OTExMDUzODEiLCJ0b2tlbiI6InphVW5IdnpBdUhEQ0xYcnRNSEhqcDl1NlgxQmw5Z3VWMG0yZWxUVVAwZHdEeUhFMERyRlRhaWtBUk5CUk9tVjYiLCJ1aW4iOiIyOTAyOTM5NjkyIn0%3D&data=4nt2yV-sFiJ5gAJwg8pkBqHkoDCvU30KHq7GDBk7yIDcvc-fX8QX4JafqJINMuVbEwKJWwSTUYpq0iws_xsFPg&svctype=4&tempid=h5_group_info" style="text-decoration: none;">
+        <a href="https://qun.qq.com/..." style="text-decoration: none;">
             <button class="copy-btn">🚀 一键加入QQ群</button>
         </a>
 
         <div class="music-wrap">
-            <p style="font-size: 12px; margin: 0 0 10px 0; color: #666;">🎵 正在播放：打上花火 - Daoko/米津玄師</p>
-            <audio controls style="width: 100%; height: 40px;">
-                <source src="https://music.163.com/song/media/outer/url?id=496869685.mp3" type="audio/mpeg">
-                您的浏览器不支持播放音乐
+            <p style="font-size: 12px; margin: 0 0 10px 0; color: #666;">🎵 正在播放：打上花火 (完整版)</p>
+            <audio id="bgMusic" loop style="width: 100%; height: 40px;">
+                <source src="https://api.uomg.com/api/rand.music?sort=热歌榜&format=mp3" type="audio/mpeg">
+                您的浏览器不支持播放
             </audio>
+            <p style="font-size: 10px; color: #999; margin-top: 5px;">Tips: 点击页面任意处可开启音乐</p>
         </div>
 
         <h2 style="font-size: 22px; margin-bottom: 20px;">支持设备</h2>
@@ -127,30 +124,30 @@
         </div>
 
         <div class="footer-note">
-            温馨提示：<br>
-            所有资源的 <span class="highlight">下载地址</span> 与 <span class="highlight">使用教程</span> 已整理至群公告。<br>
-            请入群后点击 <span class="highlight">“群公告”</span> 即可获取。
+            温馨提示：所有资源已整理至群公告。
         </div>
     </div>
 
     <div class="counter-section">
-        <p style="font-size: 11px; color: #666;">📊 访客足迹</p>
         <img src="https://count.getloli.com/get/@feng-180-xiaowo?theme=rule734" alt="Counter">
     </div>
 
     <script>
+        // 动态问候语
         function updateGreeting() {
             const hour = new Date().getHours();
-            let text = "";
-            if (hour < 6) { text = "🌙 凌晨了，记得早点休息哦"; }
-            else if (hour < 12) { text = "🌅 早上好，新的一天元气满满"; }
-            else if (hour < 14) { text = "🍱 午安，记得按时吃午饭哦"; }
-            else if (hour < 18) { text = "☕ 下午好，喝杯奶茶放松一下"; }
-            else { text = "✨ 晚上好，欢迎回到温馨的小窝"; }
+            let text = hour < 6 ? "🌙 凌晨了，注意休息" : hour < 12 ? "🌅 早上好" : "✨ 欢迎来到小窝";
             document.getElementById("greeting").innerText = text;
         }
         updateGreeting();
-    </script>
 
+        // 智能播放逻辑
+        function forcePlay() {
+            const audio = document.getElementById('bgMusic');
+            if (audio.paused) {
+                audio.play();
+            }
+        }
+    </script>
 </body>
 </html>
