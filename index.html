@@ -5,7 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>支持设备 - 风的小窝</title>
     <style>
-        body { font-family: -apple-system, sans-serif; margin: 0; background: #fff; color: #333; text-align: center; }
+        body {
+            font-family: -apple-system, sans-serif;
+            margin: 0;
+            /* 高级渐变背景 */
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background-attachment: fixed; 
+            color: #333;
+            text-align: center;
+        }
         .top-bar { background: #1a1a1a; color: #ccc; padding: 15px; font-size: 14px; line-height: 1.6; }
         .container { max-width: 600px; margin: 0 auto; padding: 40px 20px; }
         h1 { font-size: 26px; margin-bottom: 10px; }
@@ -42,8 +50,8 @@
 <body>
 
     <div class="top-bar">
-        欢迎来到风的小窝<br>
-        获取订阅最新配置请看群公告
+    <span id="greeting">欢迎来到风的小窝</span><br>
+    获取订阅最新配置请看群公告
     </div>
 
     <div class="container">
@@ -88,4 +96,15 @@
     </div>
 
 </body>
-</html>
+<script>
+    function updateGreeting() {
+        const hour = new Date().getHours();
+        let text = "";
+        if (hour < 6) { text = "🌙 凌晨了，注意休息哦！"; }
+        else if (hour < 12) { text = "🌅 早上好！今天也要加油呀！"; }
+        else if (hour < 18) { text = "☕ 下午好，喝杯咖啡休息下？"; }
+        else { text = "✨ 晚上好，来看看有什么新资源？"; }
+        document.getElementById("greeting").innerText = text;
+    }
+    updateGreeting();
+</script></html>
