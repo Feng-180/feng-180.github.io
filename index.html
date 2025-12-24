@@ -2,130 +2,160 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>欢迎访问风的小窝</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        :root { --primary-blue: #00d2ff; --glass-bg: rgba(255, 255, 255, 0.1); }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&display=swap');
         
         body {
-            margin: 0; padding: 0; min-height: 100vh;
-            background: #050a1a linear-gradient(180deg, #050a1a 0%, #1a1a2e 100%);
-            color: #fff; font-family: -apple-system, "SF Pro Text", sans-serif;
-            display: flex; align-items: center; justify-content: center; overflow: hidden;
+            font-family: 'Noto Sans SC', sans-serif;
+            background: #0f172a; /* 深色底色 */
+            overflow-x: hidden;
+            margin: 0;
         }
 
-        /* 樱花飘落画布 */
-        #sakura-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
-
-        .container {
-            position: relative; z-index: 10; width: 90%; max-width: 420px;
-            padding: 45px 25px; background: var(--glass-bg);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 40px;
-            text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-            animation: cardShow 0.8s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+        /* 动态星空背景 */
+        #star-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
         }
-        @keyframes cardShow { from { opacity: 0; transform: scale(0.9) translateY(30px); } to { opacity: 1; transform: scale(1) translateY(0); } }
 
-        /* 头像组件 - 锁定 tx.jpg */
-        .avatar-wrapper {
-            position: relative; width: 120px; height: 120px; margin: 0 auto 25px;
+        /* 毛玻璃卡片效果 */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         }
-        .avatar-wrapper::before {
-            content: ""; position: absolute; inset: -8px; 
-            border: 2px solid var(--primary-blue); border-radius: 50%;
-            animation: rotate 10s linear infinite; opacity: 0.6;
-        }
-        .avatar-img {
-            width: 100%; height: 100%; border-radius: 50%; 
-            object-fit: cover; border: 4px solid #fff; position: relative; z-index: 2;
-            background: #222;
-        }
-        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-        .title { font-size: 28px; font-weight: 900; margin-bottom: 10px; background: linear-gradient(to right, #fff, #00d2ff); -webkit-background-clip: text; color: transparent; }
-        .motto { font-size: 14px; color: rgba(255,255,255,0.7); margin-bottom: 35px; letter-spacing: 1px; }
-
-        /* 按钮设计 */
-        .btn-group { display: flex; flex-direction: column; gap: 20px; }
-        .btn {
-            padding: 18px; border-radius: 20px; text-decoration: none; font-weight: bold; font-size: 17px;
-            transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;
+        /* 按钮流光动画 */
+        .shimmer-btn {
+            position: relative;
+            overflow: hidden;
         }
-        .btn-qq { background: #fff; color: #000; box-shadow: 0 10px 25px rgba(255,255,255,0.2); }
-        .btn-tutorial { background: rgba(0, 210, 255, 0.15); color: var(--primary-blue); border: 1px solid rgba(0, 210, 255, 0.4); }
-        .btn:active { transform: scale(0.95); }
+        .shimmer-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -60%;
+            width: 20%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.4);
+            transform: rotate(30deg);
+            transition: none;
+            animation: shimmer 4s infinite;
+        }
+        @keyframes shimmer {
+            0% { left: -60%; }
+            20% { left: 120%; }
+            100% { left: 120%; }
+        }
 
-        /* 计数器修复 */
-        .visitor-stat { margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 25px; }
-        .counter { height: 45px; filter: none !important; -webkit-filter: none !important; }
-        .footer-text { font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 15px; }
+        /* 头像呼吸灯 */
+        .avatar-glow {
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
+            animation: pulse-glow 3s infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 15px rgba(56, 189, 248, 0.5); }
+            50% { box-shadow: 0 0 30px rgba(56, 189, 248, 0.8); }
+        }
     </style>
 </head>
-<body>
-    <canvas id="sakura-canvas"></canvas>
+<body class="flex items-center justify-center min-h-screen p-4">
 
-    <div class="container">
-        <div class="avatar-wrapper">
-            <img src="./tx.jpg" class="avatar-img" alt="头像" onerror="this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=Aki'">
-        </div>
+    <canvas id="star-canvas"></canvas>
+
+    <div class="glass-card w-full max-w-[400px] rounded-[2.5rem] p-8 text-center transition-all duration-500 hover:scale-[1.02]">
         
-        <div class="title">欢迎访问风的小窝</div>
-        <div class="motto">“为了那些死去的、还活着的，战斗下去。”</div>
-
-        <div class="btn-group">
-            <a href="mqqopensdkapi://bizAgent/qm/qr?url=https%3A%2F%2Fqun.qq.com%2Funiversal-share%2Fshare%3Fac%3D1%26authKey%3DnCwUHaC3AVeA0RSLe1B7dnc9MMTMd0whPyVT8%252BMVldRvQghELh2VoY%252BRDyzpAA8o%26busi_data%3DeyJncm91cENvZGUiOiI2OTExMDUzODEiLCJ0b2tokeniI6IkxESjkxUFdyTGpXdzZYTFZOb0swc1VJc0hsZzdoQVJFbGw5U3EvQWZrcDJxM2lVOXFtYk9IemRJUjRsRm50ZzUiLCJ1aW4iOiIyOTAyOTM5NjkyIn0%253D%26data%3DPGhMgcOxFZMISEqisn8K4Zb6cModQF8nsQUzziUtGNDN0NhgHwtLE8WZKMQcLVC1o-zkBYLN4y2nae-82zvEtQ%26svctype%3D4%26tempid%3Dh5_group_info" class="btn btn-qq">
-                🚀 一键加入 QQ 交流群
-            </a>
-            <a href="tutorial.html" class="btn btn-doc">📖 科学上网·操作全手册</a>
+        <div class="relative w-28 h-28 mx-auto mb-6">
+            <div class="absolute inset-0 rounded-full bg-sky-400/20 blur-xl"></div>
+            <img src="tx.jpg" alt="Avatar" class="relative w-full h-full rounded-full border-2 border-sky-400 object-cover avatar-glow">
         </div>
 
-        <div class="visitor-stat">
-            <img src="https://count.getloli.com/get/@feng-180-xiaowo?theme=rule734" class="counter">
-            <div class="footer-text">若跳转失败，请长按并在浏览器打开</div>
+        <h1 class="text-2xl font-bold text-white mb-2 tracking-tight">
+            欢迎访问风的小窝
+        </h1>
+        <p class="text-gray-400 text-sm italic mb-8 px-4">
+            “为了那些死去的、还活着的人，战斗下去。”
+        </p>
+
+        <a href="https://qun.qq.com/universal-share/share?ac=1&authKey=nCwUHaC3AVeA0RSLe1B7dnc9MMTMd0whPyVT8%2BMVldRvQghELh2VoY%2BRDyzpAA8o&busi_data=eyJncm91cENvZGUiOiI2OTExMDUzODEiLCJ0b2tlbiI6IkxESjkxUFdyTGpXdzZYTFZOb0swc1VJc0hsZzdoQVJFbGw5U3EvQWZrcDJxM2lVOXFtYk9IemRJUjRsRm50ZzUiLCJ1aW4iOiIyOTAyOTM5NjkyIn0%3D&data=PGhMgcOxFZMISEqisn8K4Zb6cModQF8nsQUzziUtGNDN0NhgHwtLE8WZKMQcLVC1o-zkBYLN4y2nae-82zvEtQ&svctype=4&tempid=h5_group_info" 
+           target="_blank"
+           class="shimmer-btn block w-full bg-white text-slate-900 font-bold py-4 rounded-2xl mb-4 shadow-xl active:scale-95 transition-transform flex items-center justify-center gap-2">
+            <span>🚀</span> 一键加入 QQ 交流群
+        </a>
+
+        <a href="tutorial.html" class="block w-full py-3 rounded-2xl text-gray-300 hover:bg-white/10 transition-colors flex items-center justify-center gap-2 text-sm border border-white/5">
+            📖 科学上网·操作全手册
+        </a>
+
+        <div class="my-10 border-t border-white/10 relative">
+            <span class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#1a2235] px-4 text-[10px] text-gray-500 tracking-[0.2em] uppercase">Stats</span>
         </div>
+
+        <div class="inline-block p-3 rounded-xl bg-black/20">
+            <img src="https://count.getloli.com/get/@:feng-180.github.io?theme=asoul" alt="MoeCounter" class="h-8">
+        </div>
+
+        <p class="mt-6 text-[11px] text-gray-500">
+            若跳转失败，请长按并在浏览器中打开
+        </p>
     </div>
 
     <script>
-        // 樱花飘落逻辑
-        const canvas = document.getElementById('sakura-canvas');
+        const canvas = document.getElementById('star-canvas');
         const ctx = canvas.getContext('2d');
-        let petals = [];
+        let stars = [];
 
-        function init() {
+        function resize() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            petals = [];
-            for (let i = 0; i < 40; i++) {
-                petals.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    r: Math.random() * 3 + 2,
-                    d: Math.random() * 1 + 0.5,
-                    a: Math.random() * Math.PI
-                });
+        }
+
+        class Star {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 1.5;
+                this.opacity = Math.random();
+                this.speed = 0.05 + Math.random() * 0.1;
+            }
+            draw() {
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            update() {
+                this.opacity += this.speed;
+                if (this.opacity > 1 || this.opacity < 0) this.speed = -this.speed;
             }
         }
 
-        function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "rgba(255, 183, 197, 0.7)";
-            petals.forEach(p => {
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-                ctx.fill();
-                p.y += p.d;
-                p.x += Math.sin(p.a) * 0.5;
-                if (p.y > canvas.height) p.y = -10;
-                if (p.x > canvas.width) p.x = 0;
-            });
-            requestAnimationFrame(draw);
+        function init() {
+            resize();
+            for (let i = 0; i < 100; i++) stars.push(new Star());
         }
 
-        window.addEventListener('resize', init);
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            stars.forEach(star => {
+                star.update();
+                star.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+
+        window.addEventListener('resize', resize);
         init();
-        draw();
+        animate();
     </script>
 </body>
 </html>
