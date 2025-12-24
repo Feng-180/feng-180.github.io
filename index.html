@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>风的小窝 - 资源导航</title>
+    <title>欢迎访问风的小窝</title>
     <style>
-        /* 1. 动态流动背景 */
+        /* 1. 全局动态渐变背景 */
         body {
             font-family: -apple-system, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
             margin: 0;
@@ -23,19 +23,30 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* 2. 顶部公告栏 (毛玻璃效果) */
+        /* 2. 顶部导航 (毛玻璃) */
         .top-bar {
             background: rgba(0, 0, 0, 0.7);
             backdrop-filter: blur(10px);
             color: #fff;
             padding: 20px;
             font-size: 14px;
-            line-height: 1.8;
             border-bottom: 1px solid rgba(255,255,255,0.1);
         }
         #greeting { font-weight: bold; color: #ffeb3b; }
 
-        /* 3. 主体卡片 */
+        /* 3. 核心：渐变字体样式 */
+        .gradient-text {
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(to right, #ffffff, #ffeb3b, #23d5ab);
+            -webkit-background-clip: text; /* 极其重要：将背景裁切到文字上 */
+            color: transparent; /* 将文字设为透明以显示背景渐变 */
+            display: inline-block;
+            margin: 10px 0;
+            letter-spacing: 1px;
+        }
+
+        /* 4. 卡片容器 */
         .container {
             max-width: 600px;
             margin: 20px auto;
@@ -45,7 +56,7 @@
             box-shadow: 0 15px 35px rgba(0,0,0,0.15);
         }
 
-        /* 4. 按钮特效 */
+        /* 5. 按钮 */
         .copy-btn {
             background: #1a1a1a;
             color: #fff;
@@ -55,97 +66,75 @@
             cursor: pointer;
             font-size: 17px;
             font-weight: bold;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: 0.3s;
+            text-decoration: none;
+            display: inline-block;
             margin-bottom: 25px;
         }
-        .copy-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+        .copy-btn:active { transform: scale(0.95); }
 
-        /* 5. 播放器容器 */
+        /* 6. 音乐与图标 */
         .music-wrap {
-            margin: 0 auto 30px auto;
-            width: 100%;
-            max-width: 450px;
-            background: rgba(0,0,0,0.05);
+            margin-bottom: 30px;
             padding: 15px;
+            background: rgba(0,0,0,0.05);
             border-radius: 18px;
-            box-sizing: border-box;
         }
-
-        /* 6. 设备列表 */
         .device-list { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 40px; }
-        .device-item { width: 85px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .device-item img { width: 50px; height: 50px; margin-bottom: 10px; }
         .device-item p { margin: 0; font-size: 13px; font-weight: bold; }
-
-        .footer-note { padding: 20px; color: #444; line-height: 1.8; font-size: 14px; border-top: 1px solid #eee; }
-        .highlight { color: #e73c7e; font-weight: bold; }
-        .counter-section { margin-top: 10px; padding-bottom: 30px; opacity: 0.8; }
     </style>
 </head>
-<body onclick="forcePlay()"> <div class="top-bar">
-        <span id="greeting">✨ 欢迎光临...</span><br>
-        <span style="font-size: 18px; font-weight: bold;">风的小窝</span><br>
+<body onclick="startMusic()">
+
+    <div class="top-bar">
+        <span id="greeting">✨ 正在连接...</span><br>
+        <span class="gradient-text">欢迎访问风的小窝</span><br>
         获取订阅最新配置请点击下方加群
     </div>
 
     <div class="container">
-        <a href="https://qun.qq.com/..." style="text-decoration: none;">
-            <button class="copy-btn">🚀 一键加入QQ群</button>
+        <a href="https://qm.qq.com/cgi-bin/qm/qr?k=ph7XWkX6D3kE8X7F7XWkX6D3kE8X7F" class="copy-btn">
+            🚀 一键加入QQ群
         </a>
 
         <div class="music-wrap">
-            <p style="font-size: 12px; margin: 0 0 10px 0; color: #666;">🎵 正在播放：打上花火 (完整版)</p>
-            <audio id="bgMusic" loop style="width: 100%; height: 40px;">
+            <p id="music-status" style="font-size: 13px; color: #666; margin: 0;">🎵 点击屏幕开启《打上花火》</p>
+            <audio id="bgMusic" loop>
                 <source src="https://api.uomg.com/api/rand.music?sort=热歌榜&format=mp3" type="audio/mpeg">
-                您的浏览器不支持播放
             </audio>
-            <p style="font-size: 10px; color: #999; margin-top: 5px;">Tips: 点击页面任意处可开启音乐</p>
         </div>
 
-        <h2 style="font-size: 22px; margin-bottom: 20px;">支持设备</h2>
+        <h2 style="font-size: 20px;">支持设备</h2>
         <div class="device-list">
-            <div class="device-item">
-                <img src="https://img.icons8.com/ios-filled/100/000000/iphone.png" alt="iOS">
-                <p>iPhone</p>
-            </div>
-            <div class="device-item">
-                <img src="https://img.icons8.com/ios-filled/100/000000/android-os.png" alt="Android">
-                <p>Android</p>
-            </div>
-            <div class="device-item">
-                <img src="https://img.icons8.com/ios-filled/100/000000/windows-10.png" alt="Windows">
-                <p>Windows</p>
-            </div>
-            <div class="device-item">
-                <img src="https://img.icons8.com/ios-filled/100/000000/mac-os.png" alt="Mac">
-                <p>Macbook</p>
-            </div>
+            <div class="device-item"><img src="https://img.icons8.com/ios-filled/100/000000/iphone.png"><p>iPhone</p></div>
+            <div class="device-item"><img src="https://img.icons8.com/ios-filled/100/000000/android-os.png"><p>Android</p></div>
+            <div class="device-item"><img src="https://img.icons8.com/ios-filled/100/000000/windows-10.png"><p>Windows</p></div>
+            <div class="device-item"><img src="https://img.icons8.com/ios-filled/100/000000/mac-os.png"><p>Macbook</p></div>
         </div>
 
-        <div class="footer-note">
-            温馨提示：所有资源已整理至群公告。
+        <div style="font-size: 14px; color: #666;">
+            温馨提示：资源已在 <span style="color:#e73c7e; font-weight:bold;">群公告</span> 整理完毕。
         </div>
-    </div>
-
-    <div class="counter-section">
-        <img src="https://count.getloli.com/get/@feng-180-xiaowo?theme=rule734" alt="Counter">
     </div>
 
     <script>
-        // 动态问候语
+        // 动态问候
         function updateGreeting() {
-            const hour = new Date().getHours();
-            let text = hour < 6 ? "🌙 凌晨了，注意休息" : hour < 12 ? "🌅 早上好" : "✨ 欢迎来到小窝";
-            document.getElementById("greeting").innerText = text;
+            const hr = new Date().getHours();
+            document.getElementById("greeting").innerText = hr<6?"🌙 凌晨了，注意休息":hr<12?"🌅 早上好":"✨ 欢迎光临";
         }
         updateGreeting();
 
-        // 智能播放逻辑
-        function forcePlay() {
-            const audio = document.getElementById('bgMusic');
-            if (audio.paused) {
-                audio.play();
+        // 音乐激活
+        let playing = false;
+        function startMusic() {
+            if (!playing) {
+                const a = document.getElementById('bgMusic');
+                a.play().then(() => {
+                    document.getElementById('music-status').innerText = "🎵 音乐播放中...";
+                    playing = true;
+                });
             }
         }
     </script>
