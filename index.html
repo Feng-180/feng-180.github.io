@@ -163,5 +163,57 @@
         window.addEventListener('resize', resize);
         init(); animate();
     </script>
-</body>
+<div id="music-container" class="fixed bottom-6 right-6 z-[100] flex items-center gap-3 bg-white/40 backdrop-blur-md p-2 pr-5 rounded-full border-2 border-[#ffb7c5] shadow-[0_0_15px_rgba(255,183,197,0.5)] transition-all hover:scale-105 group">
+        <div id="music-disc" class="w-12 h-12 rounded-full border-2 border-white overflow-hidden cursor-pointer shadow-inner animate-[spin_4s_linear_infinite] paused relative">
+            <img src="tx.jpg" class="w-full h-full object-cover">
+            <div class="absolute inset-0 m-auto w-3 h-3 bg-white/80 rounded-full border border-[#ffb7c5]"></div>
+        </div>
+        
+        <div class="flex flex-col cursor-default">
+            <span id="music-title" class="text-[10px] text-[#ff6b81] font-bold truncate w-24">未在播放</span>
+            <button id="music-control" class="text-[11px] text-[#ff8fa3] text-left font-medium hover:text-[#ff4757] transition-colors">
+                点击开启 BGM ♫
+            </button>
+        </div>
+
+        <audio id="main-audio" loop>
+            <source src="https://api.uomg.com/api/rand.music?sort=热歌榜" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <style>
+        .paused { animation-play-state: paused !important; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        #music-container { animation: slideInUp 1s ease-out; }
+        @keyframes slideInUp { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    </style>
+
+    <script>
+        const myAudio = document.getElementById('main-audio');
+        const musicCtrl = document.getElementById('music-control');
+        const musicDisc = document.getElementById('music-disc');
+        const musicTitle = document.getElementById('music-title');
+        let musicPlaying = false;
+
+        function toggleMusic() {
+            if (musicPlaying) {
+                myAudio.pause();
+                musicCtrl.innerText = '点击继续播放 🌸';
+                musicTitle.innerText = '已暂停';
+                musicDisc.classList.add('paused');
+            } else {
+                myAudio.play().then(() => {
+                    musicCtrl.innerText = '音乐运行中 ✨';
+                    musicTitle.innerText = '正在播放 BGM';
+                    musicDisc.classList.remove('paused');
+                }).catch(err => {
+                    musicCtrl.innerText = '播放失败，再试一次?';
+                });
+            }
+            musicPlaying = !musicPlaying;
+        }
+
+        musicCtrl.addEventListener('click', toggleMusic);
+        musicDisc.addEventListener('click', toggleMusic);
+    </script></body>
 </html>
