@@ -5,72 +5,127 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>欢迎访问风的小窝</title>
     <style>
-        :root { --primary: #00d2ff; --secondary: #3a7bd5; --card-bg: rgba(20, 25, 40, 0.85); }
+        :root { --primary-blue: #00d2ff; --glass-bg: rgba(255, 255, 255, 0.1); }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         body {
             margin: 0; padding: 0; min-height: 100vh;
-            background: #050a1a linear-gradient(135deg, #050a1a 0%, #1a2a6c 100%);
-            color: #fff; font-family: -apple-system, system-ui, sans-serif;
-            display: flex; align-items: center; justify-content: center;
+            background: #050a1a linear-gradient(180deg, #050a1a 0%, #1a1a2e 100%);
+            color: #fff; font-family: -apple-system, "SF Pro Text", sans-serif;
+            display: flex; align-items: center; justify-content: center; overflow: hidden;
         }
 
-        /* 修复计数器黑白问题：移除滤镜干扰 */
-        .main-card {
-            width: 90%; max-width: 400px; padding: 35px 25px;
-            background: var(--card-bg); border-radius: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: center; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        /* 樱花飘落画布 */
+        #sakura-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+
+        .container {
+            position: relative; z-index: 10; width: 90%; max-width: 420px;
+            padding: 45px 25px; background: var(--glass-bg);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 40px;
+            text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            animation: cardShow 0.8s cubic-bezier(0.17, 0.67, 0.83, 0.67);
         }
+        @keyframes cardShow { from { opacity: 0; transform: scale(0.9) translateY(30px); } to { opacity: 1; transform: scale(1) translateY(0); } }
 
-        /* 增强头像显示：增加备用路径 */
-        .avatar-container {
-            width: 120px; height: 120px; margin: 0 auto 20px;
-            border-radius: 50%; border: 3px solid #fff;
-            box-shadow: 0 0 20px rgba(0, 210, 255, 0.4);
-            overflow: hidden; background: #1a1f2c;
+        /* 头像组件 - 锁定 tx.jpg */
+        .avatar-wrapper {
+            position: relative; width: 120px; height: 120px; margin: 0 auto 25px;
         }
-        .avatar-img { width: 100%; height: 100%; object-fit: cover; }
+        .avatar-wrapper::before {
+            content: ""; position: absolute; inset: -8px; 
+            border: 2px solid var(--primary-blue); border-radius: 50%;
+            animation: rotate 10s linear infinite; opacity: 0.6;
+        }
+        .avatar-img {
+            width: 100%; height: 100%; border-radius: 50%; 
+            object-fit: cover; border: 4px solid #fff; position: relative; z-index: 2;
+            background: #222;
+        }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
-        .title { font-size: 24px; font-weight: 800; margin-bottom: 8px; color: #fff; }
-        .quote { font-size: 13px; color: rgba(255,255,255,0.6); margin-bottom: 30px; }
+        .title { font-size: 28px; font-weight: 900; margin-bottom: 10px; background: linear-gradient(to right, #fff, #00d2ff); -webkit-background-clip: text; color: transparent; }
+        .motto { font-size: 14px; color: rgba(255,255,255,0.7); margin-bottom: 35px; letter-spacing: 1px; }
 
-        /* 按钮组：优化跳转逻辑 */
+        /* 按钮设计 */
+        .btn-group { display: flex; flex-direction: column; gap: 20px; }
         .btn {
-            display: block; width: 100%; padding: 15px; border-radius: 15px;
-            text-decoration: none; font-weight: bold; margin-bottom: 15px;
-            transition: 0.3s; font-size: 16px;
+            padding: 18px; border-radius: 20px; text-decoration: none; font-weight: bold; font-size: 17px;
+            transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;
         }
-        .btn-qq { background: #fff; color: #000; }
-        .btn-doc { background: rgba(255,255,255,0.1); color: var(--primary); border: 1px solid var(--primary); }
-        .btn:active { transform: scale(0.97); opacity: 0.8; }
+        .btn-qq { background: #fff; color: #000; box-shadow: 0 10px 25px rgba(255,255,255,0.2); }
+        .btn-tutorial { background: rgba(0, 210, 255, 0.15); color: var(--primary-blue); border: 1px solid rgba(0, 210, 255, 0.4); }
+        .btn:active { transform: scale(0.95); }
 
-        /* 计数器：修复安卓下变黑白的问题 */
-        .counter-box { margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 25px; }
-        .counter-img { height: 45px; filter: none !important; } /* 强制取消滤镜 */
-
-        .tip { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 15px; }
+        /* 计数器修复 */
+        .visitor-stat { margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 25px; }
+        .counter { height: 45px; filter: none !important; -webkit-filter: none !important; }
+        .footer-text { font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 15px; }
     </style>
 </head>
 <body>
-    <div class="main-card">
-        <div class="avatar-container">
+    <canvas id="sakura-canvas"></canvas>
+
+    <div class="container">
+        <div class="avatar-wrapper">
             <img src="./tx.jpg" class="avatar-img" alt="头像" onerror="this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=Aki'">
         </div>
         
         <div class="title">欢迎访问风的小窝</div>
-        <div class="quote">“为了那些死去的、还活着的，战斗下去。”</div>
+        <div class="motto">“为了那些死去的、还活着的，战斗下去。”</div>
 
-        <a href="mqqopensdkapi://bizAgent/qm/qr?url=http%3A%2F%2Fqm.qq.com%2Fcgi-bin%2Fqm%2Fqr%3Ffrom%3Dapp%26p%3Dandroid%26jump_from%3Dwebapi%26k%3D51TTjkRn9IWbdBziVbzoFhampaQX_NKJ" class="btn btn-qq">🚀 一键加入 QQ 交流群</a>
-        
-        <a href="tutorial.html" class="btn btn-doc">📖 科学上网·全攻略手册</a>
-
-        <div class="counter-box">
-            <img src="https://count.getloli.com/get/@feng-180-xiaowo?theme=rule734" class="counter-img">
+        <div class="btn-group">
+            <a href="mqqopensdkapi://bizAgent/qm/qr?url=https%3A%2F%2Fqun.qq.com%2Funiversal-share%2Fshare%3Fac%3D1%26authKey%3DnCwUHaC3AVeA0RSLe1B7dnc9MMTMd0whPyVT8%252BMVldRvQghELh2VoY%252BRDyzpAA8o%26busi_data%3DeyJncm91cENvZGUiOiI2OTExMDUzODEiLCJ0b2tokeniI6IkxESjkxUFdyTGpXdzZYTFZOb0swc1VJc0hsZzdoQVJFbGw5U3EvQWZrcDJxM2lVOXFtYk9IemRJUjRsRm50ZzUiLCJ1aW4iOiIyOTAyOTM5NjkyIn0%253D%26data%3DPGhMgcOxFZMISEqisn8K4Zb6cModQF8nsQUzziUtGNDN0NhgHwtLE8WZKMQcLVC1o-zkBYLN4y2nae-82zvEtQ%26svctype%3D4%26tempid%3Dh5_group_info" class="btn btn-qq">
+                🚀 一键加入 QQ 交流群
+            </a>
+            <a href="tutorial.html" class="btn btn-doc">📖 科学上网·操作全手册</a>
         </div>
-        
-        <div class="tip">温馨提示：若跳转失败，请长按按钮在手机浏览器打开</div>
+
+        <div class="visitor-stat">
+            <img src="https://count.getloli.com/get/@feng-180-xiaowo?theme=rule734" class="counter">
+            <div class="footer-text">若跳转失败，请长按并在浏览器打开</div>
+        </div>
     </div>
+
+    <script>
+        // 樱花飘落逻辑
+        const canvas = document.getElementById('sakura-canvas');
+        const ctx = canvas.getContext('2d');
+        let petals = [];
+
+        function init() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            petals = [];
+            for (let i = 0; i < 40; i++) {
+                petals.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    r: Math.random() * 3 + 2,
+                    d: Math.random() * 1 + 0.5,
+                    a: Math.random() * Math.PI
+                });
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "rgba(255, 183, 197, 0.7)";
+            petals.forEach(p => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                ctx.fill();
+                p.y += p.d;
+                p.x += Math.sin(p.a) * 0.5;
+                if (p.y > canvas.height) p.y = -10;
+                if (p.x > canvas.width) p.x = 0;
+            });
+            requestAnimationFrame(draw);
+        }
+
+        window.addEventListener('resize', init);
+        init();
+        draw();
+    </script>
 </body>
 </html>
