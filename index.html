@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>欢迎访问风的小窝</title>
     <style>
-        /* 1. 动态流动背景 */
+        /* 1. 动态背景 */
         body {
-            font-family: -apple-system, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+            font-family: -apple-system, sans-serif;
             margin: 0;
             background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
             background-size: 400% 400%;
@@ -23,7 +23,7 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* 2. 顶部导航栏 */
+        /* 2. 顶部导航 */
         .top-bar {
             background: rgba(0, 0, 0, 0.7);
             backdrop-filter: blur(10px);
@@ -32,9 +32,8 @@
             font-size: 14px;
             border-bottom: 1px solid rgba(255,255,255,0.1);
         }
-        #greeting { font-weight: bold; color: #ffeb3b; margin-bottom: 5px; display: block; }
 
-        /* 3. 渐变字体标题 */
+        /* 3. 渐变标题 */
         .gradient-text {
             font-size: 26px;
             font-weight: 800;
@@ -43,7 +42,6 @@
             color: transparent;
             display: inline-block;
             margin: 10px 0;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
         }
 
         /* 4. 主体卡片 */
@@ -56,44 +54,43 @@
             box-shadow: 0 20px 40px rgba(0,0,0,0.2);
         }
 
-        /* 5. 一键加群按钮 */
+        /* 5. 按钮样式 */
         .join-btn {
             background: #1a1a1a;
             color: #fff;
             border: none;
             padding: 18px 45px;
             border-radius: 16px;
-            cursor: pointer;
             font-size: 18px;
             font-weight: bold;
-            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             text-decoration: none;
             display: inline-block;
             margin-bottom: 15px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.3);
         }
-        .join-btn:active { transform: scale(0.92); }
 
-        /* 6. 二级页面跳转按钮 */
         .sub-link {
             display: block;
             color: #666;
             text-decoration: none;
             font-size: 14px;
             margin-bottom: 30px;
-            transition: 0.3s;
         }
-        .sub-link:hover { color: #e73c7e; }
 
-        /* 7. 音乐与设备 */
-        .music-card { margin-bottom: 35px; padding: 15px; background: rgba(0,0,0,0.06); border-radius: 20px; }
+        /* 6. 音乐提示框 */
+        .music-card {
+            margin-bottom: 35px;
+            padding: 15px;
+            background: rgba(0,0,0,0.06);
+            border-radius: 20px;
+        }
+
+        /* 7. 设备与底部 */
         .device-list { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 40px; }
         .device-item img { width: 45px; height: 45px; margin-bottom: 8px; }
         .device-item p { margin: 0; font-size: 12px; font-weight: bold; }
-
         .footer { padding: 20px; color: #666; font-size: 14px; border-top: 1px solid #eee; }
         
-        /* 8. 底部计数器 */
         .counter-section {
             margin: 20px auto 40px auto;
             padding: 15px;
@@ -104,10 +101,10 @@
         }
     </style>
 </head>
-<body onclick="playMusic()">
+<body onclick="forcePlay()" ontouchstart="forcePlay()" onscroll="forcePlay()">
 
     <div class="top-bar">
-        <span id="greeting">✨ 欢迎光临</span>
+        <span id="greeting" style="font-weight: bold; color: #ffeb3b;">✨ 欢迎光临</span><br>
         <span class="gradient-text">欢迎访问风的小窝</span><br>
         获取订阅最新配置请点击下方加群
     </div>
@@ -120,10 +117,7 @@
         <a href="tutorial.html" class="sub-link">📖 查看详细使用教程 & 资源说明</a>
 
         <div class="music-card">
-            <p id="music-text" style="font-size: 13px; color: #555; margin: 0;">🎵 点击页面开启背景音乐</p>
-            <audio id="audio" loop>
-                <source src="https://api.uomg.com/api/rand.music?sort=热歌榜&format=mp3" type="audio/mpeg">
-            </audio>
+            <p id="music-status" style="font-size: 13px; color: #555; margin: 0;">🎵 触摸屏幕开启背景音乐</p>
         </div>
 
         <h2 style="font-size: 18px; margin-bottom: 25px;">支持设备</h2>
@@ -144,21 +138,28 @@
         <img src="https://count.getloli.com/get/@feng-180-xiaowo?theme=rule734" alt="访客计数器">
     </div>
 
+    <audio id="bgm" loop preload="auto">
+        <source src="https://api.uomg.com/api/rand.music?sort=热歌榜&format=mp3" type="audio/mpeg">
+    </audio>
+
     <script>
         // 动态时间问候
         const hr = new Date().getHours();
-        document.getElementById("greeting").innerText = hr<6?"🌙 凌晨了，注意休息":hr<12?"🌅 早上好":hr<18?"☕ 下午好":"✨ 晚上好";
+        const greet = hr<6?"🌙 凌晨了，注意休息":hr<12?"🌅 早上好":hr<18?"☕ 下午好":"✨ 晚上好";
+        document.getElementById("greeting").innerText = greet;
 
-        // 音乐激活
-        let isPlaying = false;
-        function playMusic() {
-            if (!isPlaying) {
-                const a = document.getElementById('audio');
-                a.play().then(() => {
-                    document.getElementById('music-text').innerText = "🎵 音乐播放中...";
-                    isPlaying = true;
-                });
-            }
+        // 🎵 强制播放逻辑
+        let played = false;
+        function forcePlay() {
+            if (played) return;
+            const audio = document.getElementById('bgm');
+            // 尝试播放
+            audio.play().then(() => {
+                document.getElementById('music-status').innerText = "🎵 正在为你播放随机热歌...";
+                played = true;
+            }).catch(e => {
+                console.log("正在等待用户操作激活音频...");
+            });
         }
     </script>
 </body>
