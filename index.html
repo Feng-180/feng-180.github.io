@@ -13,6 +13,20 @@
         
         /* 按钮样式 */
         .copy-btn { background: #000; color: #fff; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-size: 16px; margin-bottom: 50px; }
+        /* 按钮按下去时的缩放效果 */
+.copy-btn:active {
+    transform: scale(0.95);
+    background-color: #333;
+    transition: 0.1s;
+}
+
+/* 图标浮动效果 */
+.device-item {
+    transition: transform 0.3s ease;
+}
+.device-item:hover {
+    transform: translateY(-10px) scale(1.1);
+}
         
         /* 设备图标排列 */
         .device-list { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; margin-bottom: 60px; }
