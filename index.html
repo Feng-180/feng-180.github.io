@@ -21,13 +21,13 @@
             max-width: 500px;
             margin: 50px auto;
             padding: 30px 20px;
-            background: rgba(255, 255, 255, 0.92);
+            background: rgba(255, 255, 255, 0.95);
             border-radius: 30px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.1);
             backdrop-filter: blur(10px);
         }
 
-        /* 重点：这里关联你刚刚上传的 Tx.jpg */
+        /* 重点：增加路径检查和强制显示 */
         .avatar {
             width: 100px; height: 100px;
             border-radius: 50%;
@@ -35,6 +35,7 @@
             margin-bottom: 15px;
             object-fit: cover;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            background: #eee; /* 如果图挂了，显示一个灰色底 */
         }
 
         .welcome-title {
@@ -56,9 +57,9 @@
             text-decoration: none;
             display: inline-block;
             margin: 20px 0 15px 0;
-            transition: 0.3s;
+            transition: 0.2s;
         }
-        .btn-main:active { transform: scale(0.95); }
+        .btn-main:hover { transform: scale(1.05); background: #333; }
 
         .btn-sub {
             display: inline-block;
@@ -78,7 +79,7 @@
     <canvas id="sakura"></canvas>
 
     <div class="container" style="position: relative; z-index: 10;">
-        <img src="Tx.jpg" class="avatar" alt="早川秋">
+        <img src="./Tx.jpg" class="avatar" alt="早川秋" onerror="this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=Aki'">
         
         <div class="welcome-title">欢迎访问风的小窝</div>
         <p style="color: #666; font-size: 14px;">获取订阅最新配置请点击下方加群</p>
