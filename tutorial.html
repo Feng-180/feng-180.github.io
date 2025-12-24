@@ -3,62 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>科学上网攻略手册</title>
+    <title>操作手册 - 樱花版</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { font-family: -apple-system, sans-serif; background: #0b0e14; color: #d1d5db; line-height: 1.8; margin: 0; padding: 20px; }
-        .page-wrap { max-width: 600px; margin: 0 auto; }
-        .back-link { color: #00d2ff; text-decoration: none; font-size: 14px; margin-bottom: 25px; display: inline-block; }
-        
-        .guide-card { background: rgba(255,255,255,0.05); padding: 25px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; }
-        h1 { font-size: 24px; color: #fff; text-align: center; margin-bottom: 30px; }
-        h2 { font-size: 18px; color: #00d2ff; border-left: 4px solid #00d2ff; padding-left: 12px; margin-top: 0; }
-        
-        .step-list { padding-left: 20px; }
-        .step-list li { margin-bottom: 15px; }
-        b { color: #fff; }
-        code { background: rgba(231, 76, 60, 0.2); color: #ff4d4d; padding: 2px 6px; border-radius: 4px; font-family: monospace; }
-        
-        .status-tag { display: inline-block; padding: 2px 8px; border-radius: 5px; font-size: 12px; font-weight: bold; background: #27ae60; color: #fff; margin-bottom: 10px; }
+        @import url('https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap');
+        body { background: #fff5f7; font-family: 'ZCOOL KuaiLe', cursive; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 3px dashed #ffb7c5;
+            border-radius: 2rem;
+        }
+        #sakura-canvas { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 99; }
+        .content h2 { color: #ff6b81; border-left: 4px solid #ff6b81; padding-left: 10px; margin: 20px 0; }
+        .content p { color: #8a5e66; line-height: 1.8; }
     </style>
 </head>
-<body>
-    <div class="page-wrap">
-        <a href="index.html" class="back-link">⇠ 返回风的小窝</a>
-        <h1>🚀 科学上网全流程指引</h1>
-
-        <div class="guide-card">
-            <span class="status-tag">第一步：加入组织</span>
-            <h2>获取订阅链接</h2>
-            <ul class="step-list">
-                <li>通过首页按钮加入 <b>QQ 交流群</b>。</li>
-                <li>进入群聊后，查看<b>群公告</b>。</li>
-                <li>找到以 <code>http://</code> 开头的一串长字符链接，完整复制。</li>
-            </ul>
-        </div>
-
-        <div class="guide-card">
-            <span class="status-tag">第二步：选择工具</span>
-            <h2>下载对应客户端</h2>
-            <ul class="step-list">
-                <li><b>iOS (iPhone):</b> 在 App Store 搜索 <code>Shadowrocket</code> (需海外 ID)。</li>
-                <li><b>Android:</b> 群文件搜索并下载 <code>Clash Meta</code> 或 <code>v2rayNG</code>。</li>
-                <li><b>Windows/Mac:</b> 推荐使用 <code>Clash Verge</code> 极简版。</li>
-            </ul>
-        </div>
-
-        <div class="guide-card">
-            <span class="status-tag">第三步：开启新世界</span>
-            <h2>配置并连接</h2>
-            <ul class="step-list">
-                <li>打开软件，找到“添加订阅”或“配置导入”。</li>
-                <li>粘贴第一步复制的链接，点击<b>保存/更新</b>。</li>
-                <li>在节点列表中选择一个延迟低的节点，点击<b>连接/开启</b>。</li>
-            </ul>
-        </div>
-
-        <div style="text-align: center; color: rgba(255,255,255,0.3); font-size: 12px; margin-top: 40px;">
-            温馨提示：资源均收集自互联网，仅供学习交流使用。
+<body class="min-h-screen p-6">
+    <canvas id="sakura-canvas"></canvas>
+    
+    <div class="max-w-2xl mx-auto relative z-10">
+        <a href="index.html" class="inline-block mb-6 text-[#ff6b81] font-bold text-lg">🌸 返回主页</a>
+        
+        <div class="glass-card p-8 shadow-xl">
+            <h1 class="text-3xl font-bold text-[#ff6b81] mb-6 flex items-center gap-2">
+                <span>📖</span> 操作手册
+            </h1>
+            
+            <div class="content">
+                <h2>第一步：契约开启</h2>
+                <p>点击主页的 QQ 群按钮，加入我们的魔法阵地。</p>
+                
+                <h2>第二步：技能配置</h2>
+                <p>下载对应的客户端，导入订阅链接即可解锁异世界网络。</p>
+                
+                <div class="mt-10 p-4 bg-[#ffb7c5]/20 rounded-xl text-sm text-[#ff6b81] border border-[#ffb7c5]">
+                    温馨提示：樱花虽美，也要注意网络安全哦！
+                </div>
+            </div>
         </div>
     </div>
+
+    <script>
+        /* ... 此处直接复制主页中的 <script> 标签内容即可保持特效一致 ... */
+    </script>
 </body>
 </html>
