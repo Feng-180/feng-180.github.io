@@ -5,35 +5,69 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>操作指引</title>
     <style>
-        body { font-family: sans-serif; background: #fff; padding: 30px; line-height: 1.8; color: #333; }
-        .box { max-width: 500px; margin: 0 auto; }
-        h2 { color: #e73c7e; border-bottom: 2px solid #eee; padding-bottom: 10px; }
-        .step { margin-bottom: 25px; }
-        b { color: #000; }
-        .back { text-decoration: none; color: #999; font-size: 14px; }
+        body { font-family: -apple-system, sans-serif; background: #f8f9fa; color: #2c3e50; line-height: 1.7; margin: 0; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .back-home { text-decoration: none; color: #3498db; font-size: 14px; display: inline-block; margin-bottom: 10px; }
+        
+        .card { background: #fff; border-radius: 24px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        h2 { font-size: 20px; color: #1a1a1a; margin-top: 0; display: flex; align-items: center; }
+        h2::before { content: ""; width: 4px; height: 20px; background: #3498db; border-radius: 10px; margin-right: 12px; }
+        
+        .step { margin-bottom: 15px; padding-left: 10px; border-left: 2px dashed #eee; }
+        .step b { color: #3498db; display: block; margin-bottom: 5px; }
+        code { background: #f1f3f5; color: #e74c3c; padding: 2px 6px; border-radius: 4px; font-family: monospace; }
+        
+        .notice { background: #fff5f5; color: #c0392b; padding: 15px; border-radius: 15px; font-size: 13px; border: 1px solid #fed7d7; }
     </style>
 </head>
 <body>
-    <div class="box">
-        <a href="index.html" class="back">⇠ 返回主页</a>
-        <h2>🚀 科学上网操作流程</h2>
-        
-        <div class="step">
-            <b>1. 获取链接：</b><br>
-            加入 QQ 群后，复制群公告内 <code>http://</code> 开头的订阅链接。
+    <div class="container">
+        <div class="header">
+            <a href="index.html" class="back-home">⇠ 返回主页</a>
+            <h1 style="margin:0; font-size: 24px;">节点使用全指南</h1>
         </div>
 
-        <div class="step">
-            <b>2. 下载软件：</b><br>
-            安卓使用 <b>Clash Meta</b>，苹果使用 <b>Shadowrocket</b>，电脑使用 <b>Clash Verge</b>。
+        <div class="card">
+            <h2>1. 获取你的“钥匙”</h2>
+            <div class="step">
+                <b>第一步：加入组织</b>
+                通过主页按钮加入 QQ 群（如跳转失败，请手动搜群号或在浏览器打开）。
+            </div>
+            <div class="step">
+                <b>第二步：复制订阅</b>
+                在【群公告】中寻找包含 <code>http://</code> 关键字的长链接。请务必“长按全选”并完整复制，它是你连接世界的钥匙。
+            </div>
         </div>
 
-        <div class="step">
-            <b>3. 导入连接：</b><br>
-            在软件中点击“添加订阅”，粘贴链接并保存。更新节点后，挑选延迟低的节点，点击“开启”即可。
+        <div class="card">
+            <h2>2. 准备“交通工具”</h2>
+            <div class="step">
+                <b>iOS 用户</b>
+                推荐使用 <b>Shadowrocket</b> (需海外 ID 下载)。
+            </div>
+            <div class="step">
+                <b>Android / PC 用户</b>
+                推荐使用 <b>Clash Meta</b> (功能最稳) 或 <b>v2rayNG</b> (操作最简)。具体包请在群文件下载。
+            </div>
         </div>
 
-        <p style="font-size: 12px; color: #bbb; margin-top: 50px;">提示：具体软件下载请在群文件查看。</p>
+        <div class="card">
+            <h2>3. 开启连接</h2>
+            <div class="step">
+                <b>导入订阅</b>
+                打开软件 -> 配置/配置 -> 点击“+”或“从 URL 导入” -> 粘贴第一步复制的链接。
+            </div>
+            <div class="step">
+                <b>选择节点</b>
+                点击“保存”或“更新订阅”，在节点列表中选择一个延迟较低（绿色数字）的节点，拨动顶部开关。
+            </div>
+        </div>
+
+        <div class="notice">
+            ⚠️ <b>免责声明：</b><br>
+            本窝提供的所有信息仅限用于合法合规的科研、学习及跨境电商业务。请自觉遵守当地法律法规，严禁用于任何违法用途。
+        </div>
     </div>
 </body>
 </html>
