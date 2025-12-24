@@ -3,121 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>欢迎访问风的小窝 - 樱花限定版</title>
+    <title>风的小窝 - 樱花限定版</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap');
+        body { background-color: #fff5f7; font-family: 'ZCOOL KuaiLe', cursive; }
+        .sakura-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+        .glass-card { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(10px); border: 2px solid #ffb7c5; border-radius: 2rem; }
+        .cute-btn { transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .cute-btn:hover { transform: scale(1.05); box-shadow: 0 10px 20px rgba(255, 183, 197, 0.4); }
         
-        :root {
-            --sakura-pink: #ffb7c5;
-            --soft-pink: #ffe4e1;
-        }
-
-        body {
-            background: linear-gradient(135deg, #fff5f7 0%, #ffdee9 100%);
-            font-family: 'ZCOOL KuaiLe', cursive;
-            overflow-x: hidden;
-            min-h-screen;
-        }
-
-        /* 萌系毛玻璃卡片 */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(10px);
-            border: 3px dashed var(--sakura-pink);
-            border-radius: 2.5rem;
-            box-shadow: 0 10px 25px rgba(255, 183, 197, 0.3);
-        }
-
-        /* 统一按钮风格 */
-        .cute-btn {
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 2px solid transparent;
-        }
-        .cute-btn:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 15px 20px rgba(255, 183, 197, 0.4);
-        }
-
-        /* 樱花掉落画布 */
-        #sakura-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            pointer-events: none;
-            z-index: 99;
-        }
-
-        /* 计数器装饰 */
-        .counter-box {
-            background: rgba(255, 183, 197, 0.2);
-            border-radius: 1.5rem;
-            padding: 1.5rem;
-            border: 2px solid var(--sakura-pink);
-        }
-
-        /* 头像呼吸灯 */
-        .avatar-glow {
-            border: 4px solid white;
-            box-shadow: 0 0 20px var(--sakura-pink);
-            animation: heartBeat 2s infinite;
-        }
-        @keyframes heartBeat {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); box-shadow: 0 0 30px #ff8fa3; }
-            100% { transform: scale(1); }
-        }
+        @keyframes pop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .animate-pop { animation: pop 0.3s ease-out; }
+        .paused { animation-play-state: paused !important; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="flex items-center justify-center py-10 px-4">
+<body class="flex flex-col items-center justify-center min-h-screen p-6">
+    <canvas id="sakura-canvas" class="sakura-bg"></canvas>
 
-    <canvas id="sakura-canvas"></canvas>
-
-    <div class="glass-card w-full max-w-[450px] p-8 text-center relative z-10">
-        
-        <div class="relative w-32 h-32 mx-auto mb-6">
-            <img src="tx.jpg" class="w-full h-full rounded-full object-cover avatar-glow">
-            <span class="absolute bottom-0 right-0 text-3xl">🌸</span>
+    <div class="glass-card w-full max-w-md p-8 shadow-2xl z-10 text-center">
+        <div class="relative inline-block mb-6">
+            <img src="tx.jpg" alt="头像" class="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover">
+            <span class="absolute bottom-2 right-2 text-3xl">🌸</span>
         </div>
 
         <h1 class="text-3xl font-bold text-[#ff6b81] mb-2">风的小窝</h1>
-        <p class="text-[#ff8fa3] text-sm mb-8 tracking-wider">“为了那些死去的、还活着的人，战斗下去。”</p>
+        <p class="text-[#ffb7c5] italic mb-8">“为了那些死去的、还活着的人，战斗下去。”</p>
 
         <div class="space-y-4">
-            <a href="https://qun.qq.com/universal-share/share?ac=1&authKey=nCwUHaC3AVeA0RSLe1B7dnc9MMTMd0whPyVT8%2BMVldRvQghELh2VoY%2BRDyzpAA8o&busi_data=eyJncm91cENvZGUiOiI2OTExMDUzODEiLCJ0b2tlbiI6IkxESjkxUFdyTGpXdzZYTFZOb0swc1VJc0hsZzdoQVJFbGw5U3EvQWZrcDJxM2lVOXFtYk9IemRJUjRsRm50ZzUiLCJ1aW4iOiIyOTAyOTM5NjkyIn0%3D&data=PGhMgcOxFZMISEqisn8K4Zb6cModQF8nsQUzziUtGNDN0NhgHwtLE8WZKMQcLVC1o-zkBYLN4y2nae-82zvEtQ&svctype=4&tempid=h5_group_info" 
-               target="_blank"
-               class="cute-btn block w-full bg-[#ff8fa3] text-white font-bold py-4 rounded-2xl shadow-lg flex items-center justify-center gap-2">
+            <a href="https://qun.qq.com/" class="cute-btn block w-full bg-[#ff8fa3] text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-2">
                 <span>💗</span> 一键加入 QQ 交流群
             </a>
-
-            <a href="tutorial.html" 
-               class="cute-btn block w-full bg-white text-[#ff8fa3] border-2 border-[#ff8fa3] font-bold py-4 rounded-2xl flex items-center justify-center gap-2">
+            
+            <a href="tutorial.html" class="cute-btn block w-full bg-white text-[#ff8fa3] border-2 border-[#ffb7c5] font-bold py-4 rounded-2xl flex items-center justify-center gap-2">
                 <span>📚</span> 科学上网·操作全手册
             </a>
+
+            <button onclick="openPayModal()" class="cute-btn block w-full bg-[#ffb7c5] text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-2 shadow-md">
+                <span>💎</span> 获取进阶魔法群链接
+            </button>
         </div>
 
-        <div class="mt-10 counter-box">
-            <p class="text-[#ff6b81] text-xs font-bold uppercase tracking-widest mb-3">✨ 我们的契约次数 (访客统计) ✨</p>
-            <div class="flex justify-center transform scale-125 origin-center my-2">
-                <img src="https://count.getloli.com/get/@:feng-180.github.io?theme=asoul" alt="MoeCounter">
+        <div class="mt-8 pt-6 border-t border-dashed border-[#ffb7c5]">
+            <img src="https://count.getloli.com/get/@feng-180-sakura?theme=asoul" alt="计数器" class="mx-auto h-12">
+        </div>
+    </div>
+
+    <div id="pay-modal" class="fixed inset-0 z-[200] hidden flex items-center justify-center px-4">
+        <div class="absolute inset-0 bg-pink-200/40 backdrop-blur-sm" onclick="closePayModal()"></div>
+        <div class="bg-white/95 max-w-sm w-full p-8 text-center relative animate-pop z-[210] border-2 border-[#ffb7c5] rounded-[2.5rem] shadow-2xl">
+            <button onclick="closePayModal()" class="absolute top-4 right-4 text-[#ffb7c5] hover:text-[#ff6b81] text-2xl">✕</button>
+            <h2 class="text-2xl font-bold text-[#ff6b81] mb-1">加入进阶魔法阵</h2>
+            <p class="text-xs text-[#ff8fa3] mb-4 italic">扫码赞助，解锁更多权限</p>
+            
+            <div class="bg-white p-3 rounded-2xl border-2 border-[#ffb7c5] mb-4 inline-block shadow-inner">
+                <img src="skm.jpg" alt="收款码" class="w-48 h-48 object-cover rounded-xl">
             </div>
-            <p class="text-[#ff8fa3] text-[10px] mt-2 italic">你是第 00000 位的守护者</p>
-        </div>
 
-        <p class="mt-6 text-[11px] text-[#ffb7c5]">若跳转失败，请长按并在浏览器中打开</p>
+            <div class="text-left bg-[#fff5f7] p-3 rounded-xl mb-4 text-[12px] text-[#ff6b81] leading-relaxed">
+                1. 扫描上方二维码赞助 **5.00** 元<br>
+                2. 支付时请备注您的 **QQ号**<br>
+                3. 付款后凭截图联系主页君 (2902939692)
+            </div>
+
+            <a href="https://wpa.qq.com/msgrd?v=3&uin=2902939692&site=qq&menu=yes" class="cute-btn block w-full bg-[#ff8fa3] text-white font-bold py-3 rounded-xl shadow-lg text-sm text-center">
+                已赞助，点此联系主页君 🌸
+            </a>
+        </div>
+    </div>
+
+    <div id="music-container" class="fixed bottom-6 right-6 z-[100] flex items-center gap-3 bg-white/40 backdrop-blur-md p-2 pr-5 rounded-full border-2 border-[#ffb7c5] shadow-lg transition-all hover:scale-105">
+        <div id="music-disc" class="w-12 h-12 rounded-full border-2 border-white overflow-hidden cursor-pointer animate-[spin_4s_linear_infinite] paused relative">
+            <img src="tx.jpg" class="w-full h-full object-cover">
+            <div class="absolute inset-0 m-auto w-3 h-3 bg-white/80 rounded-full border border-[#ffb7c5]"></div>
+        </div>
+        <div class="flex flex-col cursor-default">
+            <span id="music-title" class="text-[10px] text-[#ff6b81] font-bold truncate w-24">未在播放</span>
+            <button id="music-control" onclick="toggleMusic()" class="text-[11px] text-[#ff8fa3] text-left font-medium">点击开启 BGM ♫</button>
+        </div>
+        <audio id="main-audio" loop><source src="bgm.mp3" type="audio/mpeg"></audio>
     </div>
 
     <script>
-        // 极简樱花特效脚本
+        // 樱花逻辑
         const canvas = document.getElementById('sakura-canvas');
         const ctx = canvas.getContext('2d');
         let sakuraArray = [];
-
-        function resize() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
         class Sakura {
             constructor() {
                 this.x = Math.random() * canvas.width;
@@ -129,91 +102,41 @@
                 this.spin = Math.random() * 2 - 1;
             }
             draw() {
-                ctx.save();
-                ctx.translate(this.x, this.y);
-                ctx.rotate(this.angle * Math.PI / 180);
-                ctx.fillStyle = '#ffb7c5';
-                ctx.beginPath();
-                ctx.ellipse(0, 0, this.size, this.size/2, 0, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.restore();
+                ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.angle * Math.PI / 180);
+                ctx.fillStyle = '#ffb7c5'; ctx.beginPath();
+                ctx.ellipse(0, 0, this.size, this.size/2, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
             }
             update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-                this.angle += this.spin;
-                if (this.y > canvas.height) {
-                    this.y = -20;
-                    this.x = Math.random() * canvas.width;
-                }
+                this.x += this.speedX; this.y += this.speedY; this.angle += this.spin;
+                if (this.y > canvas.height) { this.y = -20; this.x = Math.random() * canvas.width; }
             }
         }
-
-        function init() {
-            resize();
-            for (let i = 0; i < 30; i++) sakuraArray.push(new Sakura());
-        }
-
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            sakuraArray.forEach(s => { s.update(); s.draw(); });
-            requestAnimationFrame(animate);
-        }
-
+        function init() { resize(); for (let i = 0; i < 30; i++) sakuraArray.push(new Sakura()); }
+        function animate() { ctx.clearRect(0, 0, canvas.width, canvas.height); sakuraArray.forEach(s => { s.update(); s.draw(); }); requestAnimationFrame(animate); }
         window.addEventListener('resize', resize);
         init(); animate();
-    </script>
-<div id="music-container" class="fixed bottom-6 right-6 z-[100] flex items-center gap-3 bg-white/40 backdrop-blur-md p-2 pr-5 rounded-full border-2 border-[#ffb7c5] shadow-[0_0_15px_rgba(255,183,197,0.5)] transition-all hover:scale-105 group">
-        <div id="music-disc" class="w-12 h-12 rounded-full border-2 border-white overflow-hidden cursor-pointer shadow-inner animate-[spin_4s_linear_infinite] paused relative">
-            <img src="tx.jpg" class="w-full h-full object-cover">
-            <div class="absolute inset-0 m-auto w-3 h-3 bg-white/80 rounded-full border border-[#ffb7c5]"></div>
-        </div>
-        
-        <div class="flex flex-col cursor-default">
-            <span id="music-title" class="text-[10px] text-[#ff6b81] font-bold truncate w-24">未在播放</span>
-            <button id="music-control" class="text-[11px] text-[#ff8fa3] text-left font-medium hover:text-[#ff4757] transition-colors">
-                点击开启 BGM ♫
-            </button>
-        </div>
 
-        <audio id="main-audio" loop>
-            <source src="bgm.mp3" type="audio/mpeg">
-        </audio>
-    </div>
-
-    <style>
-        .paused { animation-play-state: paused !important; }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        #music-container { animation: slideInUp 1s ease-out; }
-        @keyframes slideInUp { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-    </style>
-
-    <script>
+        // 音乐控制
         const myAudio = document.getElementById('main-audio');
         const musicCtrl = document.getElementById('music-control');
         const musicDisc = document.getElementById('music-disc');
         const musicTitle = document.getElementById('music-title');
         let musicPlaying = false;
-
         function toggleMusic() {
             if (musicPlaying) {
-                myAudio.pause();
-                musicCtrl.innerText = '点击继续播放 🌸';
-                musicTitle.innerText = '已暂停';
-                musicDisc.classList.add('paused');
+                myAudio.pause(); musicCtrl.innerText = '点击继续播放 🌸'; musicTitle.innerText = '已暂停'; musicDisc.classList.add('paused');
             } else {
                 myAudio.play().then(() => {
-                    musicCtrl.innerText = '音乐运行中 ✨';
-                    musicTitle.innerText = '正在播放 BGM';
-                    musicDisc.classList.remove('paused');
-                }).catch(err => {
-                    musicCtrl.innerText = '播放失败，再试一次?';
+                    musicCtrl.innerText = '音乐运行中 ✨'; musicTitle.innerText = '正在播放 BGM'; musicDisc.classList.remove('paused');
                 });
             }
             musicPlaying = !musicPlaying;
         }
-
-        musicCtrl.addEventListener('click', toggleMusic);
         musicDisc.addEventListener('click', toggleMusic);
-    </script></body>
+
+        // 弹窗控制
+        function openPayModal() { document.getElementById('pay-modal').classList.remove('hidden'); }
+        function closePayModal() { document.getElementById('pay-modal').classList.add('hidden'); }
+    </script>
+</body>
 </html>
