@@ -3,64 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>资源中心 - 风的小窝</title>
+    <title>支持设备 - 风的小窝</title>
     <style>
-        body { font-family: -apple-system, sans-serif; margin: 0; background: #fff; color: #333; }
-        .top-bar { background: #1a1a1a; color: #ccc; padding: 10px; text-align: center; font-size: 13px; line-height: 1.6; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        h1 { font-size: 28px; text-align: center; margin-top: 40px; }
-        .sub-title { text-align: center; color: #666; margin-bottom: 40px; }
-        .item { display: flex; align-items: flex-start; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #f0f0f0; }
-        .icon { width: 50px; height: 50px; margin-right: 20px; flex-shrink: 0; }
-        .info { flex-grow: 1; }
-        .info h3 { margin: 0; font-size: 18px; }
-        .links { margin-top: 8px; color: #666; font-size: 14px; }
-        .links a { color: #007bff; text-decoration: none; margin: 0 5px; }
-        .links a:hover { text-decoration: underline; }
-        .copy-btn { background: #000; color: #fff; border: none; padding: 8px 20px; border-radius: 5px; margin: 10px auto; display: block; }
+        body { font-family: -apple-system, sans-serif; margin: 0; background: #fff; color: #333; text-align: center; }
+        .top-bar { background: #1a1a1a; color: #ccc; padding: 15px; font-size: 14px; line-height: 1.6; }
+        .container { max-width: 600px; margin: 0 auto; padding: 40px 20px; }
+        h1 { font-size: 26px; margin-bottom: 10px; }
+        .sub-title { color: #666; margin-bottom: 40px; }
+        
+        /* 按钮样式 */
+        .copy-btn { background: #000; color: #fff; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-size: 16px; margin-bottom: 50px; }
+        
+        /* 设备图标排列 */
+        .device-list { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; margin-bottom: 60px; }
+        .device-item { width: 80px; }
+        .device-item img { width: 50px; height: 50px; margin-bottom: 10px; }
+        .device-item p { margin: 0; font-size: 14px; color: #333; font-weight: bold; }
+
+        /* 底部说明栏 */
+        .footer-note { background: #f9f9f9; padding: 30px 20px; border-top: 1px solid #eee; color: #555; line-height: 1.8; }
+        .highlight { color: #d32f2f; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div class="top-bar">
-        欢迎来到风的小窝<br>获取订阅最新配置请看群公告
+        欢迎来到风的小窝<br>
+        获取订阅最新配置请看群公告
     </div>
 
     <div class="container">
-        <button class="copy-btn">点击添加QQ群</button>
+        <a href="点击链接加入群聊【好好学习天天向上】：https://qun.qq.com/universal-share/share?ac=1&authKey=I4%2FuMy2W7kdU0niuvpVg%2B7QJtVi%2FW48Vkxpu8CvwAU0LzFqLqH58CPrw67RIcFZ2&busi_data=eyJncm91cENvZGUiOiI2OTExMDUzODEiLCJ0b2tlbiI6IitvNHIrcXIyeUJUejA1cUx2S3VDNEJJbCsvdnpiTUcyTVhRZ1dWbUVzY3c3WmlhWHRDb1I4R2k4N1dQRFhZMXkiLCJ1aW4iOiIyOTAyOTM5NjkyIn0%3D&data=5GACASaIrs2m09qBFbKJVBGeyz8y-BdpnRMMHrCCtpCXH7tb6rjDDSwyMgnz2N3qIWtDNLUHJVcYnEcWBQEpiA&svctype=4&tempid=h5_group_info" style="text-decoration: none;">
+            <button class="copy-btn">点击一键加入QQ群</button>
+        </a>
 
-        <h1>群里每日更新各种资源</h1>
-        <p class="sub-title">根据您的设备，选择下载软件或App，添加订阅，更新订阅，就这么简单</p>
+        <h1>支持设备</h1>
+        <p class="sub-title">目前我们的资源已完美适配以下平台</p>
 
-        <div class="item">
-            <img class="icon" src="https://img.icons8.com/ios-filled/50/000000/iphone.png" alt="ios">
-            <div class="info">
-                <h3>iPhone/iPad</h3>
-                <div class="links">
-                    Shadowrocket -- <a href="#">Appstore购买</a> -- <a href="#">网上购买</a> -- <a href="#">教程</a>
-                </div>
+        <div class="device-list">
+            <div class="device-item">
+                <img src="https://img.icons8.com/ios-filled/100/000000/iphone.png" alt="iOS">
+                <p>iPhone</p>
+            </div>
+            <div class="device-item">
+                <img src="https://img.icons8.com/ios-filled/100/000000/android-os.png" alt="Android">
+                <p>Android</p>
+            </div>
+            <div class="device-item">
+                <img src="https://img.icons8.com/ios-filled/100/000000/windows-10.png" alt="Windows">
+                <p>Windows</p>
+            </div>
+            <div class="device-item">
+                <img src="https://img.icons8.com/ios-filled/100/000000/mac-os.png" alt="Mac">
+                <p>Macbook</p>
             </div>
         </div>
+    </div>
 
-        <div class="item">
-            <img class="icon" src="https://img.icons8.com/ios-filled/50/000000/android-os.png" alt="android">
-            <div class="info">
-                <h3>Android</h3>
-                <div class="links">
-                    V2rayNG -- <a href="你的文件名.apk">下载</a> -- <a href="#">教程</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="item">
-            <img class="icon" src="https://img.icons8.com/ios-filled/50/000000/windows-10.png" alt="windows">
-            <div class="info">
-                <h3>Windows</h3>
-                <div class="links">
-                    V2rayN -- <a href="#">下载</a> -- <a href="#">教程</a>
-                </div>
-            </div>
-        </div>
+    <div class="footer-note">
+        <p>
+            温馨提示：<br>
+            为了保障资源链接的实时有效性，<br>
+            所有软件的<span class="highlight">下载地址</span>与<span class="highlight">使用教程</span>已统一整理至QQ群。<br>
+            请点击上方按钮入群，在<span class="highlight">“群文件”</span>或<span class="highlight">“群公告”</span>中查看。
+        </p>
     </div>
 
 </body>
