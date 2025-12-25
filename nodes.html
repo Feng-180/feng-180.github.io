@@ -54,10 +54,13 @@
             alertTips();
         }
 
-        // Clash 导入逻辑：必须经过转换后端
+        // Clash 导入逻辑：优化编码问题
         function importClash() {
-            // 换用另一个备用转换后端，防止 EOF 错误
-            const convertUrl = "https://sub.id9.cc/sub?target=clash&url=" + encodeURIComponent(subUrl);
+            // 基础订阅地址
+            const rawSub = "https://feng-180.github.io/sub_all.txt";
+            // 拼接转换链接 (这里不要对 rawSub 进行 encode，防止二次转码)
+            const convertUrl = "https://sub.id9.cc/sub?target=clash&url=" + rawSub;
+            // 唤起协议 (只对整个转换后的 URL 进行一次编码)
             window.location.href = "clash://install-config?url=" + encodeURIComponent(convertUrl);
             alertTips();
         }
