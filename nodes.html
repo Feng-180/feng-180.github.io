@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>魔法仓库 - 风的小窝</title>
+    <style>
+        /* 复刻主页的粉色渐变背景 */
+        body {
+            background: linear-gradient(135deg, #fff5f7 0%, #ffe3e8 100%);
+            font-family: 'Segoe UI', "Microsoft YaHei", sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        /* 飘落樱花装饰（模拟主页氛围） */
+        .cherry-blossom {
+            position: absolute;
+            top: -10px;
+            color: #ffb3c1;
+            font-size: 20px;
+            user-select: none;
+            z-index: 0;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            to { transform: translateY(100vh) rotate(360deg); }
+        }
+
+        /* 毛玻璃容器 - 完美适配主页卡片风格 */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 40px 20px;
+            border-radius: 30px;
+            box-shadow: 0 15px 35px rgba(255, 179, 193, 0.3);
+            text-align: center;
+            width: 85%;
+            max-width: 400px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            z-index: 1;
+        }
+
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid #fff;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+        }
+
+        h2 { color: #ff85a1; margin: 10px 0; font-weight: 600; }
+        p { color: #999; font-size: 13px; margin-bottom: 25px; }
+
+        /* 订阅链接框 */
+        .url-box {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px dashed #ffb3c1;
+            padding: 15px;
+            border-radius: 15px;
+            margin: 20px 0;
+            word-break: break-all;
+            color: #ff85a1;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        /* 匹配主页的粉色长条按钮 */
+        .btn {
+            background: #ffb3c1;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 12px 0;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: bold;
+            box-shadow: 0 6px 15px rgba(255, 179, 193, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover { background: #ff85a1; transform: translateY(-2px); }
+        .btn:active { transform: translateY(0); }
+
+        .back-home {
+            display: inline-block;
+            margin-top: 25px;
+            color: #999;
+            text-decoration: none;
+            font-size: 13px;
+            transition: 0.3s;
+        }
+        .back-home:hover { color: #ff85a1; }
+    </style>
+</head>
+<body>
+    <div class="cherry-blossom" style="left:10%; animation-duration:5s;">🌸</div>
+    <div class="cherry-blossom" style="left:80%; animation-duration:7s;">🌸</div>
+
+    <div class="glass-card">
+        <img src="tx.jpg" class="avatar" alt="Avatar">
+        <h2>✨ 魔法订阅仓库</h2>
+        <p>“每日 06:00 自动更新 · 全网聚合”</p>
+        
+        <div class="url-box" id="subUrl">https://feng-180.github.io/sub_all.txt</div>
+
+        <button class="btn" onclick="copyLink()">点我复制魔法订阅</button>
+        
+        <a href="index.html" class="back-home">← 返回风的小窝首页</a>
+    </div>
+
+    <script>
+        function copyLink() {
+            const text = document.getElementById('subUrl').innerText;
+            const btn = document.querySelector('.btn');
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = btn.innerText;
+                btn.innerText = '✅ 复制成功啦！';
+                btn.style.background = '#00ff88';
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                    btn.style.background = '#ffb3c1';
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>
