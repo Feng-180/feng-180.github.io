@@ -62,11 +62,16 @@
         }
 
         // 3. Clash 导入逻辑：换用 v1.mk 后端 + 移除重复编码
-        function importClash() {
-            const convertUrl = "https://api.v1.mk/sub?target=clash&url=" + subUrl;
-            window.location.href = "clash://install-config?url=" + encodeURIComponent(convertUrl);
-            alertTips();
-        }
+        // --- 3. Clash 导入逻辑：换用 v1.mk 后端进行格式转换 ---
+function importClash() {
+    // 核心：必须将原始链接 (subUrl) 拼接到转换接口后面
+    const convertUrl = "https://api.v1.mk/sub?target=clash&url=" + encodeURIComponent(subUrl);
+    
+    // 唤起 Clash 软件并传递转换后的链接
+    window.location.href = "clash://install-config?url=" + encodeURIComponent(convertUrl);
+    
+    alertTips();
+}
 
         function copyLink() {
             navigator.clipboard.writeText(subUrl).then(() => {
