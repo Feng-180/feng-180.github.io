@@ -3,16 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>风的小窝</title>
+    <title>风的魔法小屋</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap');
         body { background-color: #fff5f7; font-family: 'ZCOOL KuaiLe', cursive; margin: 0; overflow-x: hidden; }
-        .glass-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 2px solid #ffb7c5; border-radius: 2.5rem; }
+        .glass-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px); border: 2px solid #ffb7c5; border-radius: 2.5rem; }
+        .btn-gradient-1 { background: linear-gradient(135deg, #f4a7b9, #ff8fa3); }
+        .btn-gradient-2 { background: linear-gradient(135deg, #ffcc33, #ffb347); }
+        .btn-gradient-3 { background: linear-gradient(135deg, #a18cd1, #fbc2eb); }
+        .btn-gradient-4 { background: linear-gradient(135deg, #84fab0, #8fd3f4); }
         .sakura-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        .spin-active { animation: spin 8s linear infinite; }
-        .spin-paused { animation-play-state: paused !important; }
     </style>
 </head>
 <body class="p-4 min-h-screen flex items-center justify-center">
@@ -20,86 +21,40 @@
 
     <div class="max-w-md w-full mx-auto relative z-10">
         <div class="glass-card p-8 shadow-2xl text-center">
-            <div class="relative inline-block mb-6">
-                <div class="w-24 h-24 rounded-full border-4 border-white shadow-lg overflow-hidden bg-[#ffecf0] flex items-center justify-center">
-                    <img src="tx.jpg" class="w-full h-full object-cover spin-active" id="avatar" onerror="this.style.display='none'">
-                    <span class="text-[#ff6b81] text-2xl absolute" id="fallback-text" style="display:none">风</span>
-                </div>
-                <div class="absolute -bottom-1 -right-1 bg-white p-1 rounded-full shadow-sm text-xs">🌸</div>
+            <div class="w-24 h-24 rounded-full border-4 border-white shadow-lg overflow-hidden bg-[#ffecf0] mx-auto mb-4">
+                <img src="tx.jpg" class="w-full h-full object-cover">
             </div>
 
-            <h1 class="text-3xl font-bold text-[#ff6b81] mb-2">风的小窝</h1>
-            <p class="text-[#ffb7c5] text-[10px] mb-8 italic">“为了那些死去的、还活着的人，战斗下去。”</p>
-
+            <h2 class="text-2xl font-bold text-[#ff6b81] mb-1">欢迎来到风的魔法小屋</h2>
+            <p class="text-[#ffb7c5] text-[13px] mb-8 italic">“魔法，为我而存在。”</p>
+            
             <div class="space-y-4">
-                <a href="https://qun.qq.com/universal-share/share?ac=1&authKey=w50ES0GuxrAJzAoY9wxtW5WQpaKyBQwMIfIy8znvH8CHKPdnFMMTgs9lvUgVOau5&busi_data=eyJncm91cENvZGUiOiI2OTExMDUzODEiLCJ0b2tlbiI6IitKNml3TjMwdDZ6cGwrRWxzZnpTWHNXcHFHUnFPOTRWZUdGK0I5VmtFQzNUR1BlTUEweW9BTTNPUlo0NmhGVzQiLCJ1aW4iOiIyOTAyOTM5NjkyIn0%3D&data=VsURxCRhFWDmFze0VxjtORYE9NE8-HOb6Z97Xmz9oWU57xKEkKomJFEJZ3779cNH8eJH-jbtyhfMFIwp36zUUA&svctype=4&tempid=h5_group_info" 
-                   class="block w-full bg-[#f4a7b9] text-white font-bold py-4 rounded-2xl shadow-md text-center">💗 一键加入 QQ 交流群</a>
+                <a href="https://qun.qq.com/..." class="block w-full btn-gradient-1 text-white font-bold py-4 rounded-2xl shadow-md transition-all active:scale-95">
+                    💖 一键加入魔法群
+                </a>
 
-                <a href="tutorial.html" 
-                   class="block w-full bg-white text-[#ff8fa3] font-bold py-4 rounded-2xl border-2 border-[#ffb7c5] text-center">📚 科学上网·魔法手册</a>
+                <a href="tutorial.html" class="block w-full btn-gradient-2 text-white font-bold py-4 rounded-2xl shadow-md transition-all active:scale-95">
+                    📚 科学上网·魔法手册
+                </a>
 
-                <button onclick="showModal()" class="block w-full bg-[#a2d2ff] text-white font-bold py-4 rounded-2xl shadow-md">🚀 获取最新进阶魔法群链接</button>
+                <a href="skm.jpg" class="block w-full btn-gradient-3 text-white font-bold py-4 rounded-2xl shadow-md transition-all active:scale-95">
+                    🚀 点击获取高阶魔法
+                </a>
 
-                <a href="nodes.html" 
-                   class="block w-full bg-gradient-to-r from-[#b8c6ff] to-[#8594ff] text-white font-bold py-4 rounded-2xl shadow-md text-center">💎 获取今日免费订阅 (每日更新)</a>
+                <a href="nodes.html" class="block w-full btn-gradient-4 text-white font-bold py-4 rounded-2xl shadow-md transition-all active:scale-95">
+                    💎 获取今日低阶魔法
+                </a>
             </div>
 
-            <div class="mt-8 pt-4 border-t border-dashed border-pink-200">
-                <img src="https://count.getloli.com/get/@feng-180?theme=rule_34" class="mx-auto scale-90">
+            <div class="mt-8">
+                <img src="https://count.getloli.com/get/@feng-180-magic?theme=moebooru" alt="Visitor Count" class="mx-auto h-12">
             </div>
+            
+            <p class="mt-4 text-[10px] text-gray-400">© 2025 风的魔法小屋 | 纯真永存</p>
         </div>
-    </div>
-
-    <div id="modal" class="hidden fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-center justify-center p-6" onclick="hideModal()">
-        <div class="glass-card p-6 w-full max-w-xs text-center shadow-2xl" onclick="event.stopPropagation()">
-            <h3 class="text-lg font-bold text-[#ff6b81] mb-4">进阶魔法通道</h3>
-            <div class="bg-white p-2 rounded-xl mb-4 border border-pink-100">
-                <img src="skm.jpg" class="w-48 h-48 mx-auto rounded-lg" onerror="this.src='https://via.placeholder.com/200/ffecf0/ff6b81?text=扫码加QQ'">
-            </div>
-            <div class="bg-pink-50 p-4 rounded-2xl">
-                <p class="text-[12px] text-[#ff8fa3] font-bold">赞助后请私聊我的 QQ：<br>
-                <span class="text-lg text-[#ff6b81] block mt-1 select-all">2902939692</span></p>
-            </div>
-        </div>
-    </div>
-
-    <div id="music-player" onclick="toggleMusic()" class="fixed bottom-6 right-6 left-6 max-w-sm mx-auto bg-white/80 backdrop-blur-md p-2 rounded-full border-2 border-[#ffb7c5] shadow-lg flex items-center gap-3 cursor-pointer z-[100]">
-        <img src="tx.jpg" class="w-10 h-10 rounded-full spin-active spin-paused" id="m-img" onerror="this.style.display='none'">
-        <div class="text-left flex-1">
-            <p id="m-status" class="text-[10px] text-[#ff6b81] font-bold m-0">未在播放</p>
-            <p class="text-[9px] text-gray-400 m-0">点击屏幕开启 BGM ♫</p>
-        </div>
-        <audio id="bgm" loop src="bgm.mp3"></audio>
     </div>
 
     <script>
-        const audio = document.getElementById('bgm');
-        const avatar = document.getElementById('avatar');
-        const mImg = document.getElementById('m-img');
-        const mStatus = document.getElementById('m-status');
-        const fbText = document.getElementById('fallback-text');
-
-        // 处理安卓图片不显示
-        avatar.onerror = function() { this.style.display='none'; fbText.style.display='block'; };
-
-        function toggleMusic() {
-            if (audio.paused) {
-                audio.play();
-                avatar.classList.remove('spin-paused');
-                mImg.classList.remove('spin-paused');
-                mStatus.innerText = '音乐运行中 ✨';
-            } else {
-                audio.pause();
-                avatar.classList.add('spin-paused');
-                mImg.classList.add('spin-paused');
-                mStatus.innerText = '已暂停';
-            }
-        }
-        function showModal(){ document.getElementById('modal').classList.remove('hidden'); }
-        function hideModal(){ document.getElementById('modal').classList.add('hidden'); }
-        document.body.addEventListener('click', () => { if (audio.paused) toggleMusic(); }, { once: true });
-
-        // 樱花绘制
         const canvas = document.getElementById('sakura-canvas');
         const ctx = canvas.getContext('2d');
         let sakuraArray = [];
@@ -124,7 +79,7 @@
                 if (this.y > canvas.height) { this.y = -20; this.x = Math.random() * canvas.width; }
             }
         }
-        function init() { resize(); for (let i = 0; i < 25; i++) sakuraArray.push(new Sakura()); }
+        function init() { resize(); for (let i = 0; i < 20; i++) sakuraArray.push(new Sakura()); }
         function animate() { ctx.clearRect(0, 0, canvas.width, canvas.height); sakuraArray.forEach(s => { s.update(); s.draw(); }); requestAnimationFrame(animate); }
         window.addEventListener('resize', resize); init(); animate();
     </script>
