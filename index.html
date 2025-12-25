@@ -1,76 +1,106 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>风的小窝</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<style>
- body { background:#fff5f6; margin:0; font-family:sans-serif; }
- .sakura-bg { min-height:100vh; background:linear-gradient(180deg,#fff5f6,#ffebf0); padding:20px; }
- .main-card { background:rgba(255,255,255,0.7); border:2px dashed #ffccd5; border-radius:30px; padding:30px 15px; box-shadow:0 10px 30px rgba(255,182,193,0.3); margin-top:60px; }
- .avatar-img { width:100px; height:100px; border-radius:50%; border:4px solid #fff; margin:-80px auto 15px; display:block; object-fit:cover; box-shadow:0 4px 10px rgba(0,0,0,0.1); }
- .cute-btn { display:block; width:100%; padding:14px; margin:12px 0; border-radius:18px; font-weight:bold; text-align:center; text-decoration:none; }
- .music-box { position:fixed; bottom:20px; right:15px; left:15px; background:rgba(255,255,255,0.9); backdrop-filter:blur(10px); padding:8px 15px; border-radius:50px; display:flex; align-items:center; border:1px solid #ffccd5; z-index:100; cursor:pointer; }
- .music-img { width:45px; height:45px; border-radius:50%; border:2px solid #ff8fa3; animation:rotate 5s linear infinite; animation-play-state:paused; object-fit:cover; }
- .playing { animation-play-state:running; }
- @keyframes rotate { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>风的小窝 - 导航主页</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap');
+        body { background-color: #fff5f7; font-family: 'ZCOOL KuaiLe', cursive; }
+        .glass-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); border: 2px solid #ffb7c5; border-radius: 2.5rem; }
+        .cute-btn { transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .cute-btn:active { transform: scale(0.95); }
+        .avatar-spin { animation: spin 10s linear infinite; animation-play-state: paused; }
+        .playing .avatar-spin { animation-play-state: running; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    </style>
 </head>
-<body class="sakura-bg flex flex-col items-center">
-<audio id="bgMusic" loop><source src="bgm.mp3" type="audio/mpeg"></audio>
+<body class="p-6 min-h-screen flex items-center justify-center">
 
-<div class="music-box shadow-lg" onclick="toggleMusic()">
- <img id="disk" src="tx.jpg" class="music-img">
- <div class="ml-3 flex-1 text-left">
-  <p id="ms" class="text-xs text-pink-500 font-bold m-0">未在播放</p>
-  <p class="text-[10px] text-gray-400 m-0">点击开启 BGM 🎵</p>
- </div>
-</div>
+    <div class="w-full max-w-md relative">
+        <div class="glass-card p-8 shadow-2xl text-center">
+            <div class="relative inline-block mb-6">
+                <img src="tx.jpg" class="w-24 h-24 rounded-full border-4 border-white shadow-lg object-cover avatar-spin" id="main-avatar">
+                <div class="absolute -bottom-1 -right-1 bg-white p-1 rounded-full shadow-sm text-xs">🌸</div>
+            </div>
 
-<div class="w-full max-w-sm">
- <div class="main-card text-center">
-  <img src="tx.jpg" class="avatar-img">
-  <h1 class="text-2xl font-bold text-[#ff8fa3] mb-1">风的小窝</h1>
-  <p class="text-[10px] text-pink-400 opacity-80 mb-8">“为了那些死去的、还活着的人，战斗下去。”</p>
-  
-  <a href="https://qun.qq.com/universal-share/share?ac=1&authKey=njNYflcvtDV7cH8x3mS7kayffGbS3O2u4sPCUkexnFhFw9kbcYpwGWJ2U9OuGO25" 
-     class="cute-btn bg-[#f4a7b9] text-white">💗 一键加入 QQ 交流群</a>
-  
-  <button onclick="showP('m-p')" class="cute-btn bg-white text-[#f4a7b9] border-2 border-[#f4a7b9]/10">📚 科学上网·操作全手册</button>
-  <button onclick="showP('p-p')" class="cute-btn bg-[#a2d2ff] text-white">🚀 获取进阶魔法群链接</button>
+            <h1 class="text-3xl font-bold text-[#ff6b81] mb-2">风的小窝</h1>
+            <p class="text-[#ffb7c5] text-sm italic mb-8">“为了那些死去的、还活着的人，战斗下去。”</p>
 
-  <div class="mt-8 pt-6 border-t border-dashed border-pink-200 text-center">
-   <p class="text-[10px] text-pink-400 italic mb-3">✨ 我们的契约次数 (访客统计) ✨</p>
-   <img src="https://count.getloli.com/get/@feng-180?theme=rule_34" class="mx-auto">
-  </div>
- </div>
-</div>
+            <div class="space-y-4">
+                <a href="https://qun.qq.com/universal-share/share?ac=1&authKey=CpoXWwZBRIZs4vczkk3I%2B%2Fj7qGFhNEWQrpnTdTt23Wi16PDsZmDfw%2FZDh20pr%2FrX" 
+                   class="cute-btn block w-full bg-[#ff8fa3] text-white font-bold py-4 rounded-2xl shadow-lg hover:bg-[#ff6b81]">
+                    💗 一键加入 QQ 交流群
+                </a>
 
-<div id="m-p" style="display:none" class="fixed inset-0 bg-[#fff5f6] z-[200] p-6">
- <button onclick="showP('main')" class="text-pink-400 mb-6 font-bold">⬅️ 返回</button>
- <div class="bg-white p-6 rounded-3xl text-sm">手册内容加载中...</div>
-</div>
+                <a href="tutorial.html" 
+                   class="cute-btn block w-full bg-white text-[#ff8fa3] font-bold py-4 rounded-2xl border-2 border-[#ffb7c5] hover:bg-pink-50">
+                    📚 科学上网·魔法手册
+                </a>
 
-<div id="p-p" style="display:none" class="fixed inset-0 bg-[#fff5f6] z-[200] p-6 text-center">
- <button onclick="showP('main')" class="text-pink-400 mb-6 font-bold text-left block">⬅️ 返回</button>
- <div class="bg-white p-6 rounded-3xl">
-  <h2 class="text-lg font-bold text-pink-500 mb-4">赞赏支持</h2>
-  <img src="skm.jpg" style="width:200px;border-radius:10px" class="mx-auto">
- </div>
-</div>
+                <button onclick="togglePay()" class="cute-btn block w-full bg-[#a2d2ff] text-white font-bold py-4 rounded-2xl shadow-lg">
+                    🚀 获取最新的魔法师
+                </button>
+            </div>
 
-<script>
-const a=document.getElementById('bgMusic'),d=document.getElementById('disk'),s=document.getElementById('ms');
-function toggleMusic(){
- if(a.paused){a.play();d.classList.add('playing');s.innerText="播放中...";}
- else{a.pause();d.classList.remove('playing');s.innerText="已暂停";}
-}
-function showP(p){
- document.getElementById('m-p').style.display=(p==='m-p'?'block':'none');
- document.getElementById('p-p').style.display=(p==='p-p'?'block':'none');
-}
-document.body.addEventListener('click',()=>{if(a.paused)toggleMusic()},{once:true});
-</script>
+            <div class="mt-8 pt-6 border-t border-dashed border-pink-200">
+                <p class="text-[10px] text-[#ffb7c5] mb-2 font-bold italic">✨ 我们的契约次数 ✨</p>
+                <img src="https://count.getloli.com/get/@feng-180?theme=rule_34" class="mx-auto" alt="统计">
+            </div>
+        </div>
+
+        <div id="pay-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/20 backdrop-blur-sm" onclick="togglePay()">
+            <div class="glass-card p-6 w-full max-w-xs text-center" onclick="event.stopPropagation()">
+                <h2 class="text-xl font-bold text-[#ff6b81] mb-4">投喂主页君</h2>
+                <img src="skm.jpg" class="w-48 h-48 mx-auto rounded-xl shadow-inner mb-4">
+                <p class="text-xs text-gray-500">赞助后请回群私聊获取</p>
+                <button onclick="togglePay()" class="mt-4 text-pink-400 text-sm font-bold">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="music-player" onclick="toggleMusic()" class="fixed bottom-6 right-6 bg-white/80 backdrop-blur-md p-2 pr-4 rounded-full border-2 border-[#ffb7c5] shadow-lg flex items-center gap-3 cursor-pointer z-50">
+        <div class="w-10 h-10 rounded-full border-2 border-[#ff8fa3] overflow-hidden">
+            <img src="tx.jpg" class="w-full h-full object-cover avatar-spin">
+        </div>
+        <div class="flex flex-col">
+            <span id="music-status" class="text-[10px] text-[#ff6b81] font-bold">已暂停</span>
+            <span class="text-[8px] text-gray-400">点击播放 BGM ♫</span>
+        </div>
+        <audio id="bgm" loop src="bgm.mp3"></audio>
+    </div>
+
+    <script>
+        const audio = document.getElementById('bgm');
+        const player = document.getElementById('music-player');
+        const statusText = document.getElementById('music-status');
+        const mainAvatar = document.getElementById('main-avatar');
+
+        function toggleMusic() {
+            if (audio.paused) {
+                audio.play();
+                player.classList.add('playing');
+                document.body.classList.add('playing');
+                statusText.innerText = '正在播放';
+                mainAvatar.style.animationPlayState = 'running';
+            } else {
+                audio.pause();
+                player.classList.remove('playing');
+                statusText.innerText = '已暂停';
+                mainAvatar.style.animationPlayState = 'paused';
+            }
+        }
+
+        function togglePay() {
+            const modal = document.getElementById('pay-modal');
+            modal.classList.toggle('hidden');
+        }
+
+        // 首次点击屏幕自动播放
+        document.body.addEventListener('click', () => {
+            if (audio.paused) toggleMusic();
+        }, { once: true });
+    </script>
 </body>
 </html>
