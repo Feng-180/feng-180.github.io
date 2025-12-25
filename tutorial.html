@@ -2,110 +2,94 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>魔法手册 - 风的小窝 (2025版)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>魔法手册 - 风的魔法小屋</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap');
-        body { background-color: #fff5f7; font-family: 'ZCOOL KuaiLe', cursive; overflow-x: hidden; }
-        .glass-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); border: 2px solid #ffb7c5; border-radius: 2rem; }
-        .sakura-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
-        .paused { animation-play-state: paused !important; }
+        body { background-color: #fff5f7; font-family: 'ZCOOL KuaiLe', cursive; margin: 0; }
+        .glass-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px); border: 2px solid #ffb7c5; border-radius: 2.5rem; }
+        .step-card { background: white; border-radius: 1.5rem; border: 1px solid #ffecf0; transition: all 0.3s; }
+        .step-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(255,183,197,0.2); }
+        .btn-main { background: linear-gradient(135deg, #f4a7b9, #ff8fa3); color: white; font-bold: true; }
+        .music-capsule { background: rgba(255, 255, 255, 0.9); border: 1.5px solid #ffecf0; border-radius: 50px; padding: 6px 15px; display: inline-flex; align-items: center; gap: 10px; cursor: pointer; }
+        .rotate-img { width: 32px; height: 32px; border-radius: 50%; animation: spin 4s linear infinite; animation-play-state: paused; }
+        .rotate-img.playing { animation-play-state: running; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="p-6 min-h-screen">
-    <canvas id="sakura-canvas" class="sakura-bg"></canvas>
+<body class="p-4 min-h-screen">
+    <div class="max-w-md mx-auto pt-4 pb-12">
+        <a href="index.html" class="text-[#ff6b81] mb-6 inline-block font-bold">← 返回主页</a>
+        
+        <div class="glass-card p-6 shadow-2xl">
+            <h1 class="text-2xl text-center text-[#ff6b81] font-bold mb-2">📖 科学上网·魔法手册</h1>
+            <p class="text-center text-gray-400 text-xs mb-8">最后更新时间：2025年12月25日</p>
 
-    <div class="max-w-2xl mx-auto relative z-10">
-        <a href="index.html" class="inline-block mb-6 text-[#ff6b81] font-bold transition-transform hover:-translate-x-1">← 返回主页</a>
+            <div class="space-y-6">
+                <div class="step-card p-5">
+                    <h3 class="text-[#ff6b81] font-bold mb-2 text-lg">第 1 步：加入魔法阵地</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed">
+                        点击下方按钮加入官方 QQ 交流群。在群公告或群文件中，你可以获取最新发布的魔法客户端软件。
+                    </p>
+                    <a href="https://qun.qq.com/universal-share/share?ac=1&authKey=guQGnlgLJG99VaGCiKE1MKQQiMLQYaJmDokWOhDmt%2BBWBpmBaUSEfHdfdk5lQg48&busi_data=eyJncm91cENvZGUiOiI2OTExMDUzODEiLCJ0b2tlbiI6ImZBbnprTGlvZURIV2lzYXZvWUpacUtNeTRaMHpWbzMycmhTcExqdUltZHNhc3FkcUZGMTZLb2haSVpTcXdYcTAiLCJ1aW4iOiIyOTAyOTM5NjkyIn0%3D&data=MUTFo3L965hUraLlNAk1JUxl-XpA7NlW55lt2xBntm936Gc-YlHk8Agx2STHouQw7zlXPZGtopJI9xrwujCLmQ&svctype=4&tempid=h5_group_info" class="mt-3 block text-center py-2 rounded-xl bg-pink-50 text-[#ff6b81] font-bold text-sm border border-pink-100">
+                        立即申请加群
+                    </a>
+                </div>
 
-        <div class="glass-card p-8 shadow-xl">
-            <h1 class="text-3xl font-bold text-[#ff6b81] mb-2 text-center">📖 科学上网·魔法手册</h1>
-            <p class="text-center text-[#ffb7c5] text-xs mb-8">最后更新时间：2025年12月24日</p>
-            
-            <div class="space-y-6 text-[#ff8fa3]">
-                <section class="bg-white/50 p-4 rounded-xl border border-pink-100">
-                    <div class="flex justify-between items-center mb-2">
-                        <h2 class="text-xl font-bold text-[#ff6b81]">第 1 步：获取魔法链接</h2>
-                        <a href="nodes.html" class="text-xs bg-[#ffb7c5] text-white px-2 py-1 rounded-lg">去获取订阅 →</a>
+                <div class="step-card p-5">
+                    <h3 class="text-[#ff6b81] font-bold mb-2 text-lg">第 2 步：获取魔法链接</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed">
+                        回到主页点击“获取今日低阶魔法”即可拿到免费订阅链接。请务必完整复制出现的地址。
+                    </p>
+                </div>
+
+                <div class="step-card p-5">
+                    <h3 class="text-[#ff6b81] font-bold mb-2 text-lg">第 3 步：导入订阅链接</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed mb-3">
+                        将复制的链接粘贴至软件的“订阅设置”或“配置”中，点击更新即可。
+                    </p>
+                    <div class="bg-pink-50 rounded-lg p-3 text-[11px] text-[#ff8fa3]">
+                        Tips: Windows 推荐 v2rayN，安卓推荐 Clash Meta，iOS 推荐小火箭。
                     </div>
-                    <p class="text-sm">点击主页的“获取今日免费订阅”按钮即可拿到最新的魔法链接。如果您需要更稳定、高速的体验，可以通过主页扫码联系主页君解锁进阶通道。</p>
-                </section>
+                </div>
 
-                <section class="bg-white/50 p-4 rounded-xl border border-pink-100">
-                    <h2 class="text-xl font-bold mb-2 text-[#ff6b81]">第 2 步：下载 2025 推荐工具</h2>
-                    <p class="text-sm">Windows 推荐使用 v2rayN 极速版，安卓推荐使用 Clash Meta 或 Clash Verge，iOS 推荐使用 Shadowrocket (小火箭)。</p>
-                </section>
-
-                <section class="bg-white/50 p-4 rounded-xl border border-pink-100">
-                    <h2 class="text-xl font-bold mb-2 text-[#ff6b81]">第 3 步：导入与连接</h2>
-                    <p class="text-sm">将订阅链接粘贴至软件的“订阅设置”或“配置”中，点击更新。开启系统代理开关后，即可享受自由网络。如遇连接超时，请尝试在软件内切换不同地区的节点。</p>
-                </section>
+                <div class="step-card p-5 border-2 border-dashed border-[#a18cd1]">
+                    <h3 class="text-[#a18cd1] font-bold mb-2 text-lg italic">✨ 第 4 步：开启高阶魔法</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed">
+                        低阶魔法不稳定？点击主页“获取高阶魔法”进行赞助，截图联系主页君 QQ：2902939692 即可换取高速专线链接。
+                    </p>
+                    <a href="pay.html" class="mt-3 block text-center py-2 rounded-xl bg-purple-50 text-[#a18cd1] font-bold text-sm">
+                        了解高阶魔法优势 →
+                    </a>
+                </div>
             </div>
 
-            <div class="mt-12 pt-6 border-t border-dashed border-pink-200 text-center">
-                <p class="text-[#ffb7c5] text-sm italic">✨ 魔法之旅由此开启，探索更广阔的世界 ✨</p>
-                <p class="mt-4 text-[10px] text-gray-300">Tips: 请遵守当地法律法规，合理使用网络资源</p>
+            <div class="mt-8 text-center">
+                <div class="music-capsule shadow-sm" onclick="toggleMusic()">
+                    <img src="tx.jpg" id="music-icon" class="rotate-img">
+                    <p id="music-text" class="text-[11px] text-[#ff6b81] font-bold">播放魔法旋律 ♫</p>
+                </div>
+                <audio id="audio-player" src="bgm.mp3" loop></audio>
             </div>
-            
-            <p class="mt-6 text-center text-[10px] text-[#ffb7c5]">© 2025 风的小窝 | 探索世界·守护纯真</p>
-        </div>
-    </div>
 
-    <div id="music-container" class="fixed bottom-6 right-6 z-[100] flex items-center gap-3 bg-white/40 backdrop-blur-md p-2 pr-5 rounded-full border-2 border-[#ffb7c5] shadow-lg">
-        <div id="music-disc" onclick="toggleMusic()" class="w-12 h-12 rounded-full border-2 border-white overflow-hidden cursor-pointer animate-[spin_4s_linear_infinite] paused relative">
-            <img src="tx.jpg" class="w-full h-full object-cover">
+            <p class="mt-6 text-[10px] text-center text-gray-300 italic">© 2025 风的小窝 | 探索更广阔的世界</p>
         </div>
-        <div class="flex flex-col">
-            <span id="music-title" class="text-[10px] text-[#ff6b81] font-bold">未在播放</span>
-            <button onclick="toggleMusic()" id="music-control" class="text-[11px] text-[#ff8fa3] text-left">点击开启 2025 BGM ♫</button>
-        </div>
-        <audio id="main-audio" loop><source src="bgm.mp3" type="audio/mpeg"></audio>
     </div>
 
     <script>
-        // 樱花特效逻辑
-        const canvas = document.getElementById('sakura-canvas');
-        const ctx = canvas.getContext('2d');
-        let sakuraArray = [];
-        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-        class Sakura {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height - canvas.height;
-                this.size = Math.random() * 10 + 5;
-                this.speedX = Math.random() * 1.5 - 0.5;
-                this.speedY = Math.random() * 1 + 1;
-                this.angle = Math.random() * 360;
-                this.spin = Math.random() * 2 - 1;
-            }
-            draw() {
-                ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.angle * Math.PI / 180);
-                ctx.fillStyle = '#ffb7c5'; ctx.beginPath();
-                ctx.ellipse(0, 0, this.size, this.size/2, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
-            }
-            update() {
-                this.x += this.speedX; this.y += this.speedY; this.angle += this.spin;
-                if (this.y > canvas.height) { this.y = -20; this.x = Math.random() * canvas.width; }
-            }
-        }
-        function init() { resize(); for (let i = 0; i < 20; i++) sakuraArray.push(new Sakura()); }
-        function animate() { ctx.clearRect(0, 0, canvas.width, canvas.height); sakuraArray.forEach(s => { s.update(); s.draw(); }); requestAnimationFrame(animate); }
-        window.addEventListener('resize', resize);
-        init(); animate();
-
-        // 音乐控制逻辑
-        const myAudio = document.getElementById('main-audio');
+        const audio = document.getElementById('audio-player');
+        const icon = document.getElementById('music-icon');
+        const text = document.getElementById('music-text');
         function toggleMusic() {
-            if (myAudio.paused) {
-                myAudio.play(); document.getElementById('music-disc').classList.remove('paused');
-                document.getElementById('music-control').innerText = '音乐运行中 ✨';
-                document.getElementById('music-title').innerText = '正在播放 2025 BGM';
+            if (audio.paused) {
+                audio.play();
+                icon.classList.add('playing');
+                text.innerText = "旋律运行中 ✨";
             } else {
-                myAudio.pause(); document.getElementById('music-disc').classList.add('paused');
-                document.getElementById('music-control').innerText = '点击开启 2025 BGM ♫';
-                document.getElementById('music-title').innerText = '已暂停';
+                audio.pause();
+                icon.classList.remove('playing');
+                text.innerText = "播放魔法旋律 ♫";
             }
         }
     </script>
