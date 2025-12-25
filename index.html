@@ -3,81 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>风的小窝 - 导航主页</title>
+    <title>风的小窝 - 2025</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap');
-        body { background-color: #fff5f7; font-family: 'ZCOOL KuaiLe', cursive; overflow-x: hidden; margin: 0; }
-        .glass-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 2px solid #ffb7c5; border-radius: 2.5rem; }
+        body { background-color: #fff5f7; font-family: 'ZCOOL KuaiLe', cursive; margin: 0; overflow-x: hidden; }
+        .glass-card { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 2px solid #ffb7c5; border-radius: 2.5rem; }
         .sakura-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
-        .paused { animation-play-state: paused !important; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        .cute-btn { transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; justify-content: center; text-decoration: none; }
-        .cute-btn:active { transform: scale(0.95); }
+        .spin-active { animation: spin 8s linear infinite; }
     </style>
 </head>
-<body class="p-6 min-h-screen flex items-center justify-center">
+<body class="p-4 min-h-screen flex items-center justify-center">
     <canvas id="sakura-canvas" class="sakura-bg"></canvas>
 
     <div class="max-w-md w-full mx-auto relative z-10">
         <div class="glass-card p-8 shadow-2xl text-center">
-            <div class="relative inline-block mb-6">
-                <img src="tx.jpg" crossorigin="anonymous" class="w-24 h-24 rounded-full border-4 border-white shadow-lg object-cover" id="main-avatar">
-                <div class="absolute -bottom-1 -right-1 bg-white p-1 rounded-full shadow-sm text-xs">🌸</div>
+            <div class="relative inline-block mb-6 bg-pink-100 rounded-full w-24 h-24 border-4 border-white shadow-lg overflow-hidden">
+                <img src="tx.jpg" class="w-full h-full object-cover spin-active" onerror="this.parentElement.innerHTML='<span class=\'text-[#ff6b81] leading-[96px]\'>风</span>'">
             </div>
 
             <h1 class="text-3xl font-bold text-[#ff6b81] mb-2">风的小窝</h1>
             <p class="text-[#ffb7c5] text-xs mb-8 italic">“为了那些死去的、还活着的人，战斗下去。”</p>
 
             <div class="space-y-4">
-                <a href="https://qun.qq.com/universal-share/share?ac=1&authKey=w50ES0GuxrAJzAoY9wxtW5WQpaKyBQwMIfIy8znvH8CHKPdnFMMTgs9lvUgVOau5&busi_data=eyJncm91cENvZGUiOiI2OTExMDUzODEiLCJ0b2tlbiI6IitKNml3TjMwdDZ6cGwrRWxzZnpTWHNXcHFHUnFPOTRWZUdGK0I5VmtFQzNUR1BlTUEweW9BTTNPUlo0NmhGVzQiLCJ1aW4iOiIyOTAyOTM5NjkyIn0%3D&data=VsURxCRhFWDmFze0VxjtORYE9NE8-HOb6Z97Xmz9oWU57xKEkKomJFEJZ3779cNH8eJH-jbtyhfMFIwp36zUUA&svctype=4&tempid=h5_group_info" 
-                   target="_blank" class="cute-btn w-full bg-[#f4a7b9] text-white font-bold py-4 rounded-2xl shadow-lg hover:bg-[#ff6b81]">
-                    💗 一键加入 QQ 交流群
-                </a>
+                <a href="https://qun.qq.com/universal-share/share?ac=1&authKey=w50ES0GuxrAJzAoY9wxtW5WQpaKyBQwMIfIy8znvH8CHKPdnFMMTgs9lvUgVOau5" 
+                   class="block w-full bg-[#f4a7b9] text-white font-bold py-4 rounded-2xl shadow-md">💗 一键加入 QQ 交流群</a>
 
                 <a href="tutorial.html" 
-                   class="cute-btn w-full bg-white text-[#ff8fa3] font-bold py-4 rounded-2xl border-2 border-[#ffb7c5] hover:bg-pink-50">
-                    📚 科学上网·魔法手册
-                </a>
+                   class="block w-full bg-white text-[#ff8fa3] font-bold py-4 rounded-2xl border-2 border-[#ffb7c5]">📚 科学上网·操作全手册</a>
 
-                <button onclick="togglePay()" class="cute-btn w-full bg-[#a2d2ff] text-white font-bold py-4 rounded-2xl shadow-lg">
-                    🚀 获取最新进阶魔法群链接
-                </button>
+                <div class="pt-2">
+                    <p class="text-[10px] text-[#ff8fa3] mb-1 font-bold">进阶魔法请联系 QQ: 2902939692</p>
+                    <button onclick="showModal()" class="block w-full bg-[#a2d2ff] text-white font-bold py-4 rounded-2xl shadow-md">🚀 获取最新进阶魔法群链接</button>
+                </div>
             </div>
 
-            <div class="mt-8 pt-6 border-t border-dashed border-pink-200">
-                <p class="text-[10px] text-[#ffb7c5] mb-2 font-bold italic">✨ 我们的契约次数 ✨</p>
-                <img src="https://count.getloli.com/get/@feng-180?theme=rule_34" class="mx-auto" alt="Counter">
+            <div class="mt-8 pt-4 border-t border-dashed border-pink-200">
+                <img src="https://count.getloli.com/get/@feng-180?theme=rule_34" class="mx-auto scale-90">
             </div>
-            
-            <p class="mt-4 text-[10px] text-gray-300">© 2025 风的小窝 | 探索世界</p>
         </div>
     </div>
 
-    <div id="music-player" onclick="toggleMusic()" class="fixed bottom-6 right-6 left-6 max-w-sm mx-auto bg-white/60 backdrop-blur-lg p-2 pr-5 rounded-full border-2 border-[#ffb7c5] shadow-lg flex items-center gap-3 cursor-pointer z-[100]">
-        <div id="music-disc" class="w-11 h-11 rounded-full border-2 border-white overflow-hidden animate-[spin_5s_linear_infinite] paused relative">
-            <img src="tx.jpg" crossorigin="anonymous" class="w-full h-full object-cover">
+    <div id="modal" class="hidden fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-center justify-center p-6" onclick="hideModal()">
+        <div class="glass-card p-6 w-full max-w-xs text-center" onclick="event.stopPropagation()">
+            <h3 class="text-lg font-bold text-[#ff6b81] mb-4">进阶魔法通道</h3>
+            <div class="mb-4 bg-white p-2 rounded-xl border border-pink-100">
+                <img src="skm.jpg" class="w-48 h-48 mx-auto rounded-lg" onerror="this.replaceWith('暂无预览，请直接加QQ')">
+            </div>
+            <div class="bg-pink-50 p-4 rounded-2xl border border-pink-100">
+                <p class="text-[12px] text-[#ff8fa3] font-bold">赞助后请私聊我的 QQ：<br>
+                <span class="text-lg text-[#ff6b81] block mt-1 select-all">2902939692</span></p>
+                <p class="text-[10px] text-gray-400 mt-1">(长按上方数字可复制)</p>
+            </div>
         </div>
-        <div class="flex flex-col text-left">
-            <span id="music-title" class="text-[10px] text-[#ff6b81] font-bold">未在播放</span>
-            <span id="music-btn-text" class="text-[11px] text-[#ff8fa3]">点击开启背景音乐 ♫</span>
-        </div>
-        <audio id="main-audio" loop src="bgm.mp3"></audio>
     </div>
 
-    <div id="pay-modal" class="hidden fixed inset-0 z-[200] flex items-center justify-center p-6 bg-black/30 backdrop-blur-sm" onclick="togglePay()">
-        <div class="glass-card p-8 w-full max-w-xs text-center shadow-2xl" onclick="event.stopPropagation()">
-            <h2 class="text-xl font-bold text-[#ff6b81] mb-4">进阶魔法通道</h2>
-            <img src="skm.jpg" crossorigin="anonymous" class="w-48 h-48 mx-auto rounded-2xl shadow-md mb-6">
-            <div class="bg-pink-50 p-3 rounded-xl mb-4">
-                <p class="text-xs text-[#ff8fa3] leading-relaxed">扫码获取进阶魔法，赞助后请<br>私聊联系我的 QQ：<br><b class="text-sm text-[#ff6b81]">2902939692</b></p>
-            </div>
-            <button onclick="togglePay()" class="text-pink-400 text-sm font-bold border-b border-pink-400">我知道了</button>
+    <div id="music-player" onclick="toggleMusic()" class="fixed bottom-6 right-6 left-6 max-w-sm mx-auto bg-white/70 backdrop-blur-md p-2 rounded-full border-2 border-[#ffb7c5] shadow-lg flex items-center gap-3 cursor-pointer z-[100]">
+        <img src="tx.jpg" class="w-10 h-10 rounded-full spin-active" id="m-img" onerror="this.src='https://via.placeholder.com/40/ffb7c5/ffffff?text=♫'">
+        <div class="text-left">
+            <p id="m-status" class="text-[10px] text-[#ff6b81] font-bold m-0 leading-tight">未在播放</p>
+            <p class="text-[9px] text-gray-400 m-0 leading-tight">点击开启 2025 BGM ♫</p>
         </div>
+        <audio id="bgm" loop src="bgm.mp3"></audio>
     </div>
 
     <script>
-        // 樱花逻辑
+        const audio = document.getElementById('bgm');
+        function toggleMusic() {
+            if(audio.paused){ audio.play(); document.getElementById('m-status').innerText='正在播放✨'; }
+            else { audio.pause(); document.getElementById('m-status').innerText='已暂停'; }
+        }
+        function showModal(){ document.getElementById('modal').classList.remove('hidden'); }
+        function hideModal(){ document.getElementById('modal').classList.add('hidden'); }
+        document.body.addEventListener('click', () => { if(audio.paused) toggleMusic(); }, {once: true});
+        
+        // 樱花绘制逻辑保持一致...
         const canvas = document.getElementById('sakura-canvas');
         const ctx = canvas.getContext('2d');
         let sakuraArray = [];
@@ -105,24 +106,6 @@
         function init() { resize(); for (let i = 0; i < 20; i++) sakuraArray.push(new Sakura()); }
         function animate() { ctx.clearRect(0, 0, canvas.width, canvas.height); sakuraArray.forEach(s => { s.update(); s.draw(); }); requestAnimationFrame(animate); }
         window.addEventListener('resize', resize); init(); animate();
-
-        // 音乐控制
-        const myAudio = document.getElementById('main-audio');
-        function toggleMusic() {
-            if (myAudio.paused) {
-                myAudio.play();
-                document.getElementById('music-disc').classList.remove('paused');
-                document.getElementById('music-title').innerText = '正在运行 ✨';
-                document.getElementById('music-btn-text').innerText = '享受美好的魔法时光';
-            } else {
-                myAudio.pause();
-                document.getElementById('music-disc').classList.add('paused');
-                document.getElementById('music-title').innerText = '已暂停';
-                document.getElementById('music-btn-text').innerText = '点击开启背景音乐 ♫';
-            }
-        }
-        function togglePay() { document.getElementById('pay-modal').classList.toggle('hidden'); }
-        document.body.addEventListener('click', () => { if (myAudio.paused) toggleMusic(); }, { once: true });
     </script>
 </body>
 </html>
