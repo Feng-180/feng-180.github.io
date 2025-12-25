@@ -8,12 +8,19 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap');
         body { background-color: #fff5f7; font-family: 'ZCOOL KuaiLe', cursive; margin: 0; overflow-x: hidden; }
-        .glass-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px); border: 2px solid #ffb7c5; border-radius: 2.5rem; }
+        .glass-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px); border: 2px solid #ffb7c5; border-radius: 2.5rem; position: relative; }
+        /* 按钮颜色回归并保持活力 */
         .btn-gradient-1 { background: linear-gradient(135deg, #f4a7b9, #ff8fa3); }
         .btn-gradient-2 { background: linear-gradient(135deg, #ffcc33, #ffb347); }
         .btn-gradient-3 { background: linear-gradient(135deg, #a18cd1, #fbc2eb); }
         .btn-gradient-4 { background: linear-gradient(135deg, #84fab0, #8fd3f4); }
         .sakura-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+        
+        /* 音乐播放器样式 */
+        .music-player { background: rgba(255, 255, 255, 0.9); border: 1px solid #ffecf0; border-radius: 1.5rem; padding: 10px 20px; display: flex; align-items: center; gap: 12px; margin-top: 20px; }
+        .player-img { width: 40px; height: 40px; border-radius: 50%; animation: rotate 3s linear infinite; animation-play-state: paused; }
+        .player-img.playing { animation-play-state: running; }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     </style>
 </head>
 <body class="p-4 min-h-screen flex items-center justify-center">
@@ -29,7 +36,7 @@
             <p class="text-[#ffb7c5] text-[13px] mb-8 italic">“魔法，为我而存在。”</p>
             
             <div class="space-y-4">
-                <a href="https://qun.qq.com/..." class="block w-full btn-gradient-1 text-white font-bold py-4 rounded-2xl shadow-md transition-all active:scale-95">
+                <a href="https://qm.qq.com/cgi-bin/qm/qr?k=你的群Key" class="block w-full btn-gradient-1 text-white font-bold py-4 rounded-2xl shadow-md transition-all active:scale-95">
                     💖 一键加入魔法群
                 </a>
 
@@ -37,7 +44,7 @@
                     📚 科学上网·魔法手册
                 </a>
 
-                <a href="skm.jpg" class="block w-full btn-gradient-3 text-white font-bold py-4 rounded-2xl shadow-md transition-all active:scale-95">
+                <a href="pay.html" class="block w-full btn-gradient-3 text-white font-bold py-4 rounded-2xl shadow-md transition-all active:scale-95">
                     🚀 点击获取高阶魔法
                 </a>
 
@@ -46,8 +53,17 @@
                 </a>
             </div>
 
-            <div class="mt-8">
-                <img src="https://count.getloli.com/get/@feng-180-magic?theme=moebooru" alt="Visitor Count" class="mx-auto h-12">
+            <div class="mt-8 flex justify-center">
+                <img src="https://count.getloli.com/get/@feng-180-magic?theme=moebooru" alt="Visitor Count" class="h-20 md:h-24">
+            </div>
+
+            <div class="music-player shadow-inner cursor-pointer" onclick="toggleMusic()">
+                <img src="tx.jpg" id="music-img" class="player-img">
+                <div class="text-left">
+                    <p class="text-[12px] text-[#ff6b81] font-bold">正在播放 BGM</p>
+                    <p class="text-[10px] text-gray-400">点击卡片 开启/关闭 魔法旋律</p>
+                </div>
+                <audio id="bgm" src="bgm.mp3" loop></audio>
             </div>
             
             <p class="mt-4 text-[10px] text-gray-400">© 2025 风的魔法小屋 | 纯真永存</p>
@@ -55,6 +71,20 @@
     </div>
 
     <script>
+        // 音乐控制逻辑
+        const bgm = document.getElementById('bgm');
+        const img = document.getElementById('music-img');
+        function toggleMusic() {
+            if (bgm.paused) {
+                bgm.play();
+                img.classList.add('playing');
+            } else {
+                bgm.pause();
+                img.classList.remove('playing');
+            }
+        }
+
+        // 樱花特效保持不变...
         const canvas = document.getElementById('sakura-canvas');
         const ctx = canvas.getContext('2d');
         let sakuraArray = [];
