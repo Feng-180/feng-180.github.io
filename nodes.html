@@ -2,1274 +2,198 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <!-- 修复的 viewport 设置 -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=0.5, viewport-fit=cover">
-    
-    <!-- 移动端优化 meta 标签 -->
-    <meta name="HandheldFriendly" content="true">
-    <meta name="MobileOptimized" content="width">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    
-    <!-- 内容安全策略 -->
-    <meta http-equiv="Content-Security-Policy" 
-          content="default-src 'self' https:;
-                   script-src 'self' https://cdn.tailwindcss.com 'unsafe-inline';
-                   style-src 'self' https://fonts.googleapis.com 'unsafe-inline';
-                   font-src 'self' https://fonts.gstatic.com;
-                   connect-src 'self' https://api.github.com https://fastly.jsdelivr.net;
-                   frame-ancestors 'none';
-                   form-action 'self'">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <meta name="description" content="安全可靠的代理订阅服务">
-    <meta name="keywords" content="订阅,代理,节点,Clash,Shadowrocket">
-    <meta name="author" content="魔法补给站">
-    
     <title>魔法补给站 - 安全极速自动化</title>
     
-    <!-- 加载失败时降级处理 -->
-    <script>
-        // 强制HTTPS
-        if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
-            location.replace(`https://${location.hostname}${location.pathname}${location.search}`);
-        }
-        
-        // 资源加载失败处理
-        window.addEventListener('error', function(e) {
-            console.warn('资源加载失败:', e.target.src || e.target.href);
-        }, true);
-    </script>
-    
-    <!-- Tailwind CSS with fallback -->
-    <link rel="stylesheet" 
-          href="https://cdn.tailwindcss.com"
-          onerror="console.warn('Tailwind CSS加载失败，使用备用样式');">
-    
-    <!-- 备用本地样式 -->
-    <style id="fallback-styles">
-        /* 基础样式，当Tailwind加载失败时使用 */
-        body { margin: 0; padding: 1rem; background-color: #fff5f7; }
-        .container { max-width: 28rem; margin: 0 auto; }
-        .card { background: white; border-radius: 1.5rem; padding: 2rem; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        .btn { display: block; width: 100%; padding: 1rem; border-radius: 1rem; text-align: center; 
-               margin-bottom: 1rem; font-weight: bold; border: none; cursor: pointer; transition: all 0.3s; }
-        .btn:active { transform: scale(0.98); }
-        .btn-primary { background: linear-gradient(135deg, #007aff, #5856d6); color: white; }
-        .btn-secondary { background: linear-gradient(135deg, #fb923c, #ea580c); color: white; }
-        .btn-success { background: linear-gradient(135deg, #4ade80, #16a34a); color: white; }
-        .text-center { text-align: center; }
-        .mt-2 { margin-top: 0.5rem; }
-        .mt-4 { margin-top: 1rem; }
-        .mt-6 { margin-top: 1.5rem; }
-        .text-sm { font-size: 0.875rem; }
-        .text-xs { font-size: 0.75rem; }
-        .opacity-80 { opacity: 0.8; }
-    </style>
-    
-    <!-- Google字体，优化加载 -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Inter:wght@400;600;700&display=swap" 
-          rel="stylesheet"
-          onerror="console.warn('Google字体加载失败');">
+    <script src="https://cdn.tailwindcss.com"></script>
     
     <style>
-        :root {
-            --color-primary: #ff6b81;
-            --color-secondary: #ffb7c5;
-            --color-success: #4ade80;
-            --color-danger: #ef4444;
-            --color-warning: #f59e0b;
-            --color-info: #3b82f6;
-        }
-        
-        body { 
-            background-color: #fff5f7; 
-            font-family: 'ZCOOL KuaiLe', 'Inter', sans-serif; 
-            margin: 0;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
+        /* 强制全局防溢出 */
+        html, body {
+            max-width: 100vw;
             overflow-x: hidden;
-        }
-        
-        /* 可访问性：键盘焦点样式 */
-        *:focus {
-            outline: 3px solid var(--color-info);
-            outline-offset: 2px;
-        }
-        
-        .sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
+            margin: 0;
             padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border: 0;
+            background-color: #fff5f7;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
-        
+
+        /* 玻璃拟态卡片优化 */
         .glass-card {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 2px solid var(--color-secondary);
-            border-radius: 2rem;
-            position: relative;
-            overflow: hidden;
+            border: 2px solid #ffb7c5;
+            border-radius: 1.5rem;
+            width: 100%;
+            box-sizing: border-box;
         }
-        
-        .glass-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #007aff, #ff6b81, #4ade80);
-        }
-        
-        .sakura-bg { 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            pointer-events: none; 
-            z-index: -1;
-        }
-        
-        /* 呼吸灯特效 - 改进版 */
-        @keyframes breath {
-            0%, 100% { 
-                box-shadow: 0 0 5px rgba(255, 107, 129, 0.2), 0 2px 4px rgba(0,0,0,0.1);
-                transform: translateY(0);
-            }
-            50% { 
-                box-shadow: 0 0 20px rgba(255, 107, 129, 0.4), 0 4px 8px rgba(0,0,0,0.15);
-                transform: translateY(-2px);
-            }
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-        
-        .recommend-active { 
-            animation: breath 2s infinite ease-in-out;
-            border: 2px solid white;
-            position: relative;
-        }
-        
-        .recommend-active::after {
-            content: '✨ 推荐';
-            position: absolute;
-            top: -10px;
-            right: 10px;
-            background: var(--color-primary);
-            color: white;
-            font-size: 0.6rem;
-            padding: 2px 6px;
-            border-radius: 10px;
-            animation: pulse 1.5s infinite;
-        }
-        
-        /* 按钮样式 */
+
+        /* 按钮通用样式：防止文字撑开宽度 */
         .btn {
-            transition: all 0.3s ease;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem 0.5rem;
+            border-radius: 1rem;
+            transition: all 0.2s;
             border: none;
             cursor: pointer;
-            position: relative;
-            overflow: hidden;
+            word-break: break-all;
+            white-space: normal; /* 允许换行 */
+            text-align: center;
         }
-        
-        .btn::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 5px;
-            height: 5px;
-            background: rgba(255, 255, 255, 0.5);
-            opacity: 0;
-            border-radius: 100%;
-            transform: scale(1, 1) translate(-50%);
-            transform-origin: 50% 50%;
+
+        .btn:active { transform: scale(0.97); }
+
+        .btn-ios { background: linear-gradient(135deg, #007aff, #5856d6); color: white; }
+        .btn-clash { background: linear-gradient(135deg, #fb923c, #ea580c); color: white; }
+        .btn-backup { background: linear-gradient(135deg, #4ade80, #16a34a); color: white; }
+        .btn-copy { background: #fff; color: #ff6b81; border: 2px solid #ffb7c5; }
+
+        /* 樱花背景层：确保不干扰点击 */
+        #sakura-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
         }
-        
-        .btn:focus:not(:active)::after {
-            animation: ripple 1s ease-out;
-        }
-        
-        @keyframes ripple {
-            0% { transform: scale(0, 0); opacity: 0.5; }
-            100% { transform: scale(20, 20); opacity: 0; }
-        }
-        
-        .btn-shadowrocket { 
-            background: linear-gradient(135deg, #007aff, #5856d6);
-            color: white;
-        }
-        
-        .btn-clash { 
-            background: linear-gradient(135deg, #fb923c, #ea580c);
-            color: white;
-        }
-        
-        .btn-clash-backup { 
-            background: linear-gradient(135deg, #4ade80, #16a34a);
-            color: white;
-        }
-        
-        .btn-copy { 
-            background: white;
-            color: #ff8fa3;
-            border: 2px solid #ffb7c5;
-        }
-        
-        /* 状态指示器 */
-        .status-dot {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            margin-right: 6px;
-        }
-        
-        .status-online { background-color: var(--color-success); }
-        .status-offline { background-color: var(--color-danger); }
-        .status-warning { background-color: var(--color-warning); }
-        
-        /* 加载动画 */
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 107, 129, 0.3);
-            border-radius: 50%;
-            border-top-color: var(--color-primary);
-            animation: spin 1s ease-in-out infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        /* 移动端修复 - 新增的修复代码 */
-        @media screen and (max-width: 768px) {
-            html, body {
-                width: 100% !important;
-                overflow-x: hidden !important;
-                position: relative;
-                -webkit-overflow-scrolling: touch;
-                touch-action: pan-y pinch-zoom;
-            }
-            
-            body {
-                -webkit-text-size-adjust: 100% !important;
-                text-size-adjust: 100% !important;
-                padding: 0.5rem;
-            }
-            
-            .glass-card {
-                transform: translateZ(0);
-                -webkit-transform: translateZ(0);
-                padding: 1.5rem !important;
-                border-radius: 1.5rem;
-            }
-            
-            .max-w-md {
-                max-width: 100% !important;
-                padding: 0.5rem;
-            }
-            
-            h1, h2 {
-                font-size: 1.5rem !important;
-            }
-            
-            button, .btn {
-                font-size: 0.9rem !important;
-                padding: 0.75rem !important;
-            }
-        }
-        
-        /* 防止双指缩放导致的布局问题 */
-        * {
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        /* 针对 iOS Safari 的特殊修复 */
-        @supports (-webkit-touch-callout: none) {
-            body {
-                padding-top: env(safe-area-inset-top);
-                padding-bottom: env(safe-area-inset-bottom);
-                padding-left: env(safe-area-inset-left);
-                padding-right: env(safe-area-inset-right);
-            }
-            
-            .glass-card {
-                margin-top: env(safe-area-inset-top);
-            }
-        }
-        
-        /* 响应式调整 */
-        @media (max-width: 640px) {
-            .glass-card {
-                border-radius: 1.5rem;
-                padding: 1.5rem !important;
-            }
-            
-            h2 {
-                font-size: 1.5rem !important;
-            }
-        }
-        
-        /* 减少运动偏好设置 */
-        @media (prefers-reduced-motion: reduce) {
-            *,
-            *::before,
-            *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-            }
-            
-            .loading {
-                animation: none;
-                border: 3px solid var(--color-primary);
-                border-top-color: transparent;
-            }
-        }
-        
-        /* 暗色模式支持 */
-        @media (prefers-color-scheme: dark) {
-            body {
-                background-color: #1a1a1a;
-                color: #e5e5e5;
-            }
-            
-            .glass-card {
-                background: rgba(30, 30, 30, 0.95);
-                border-color: #444;
-                color: #e5e5e5;
-            }
-            
-            .btn-copy {
-                background: #2d2d2d;
-                color: #ff8fa3;
-                border-color: #444;
-            }
-            
-            /* 模态框暗色模式 */
-            #modal-container .glass-card {
-                background: rgba(40, 40, 40, 0.98);
-                color: #e5e5e5;
-            }
-            
-            #modal-container .glass-card h3 {
-                color: #ff6b81;
-            }
-            
-            #modal-container .glass-card p {
-                color: #cccccc;
-            }
+
+        /* 响应式微调 */
+        @media (max-width: 380px) {
+            .btn span.text-lg { font-size: 1rem; }
+            .btn span.text-xs { font-size: 0.7rem; }
+            .glass-card { padding: 1.25rem !important; }
         }
     </style>
 </head>
-<body class="p-4 min-h-screen flex items-center justify-center">
-    <canvas id="sakura-canvas" class="sakura-bg"></canvas>
+<body>
+    <canvas id="sakura-canvas"></canvas>
 
-    <div class="max-w-md w-full mx-auto relative z-10">
-        <div class="glass-card p-8 shadow-2xl text-center">
-            <div class="w-20 h-20 rounded-full border-4 border-white shadow-lg overflow-hidden mx-auto mb-4">
-                <img src="tx.jpg" 
-                     class="w-full h-full object-cover" 
-                     alt="用户头像"
-                     loading="lazy"
-                     onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSI0MCIgY3k9IjQwIiByPSI0MCIgZmlsbD0iI2ZmNmI4MSIvPjwvc3ZnPg=='">
-            </div>
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <div class="w-full max-w-[360px] sm:max-w-md mx-auto">
+            <main class="glass-card p-6 shadow-2xl">
+                <div class="w-20 h-20 rounded-full border-4 border-white shadow-md overflow-hidden mx-auto mb-4">
+                    <img src="tx.jpg" class="w-full h-full object-cover" alt="Avatar" onerror="this.src='https://via.placeholder.com/80/ff6b81/fff?text=Magic'">
+                </div>
 
-            <h1 class="text-2xl font-bold text-[#ff6b81] mb-2">
-                ✨ 魔法补给站
-            </h1>
-            
-            <div class="flex justify-center gap-2 mb-6 mt-2 flex-wrap">
-                <span id="node-count" class="bg-pink-100 text-[#ff6b81] text-xs px-3 py-1.5 rounded-full border border-pink-200 flex items-center">
-                    <span class="loading mr-2" id="node-loading"></span>
-                    <span id="node-count-text">清点节点中...</span>
-                </span>
-                <span id="update-time" class="bg-blue-100 text-blue-500 text-xs px-3 py-1.5 rounded-full border border-blue-200 flex items-center">
-                    <span class="status-dot status-online mr-2"></span>
-                    <span id="update-time-text">同步中...</span>
-                </span>
-            </div>
-            
-            <div class="space-y-4">
-                <button id="btn-ios" class="block w-full btn-shadowrocket text-white font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-95 flex flex-col items-center">
-                    <span>🚀 一键导入小火箭 (iOS)</span>
-                    <span class="text-xs opacity-80 font-normal">支持 Shadowrocket / Quantumult X</span>
-                </button>
+                <h1 class="text-2xl font-bold text-center text-[#ff6b81] mb-6">✨ 魔法补给站</h1>
 
-                <button id="btn-android" class="block w-full btn-clash text-white font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-95 flex flex-col items-center">
-                    <span>🔥 一键导入 Clash (极速秒推)</span>
-                    <span class="text-xs opacity-80 font-normal">推荐安卓/Windows用户使用</span>
-                </button>
+                <div class="space-y-4">
+                    <button onclick="importRocket()" class="btn btn-ios shadow-lg">
+                        <span class="text-lg font-bold">🚀 一键导入小火箭 (iOS)</span>
+                        <span class="text-xs opacity-90 mt-1">Shadowrocket / Quantumult X</span>
+                    </button>
 
-                <button id="btn-backup" class="block w-full btn-clash-backup text-white font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-95 text-sm">
-                    🔄 导入失败请点此 (备用线路)
-                </button>
+                    <button onclick="importClash('fast')" class="btn btn-clash shadow-lg">
+                        <span class="text-lg font-bold">🔥 一键导入 Clash</span>
+                        <span class="text-xs opacity-90 mt-1">推荐安卓 / Windows 用户</span>
+                    </button>
 
-                <button id="copyBtn" class="block w-full bg-white text-[#ff8fa3] font-bold py-4 rounded-2xl border-2 border-[#ffb7c5] transition-all text-sm">
-                    📋 仅复制订阅链接
-                </button>
-            </div>
-            
-            <!-- 订阅链接显示区域 -->
-            <div class="mt-6 p-4 bg-gray-50 rounded-xl border border-gray-200 hidden" id="link-display">
-                <p class="text-xs text-gray-600 mb-2">订阅链接：</p>
-                <div class="flex items-center gap-2">
-                    <code id="subscription-link" class="flex-1 text-xs p-2 bg-white rounded border break-all"></code>
-                    <button id="copy-link-again" class="text-xs px-3 py-2 bg-blue-100 text-blue-600 rounded hover:bg-blue-200 transition-colors">
-                        复制
+                    <button onclick="importClash('backup')" class="btn btn-backup shadow-lg">
+                        <span class="text-sm font-bold">🔄 导入失败点此 (备用线路)</span>
+                    </button>
+
+                    <button onclick="copyLink()" class="btn btn-copy">
+                        <span class="text-sm font-bold">📋 仅复制订阅链接</span>
                     </button>
                 </div>
-            </div>
-            
-            <div class="mt-8 px-4 text-center border-t border-dashed border-pink-100 pt-6">
-                <p class="text-xs text-gray-400 italic">🟢 当前服务器状态：良好 (CDN已加速)</p>
-                <p class="mt-4 text-[10px] text-gray-300">© 2025 风的魔法小屋 | 自动补货系统</p>
-            </div>
-        </div>
-    </div>
 
-    <!-- 模态框容器 -->
-    <div id="modal-container" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black bg-opacity-50">
-        <div class="bg-white rounded-2xl max-w-md w-full p-6 glass-card">
-            <h3 id="modal-title" class="text-xl font-bold text-[#ff6b81] mb-4"></h3>
-            <p id="modal-content" class="text-gray-700 mb-6"></p>
-            <div class="flex justify-end gap-3">
-                <button id="modal-close" class="px-4 py-2 text-gray-600 hover:text-gray-800">关闭</button>
-                <button id="modal-confirm" class="px-4 py-2 bg-[#ff6b81] text-white rounded-lg hover:bg-[#ff5570]">确认</button>
-            </div>
+                <footer class="mt-8 pt-6 border-t border-dashed border-pink-200 text-center">
+                    <p class="text-[10px] text-gray-400">© 2025 风的魔法小屋 | 自动补货系统</p>
+                </footer>
+            </main>
         </div>
     </div>
 
     <script>
-        // 配置项 - 可修改
-        const Config = {
-            GITHUB_USER: "feng-180",
-            GITHUB_REPO: "feng-180.github.io",
-            SUBSCRIPTION_FILE: "sub_all.txt",
-            
-            // 缓存设置（毫秒）
-            CACHE_DURATION: 5 * 60 * 1000, // 5分钟
-            NODE_COUNT_CACHE_KEY: 'node_count_cache',
-            UPDATE_TIME_CACHE_KEY: 'update_time_cache',
-            
-            // API端点
-            getSubscriptionUrl() {
-                return `https://fastly.jsdelivr.net/gh/${this.GITHUB_USER}/${this.GITHUB_REPO}@main/${this.SUBSCRIPTION_FILE}`;
-            },
-            
-            getGitHubApiUrl() {
-                return `https://api.github.com/repos/${this.GITHUB_USER}/${this.GITHUB_REPO}/commits?path=${this.SUBSCRIPTION_FILE}&per_page=1`;
-            }
+        // 配置信息：请确保这里的用户名和仓库名正确
+        const CONFIG = {
+            subUrl: "https://raw.githubusercontent.com/feng-180/feng-180.github.io/main/sub_all.txt"
         };
 
-        // 状态管理
-        const State = {
-            isLoading: false,
-            subscriptionUrl: Config.getSubscriptionUrl(),
-            nodeCount: 0,
-            lastUpdate: null,
-            isOnline: navigator.onLine,
-            
-            updateNodeCount(count) {
-                this.nodeCount = count;
-                localStorage.setItem(Config.NODE_COUNT_CACHE_KEY, JSON.stringify({
-                    count,
-                    timestamp: Date.now()
-                }));
-            },
-            
-            updateLastUpdate(time) {
-                this.lastUpdate = time;
-                localStorage.setItem(Config.UPDATE_TIME_CACHE_KEY, JSON.stringify({
-                    time,
-                    timestamp: Date.now()
-                }));
-            },
-            
-            getCachedNodeCount() {
-                const cached = localStorage.getItem(Config.NODE_COUNT_CACHE_KEY);
-                if (!cached) return null;
-                
-                const { count, timestamp } = JSON.parse(cached);
-                if (Date.now() - timestamp < Config.CACHE_DURATION) {
-                    return count;
-                }
-                return null;
-            },
-            
-            getCachedUpdateTime() {
-                const cached = localStorage.getItem(Config.UPDATE_TIME_CACHE_KEY);
-                if (!cached) return null;
-                
-                const { time, timestamp } = JSON.parse(cached);
-                if (Date.now() - timestamp < Config.CACHE_DURATION) {
-                    return time;
-                }
-                return null;
-            }
-        };
-
-        // DOM元素引用
-        const Elements = {
-            // 状态显示
-            nodeCount: document.getElementById('node-count'),
-            nodeCountText: document.getElementById('node-count-text'),
-            nodeLoading: document.getElementById('node-loading'),
-            updateTime: document.getElementById('update-time-text'),
-            
-            // 按钮
-            btnIos: document.getElementById('btn-ios'),
-            btnAndroid: document.getElementById('btn-android'),
-            btnBackup: document.getElementById('btn-backup'),
-            copyBtn: document.getElementById('copyBtn'),
-            copyLinkAgain: document.getElementById('copy-link-again'),
-            
-            // 链接显示
-            linkDisplay: document.getElementById('link-display'),
-            subscriptionLink: document.getElementById('subscription-link'),
-            
-            // 模态框
-            modalContainer: document.getElementById('modal-container'),
-            modalTitle: document.getElementById('modal-title'),
-            modalContent: document.getElementById('modal-content'),
-            modalClose: document.getElementById('modal-close'),
-            modalConfirm: document.getElementById('modal-confirm')
-        };
-
-        // 工具函数
-        const Utils = {
-            // 安全Base64编码 - 根据高手建议修正
-            encodeBase64(str) {
-                try {
-                    // 修正版本：正确处理Unicode字符，适配Shadowrocket
-                    return btoa(unescape(encodeURIComponent(str)));
-                } catch (e) {
-                    console.error('Base64编码失败:', e);
-                    // 降级方案：使用标准Base64
-                    try {
-                        return btoa(str);
-                    } catch {
-                        return '';
-                    }
-                }
-            },
-
-            // 格式化时间
-            formatTime(date) {
-                if (!date) return '未知时间';
-                
-                const now = new Date();
-                const diff = now - date;
-                
-                if (diff < 60000) return '刚刚';
-                if (diff < 3600000) return `${Math.floor(diff / 60000)}分钟前`;
-                if (diff < 86400000) return `${Math.floor(diff / 3600000)}小时前`;
-                return `${Math.floor(diff / 86400000)}天前`;
-            },
-
-            // 复制文本到剪贴板
-            async copyToClipboard(text) {
-                try {
-                    if (navigator.clipboard && window.isSecureContext) {
-                        await navigator.clipboard.writeText(text);
-                        return true;
-                    } else {
-                        // 降级方案
-                        const textArea = document.createElement('textarea');
-                        textArea.value = text;
-                        textArea.style.position = 'fixed';
-                        textArea.style.opacity = '0';
-                        document.body.appendChild(textArea);
-                        textArea.select();
-                        const success = document.execCommand('copy');
-                        document.body.removeChild(textArea);
-                        return success;
-                    }
-                } catch (error) {
-                    console.error('复制失败:', error);
-                    return false;
-                }
-            },
-
-            // 显示消息
-            showMessage(message, type = 'info') {
-                const colors = {
-                    success: 'bg-green-500',
-                    error: 'bg-red-500',
-                    warning: 'bg-yellow-500',
-                    info: 'bg-blue-500'
-                };
-                
-                // 移除现有消息
-                const existing = document.querySelector('.message-toast');
-                if (existing) existing.remove();
-                
-                // 创建新消息
-                const toast = document.createElement('div');
-                toast.className = `message-toast fixed top-4 right-4 ${colors[type]} text-white px-6 py-3 rounded-lg shadow-lg z-50 transform transition-transform duration-300 translate-x-full`;
-                toast.textContent = message;
-                
-                document.body.appendChild(toast);
-                
-                // 动画显示
-                requestAnimationFrame(() => {
-                    toast.style.transform = 'translateX(0)';
-                });
-                
-                // 3秒后消失
-                setTimeout(() => {
-                    toast.style.transform = 'translateX(100%)';
-                    setTimeout(() => toast.remove(), 300);
-                }, 3000);
-            },
-
-            // 验证订阅链接
-            async validateSubscription(url) {
-                try {
-                    const response = await fetch(url, { 
-                        method: 'HEAD',
-                        cache: 'no-cache'
-                    });
-                    return response.ok;
-                } catch (error) {
-                    console.warn('订阅链接验证失败:', error);
-                    return false;
-                }
-            },
-
-            // 节点计数增强 - 根据高手建议改进
-            async countNodes(text) {
-                // 多种格式识别
-                const patterns = [
-                    /- name:/g,                     // Clash格式
-                    /vmess:\/\//g,                  // V2Ray格式
-                    /ss:\/\//g,                     // Shadowsocks格式
-                    /trojan:\/\//g,                 // Trojan格式
-                    /ssr:\/\//g,                    // ShadowsocksR格式
-                    /hy2:\/\//g,                    // Hysteria2格式
-                    /PROTOCOL,[^,\n]+,[^,\n]+/g    // Surge格式
-                ];
-                
-                let total = 0;
-                for (const pattern of patterns) {
-                    const matches = text.match(pattern) || [];
-                    total += matches.length;
-                }
-                
-                // 如果都没有匹配到，尝试按行分割计数
-                if (total === 0) {
-                    const lines = text.split('\n').filter(line => {
-                        return line.trim() && 
-                               !line.startsWith('#') && 
-                               !line.startsWith('//') &&
-                               line.includes('://');
-                    });
-                    total = lines.length;
-                }
-                
-                return total;
-            },
-
-            // 防抖函数
-            debounce(func, wait) {
-                let timeout;
-                return function executedFunction(...args) {
-                    const later = () => {
-                        clearTimeout(timeout);
-                        func(...args);
-                    };
-                    clearTimeout(timeout);
-                    timeout = setTimeout(later, wait);
-                };
-            },
-
-            // 节流函数
-            throttle(func, limit) {
-                let inThrottle;
-                return function() {
-                    const args = arguments;
-                    const context = this;
-                    if (!inThrottle) {
-                        func.apply(context, args);
-                        inThrottle = true;
-                        setTimeout(() => inThrottle = false, limit);
-                    }
-                };
-            }
-        };
-
-        // 模态框管理
-        const Modal = {
-            show(title, content, onConfirm = null) {
-                Elements.modalTitle.textContent = title;
-                Elements.modalContent.textContent = content;
-                Elements.modalContainer.classList.remove('hidden');
-                
-                // 设置确认按钮回调
-                if (onConfirm) {
-                    Elements.modalConfirm.onclick = () => {
-                        onConfirm();
-                        this.hide();
-                    };
-                    Elements.modalConfirm.classList.remove('hidden');
-                } else {
-                    Elements.modalConfirm.classList.add('hidden');
-                }
-                
-                // 点击遮罩层关闭
-                Elements.modalContainer.onclick = (e) => {
-                    if (e.target === Elements.modalContainer) {
-                        this.hide();
-                    }
-                };
-            },
-            
-            hide() {
-                Elements.modalContainer.classList.add('hidden');
-                Elements.modalConfirm.onclick = null;
-            },
-            
-            init() {
-                Elements.modalClose.onclick = () => this.hide();
-            }
-        };
-
-        // 樱花动画
-        const SakuraAnimation = {
-            canvas: null,
-            ctx: null,
-            particles: [],
-            animationId: null,
-            isRunning: false,
-            
-            init() {
-                this.canvas = document.getElementById('sakura-canvas');
-                this.ctx = this.canvas.getContext('2d');
-                this.resize();
-                
-                // 监听窗口大小变化
-                window.addEventListener('resize', Utils.debounce(() => this.resize(), 250));
-                
-                // 页面可见性变化时暂停/恢复动画
-                document.addEventListener('visibilitychange', () => {
-                    if (document.hidden) {
-                        this.stop();
-                    } else {
-                        this.start();
-                    }
-                });
-            },
-            
-            resize() {
-                this.canvas.width = window.innerWidth;
-                this.canvas.height = window.innerHeight;
-            },
-            
-            createParticles(count = 15) {
-                this.particles = [];
-                for (let i = 0; i < count; i++) {
-                    this.particles.push({
-                        x: Math.random() * this.canvas.width,
-                        y: Math.random() * this.canvas.height - this.canvas.height,
-                        size: Math.random() * 5 + 2,
-                        speedX: Math.random() * 1 - 0.5,
-                        speedY: Math.random() * 0.5 + 0.5,
-                        angle: Math.random() * 360,
-                        spin: Math.random() * 2 - 1
-                    });
-                }
-            },
-            
-            drawParticle(particle) {
-                this.ctx.save();
-                this.ctx.translate(particle.x, particle.y);
-                this.ctx.rotate(particle.angle * Math.PI / 180);
-                
-                // 绘制花瓣
-                this.ctx.fillStyle = '#ffb7c5';
-                this.ctx.beginPath();
-                this.ctx.ellipse(0, 0, particle.size, particle.size / 2, 0, 0, Math.PI * 2);
-                this.ctx.fill();
-                
-                this.ctx.restore();
-            },
-            
-            updateParticle(particle) {
-                particle.x += particle.speedX;
-                particle.y += particle.speedY;
-                particle.angle += particle.spin;
-                
-                // 粒子超出屏幕后重置
-                if (particle.y > this.canvas.height) {
-                    particle.y = -10;
-                    particle.x = Math.random() * this.canvas.width;
-                }
-                
-                if (particle.x > this.canvas.width) particle.x = 0;
-                if (particle.x < 0) particle.x = this.canvas.width;
-            },
-            
-            animate() {
-                if (!this.isRunning) return;
-                
-                // 清空画布
-                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-                
-                // 更新和绘制所有粒子
-                this.particles.forEach(particle => {
-                    this.updateParticle(particle);
-                    this.drawParticle(particle);
-                });
-                
-                // 继续动画
-                this.animationId = requestAnimationFrame(() => this.animate());
-            },
-            
-            start() {
-                if (this.isRunning) return;
-                
-                this.isRunning = true;
-                if (this.particles.length === 0) {
-                    this.createParticles();
-                }
-                this.animate();
-            },
-            
-            stop() {
-                this.isRunning = false;
-                if (this.animationId) {
-                    cancelAnimationFrame(this.animationId);
-                    this.animationId = null;
-                }
-            }
-        };
-
-        // 主功能
-        const App = {
-            async init() {
-                console.log('魔法补给站初始化...');
-                
-                // 初始化各个模块
-                Modal.init();
-                SakuraAnimation.init();
-                
-                // 设置事件监听器
-                this.setupEventListeners();
-                
-                // 检查网络状态
-                this.setupNetworkListener();
-                
-                // 加载缓存的统计信息
-                this.loadCachedInfo();
-                
-                // 获取最新信息
-                await this.fetchLatestInfo();
-                
-                // 启动樱花动画
-                SakuraAnimation.start();
-                
-                // 智能设备识别
-                this.autoHighlight();
-                
-                console.log('魔法补给站初始化完成');
-            },
-            
-            setupEventListeners() {
-                // 按钮点击事件
-                Elements.btnIos.addEventListener('click', () => this.importShadowrocket());
-                Elements.btnAndroid.addEventListener('click', () => this.importClash('fast'));
-                Elements.btnBackup.addEventListener('click', () => this.importClash('convert'));
-                Elements.copyBtn.addEventListener('click', () => this.copySubscriptionLink());
-                Elements.copyLinkAgain.addEventListener('click', () => this.copySubscriptionLink());
-                
-                // 键盘快捷键
-                document.addEventListener('keydown', (e) => {
-                    // Ctrl/Cmd + C 复制订阅链接
-                    if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
-                        e.preventDefault();
-                        this.copySubscriptionLink();
-                    }
-                    
-                    // ESC 关闭模态框
-                    if (e.key === 'Escape') {
-                        Modal.hide();
-                    }
-                });
-            },
-            
-            setupNetworkListener() {
-                window.addEventListener('online', () => {
-                    State.isOnline = true;
-                    Utils.showMessage('网络连接已恢复', 'success');
-                    
-                    // 重新获取信息
-                    this.fetchLatestInfo();
-                });
-                
-                window.addEventListener('offline', () => {
-                    State.isOnline = false;
-                    Utils.showMessage('网络连接已断开', 'warning');
-                });
-            },
-            
-            loadCachedInfo() {
-                // 加载缓存的节点数量
-                const cachedCount = State.getCachedNodeCount();
-                if (cachedCount !== null) {
-                    State.nodeCount = cachedCount;
-                    this.updateNodeCountDisplay(cachedCount);
-                }
-                
-                // 加载缓存的上次更新时间
-                const cachedTime = State.getCachedUpdateTime();
-                if (cachedTime) {
-                    this.updateLastUpdateDisplay(cachedTime);
-                }
-            },
-            
-            async fetchLatestInfo() {
-                if (State.isLoading || !State.isOnline) return;
-                
-                State.isLoading = true;
-                Elements.nodeLoading.classList.remove('hidden');
-                
-                try {
-                    // 并行获取节点数量和更新时间
-                    await Promise.all([
-                        this.fetchNodeCount(),
-                        this.fetchLastUpdateTime()
-                    ]);
-                    
-                    // 验证订阅链接有效性
-                    await this.validateSubscription();
-                    
-                } catch (error) {
-                    console.error('获取信息失败:', error);
-                    Utils.showMessage('信息更新失败，请稍后重试', 'error');
-                } finally {
-                    State.isLoading = false;
-                    Elements.nodeLoading.classList.add('hidden');
-                }
-            },
-            
-            async fetchNodeCount() {
-                try {
-                    const response = await fetch(State.subscriptionUrl, {
-                        cache: 'no-cache',
-                        headers: {
-                            'Pragma': 'no-cache',
-                            'Cache-Control': 'no-cache'
-                        }
-                    });
-                    
-                    if (!response.ok) throw new Error('获取订阅失败');
-                    
-                    const text = await response.text();
-                    const count = await Utils.countNodes(text);
-                    
-                    State.updateNodeCount(count);
-                    this.updateNodeCountDisplay(count);
-                    
-                } catch (error) {
-                    console.warn('获取节点数量失败:', error);
-                    // 如果网络失败但有缓存，使用缓存值
-                    if (State.nodeCount > 0) {
-                        this.updateNodeCountDisplay(State.nodeCount);
-                    } else {
-                        Elements.nodeCountText.textContent = '获取失败';
-                    }
-                }
-            },
-            
-            async fetchLastUpdateTime() {
-                try {
-                    const response = await fetch(Config.getGitHubApiUrl(), {
-                        headers: {
-                            'Accept': 'application/vnd.github.v3+json'
-                        }
-                    });
-                    
-                    if (!response.ok) {
-                        if (response.status === 403) {
-                            console.warn('GitHub API限制');
-                            throw new Error('API限制');
-                        }
-                        throw new Error('获取更新时间失败');
-                    }
-                    
-                    const commits = await response.json();
-                    if (commits[0]) {
-                        const updateTime = new Date(commits[0].commit.committer.date);
-                        State.updateLastUpdate(updateTime);
-                        this.updateLastUpdateDisplay(updateTime);
-                    }
-                    
-                } catch (error) {
-                    console.warn('获取更新时间失败:', error);
-                    Elements.updateTime.textContent = '时间未知';
-                }
-            },
-            
-            async validateSubscription() {
-                const isValid = await Utils.validateSubscription(State.subscriptionUrl);
-                
-                if (!isValid) {
-                    Utils.showMessage('订阅链接验证异常，请稍后重试', 'warning');
-                }
-            },
-            
-            updateNodeCountDisplay(count) {
-                Elements.nodeCountText.textContent = `📊 当前补给: ${count} 个节点`;
-                Elements.nodeCount.classList.remove('bg-pink-100');
-                Elements.nodeCount.classList.add('bg-green-100', 'text-green-600');
-                Elements.nodeCount.querySelector('.loading').classList.add('hidden');
-            },
-            
-            updateLastUpdateDisplay(time) {
-                Elements.updateTime.textContent = `🕒 ${Utils.formatTime(time)}已补货`;
-            },
-            
-            autoHighlight() {
-                const ua = navigator.userAgent.toLowerCase();
-                
-                // 清除之前的高亮
-                Elements.btnIos.classList.remove('recommend-active');
-                Elements.btnAndroid.classList.remove('recommend-active');
-                
-                if (/iphone|ipad|ipod/.test(ua)) {
-                    Elements.btnIos.classList.add('recommend-active');
-                } else if (/android/.test(ua)) {
-                    Elements.btnAndroid.classList.add('recommend-active');
-                }
-            },
-            
-            async importShadowrocket() {
-                try {
-                    // 显示加载状态
-                    const originalText = Elements.btnIos.innerHTML;
-                    Elements.btnIos.innerHTML = '<span class="loading mr-2"></span>导入中...';
-                    Elements.btnIos.disabled = true;
-                    
-                    // 验证订阅链接
-                    const isValid = await Utils.validateSubscription(State.subscriptionUrl);
-                    if (!isValid) {
-                        throw new Error('订阅链接无效');
-                    }
-                    
-                    // 构建Shadowrocket链接
-                    const encodedUrl = Utils.encodeBase64(State.subscriptionUrl);
-                    const shadowrocketUrl = `shadowrocket://add/sub://${encodedUrl}?remark=魔法补给站`;
-                    
-                    // 尝试跳转
-                    window.location.href = shadowrocketUrl;
-                    
-                    // 设置超时检查
-                    setTimeout(() => {
-                        Modal.show(
-                            '导入提示',
-                            '如果未自动跳转到小火箭，请确保已安装Shadowrocket或Quantumult X应用。您也可以使用"仅复制订阅链接"功能手动导入。',
-                            () => {
-                                Elements.linkDisplay.classList.remove('hidden');
-                                Elements.subscriptionLink.textContent = State.subscriptionUrl;
-                            }
-                        );
-                    }, 1500);
-                    
-                } catch (error) {
-                    console.error('导入失败:', error);
-                    Utils.showMessage('导入失败，请检查网络或订阅链接', 'error');
-                    
-                    Modal.show(
-                        '导入失败',
-                        `导入过程中出现错误：${error.message}\n\n请尝试以下解决方案：\n1. 检查网络连接\n2. 确保已安装对应应用\n3. 使用备用线路导入`,
-                        () => {
-                            this.importClash('convert');
-                        }
-                    );
-                    
-                } finally {
-                    // 恢复按钮状态
-                    setTimeout(() => {
-                        Elements.btnIos.innerHTML = originalText;
-                        Elements.btnIos.disabled = false;
-                    }, 2000);
-                }
-            },
-            
-            async importClash(mode) {
-                try {
-                    const targetButton = mode === 'convert' ? Elements.btnBackup : Elements.btnAndroid;
-                    const originalText = targetButton.innerHTML;
-                    
-                    // 显示加载状态
-                    targetButton.innerHTML = '<span class="loading mr-2"></span>导入中...';
-                    targetButton.disabled = true;
-                    
-                    // 构建Clash链接
-                    let finalUrl;
-                    if (mode === 'fast') {
-                        // 直连模式
-                        finalUrl = `${State.subscriptionUrl}?t=${Date.now()}`;
-                    } else {
-                        // 备用转换模式
-                        finalUrl = `https://sub.id9.cc/sub?target=clash&url=${encodeURIComponent(State.subscriptionUrl)}&new_name=Magic_Station`;
-                        
-                        // 警告用户使用第三方服务
-                        Modal.show(
-                            '使用第三方转换服务',
-                            '您正在使用第三方订阅转换服务。请注意：\n\n1. 第三方服务可能记录您的订阅信息\n2. 建议使用自建转换服务以确保安全\n3. 我们无法保证第三方服务的稳定性和安全性\n\n是否继续？',
-                            () => {
-                                // 用户确认后继续
-                                this.performClashImport(finalUrl);
-                            }
-                        );
-                        return;
-                    }
-                    
-                    await this.performClashImport(finalUrl);
-                    
-                } catch (error) {
-                    console.error('Clash导入失败:', error);
-                    Utils.showMessage('导入失败，请稍后重试', 'error');
-                    
-                } finally {
-                    // 恢复按钮状态
-                    setTimeout(() => {
-                        const targetButton = mode === 'convert' ? Elements.btnBackup : Elements.btnAndroid;
-                        targetButton.innerHTML = originalText;
-                        targetButton.disabled = false;
-                    }, 2000);
-                }
-            },
-            
-            async performClashImport(url) {
-                // 验证链接
-                const isValid = await Utils.validateSubscription(url);
-                if (!isValid) {
-                    throw new Error('订阅链接无效');
-                }
-                
-                // 跳转到Clash
-                window.location.href = `clash://install-config?url=${encodeURIComponent(url)}`;
-                
-                // 设置超时检查
-                setTimeout(() => {
-                    Modal.show(
-                        '导入提示',
-                        '如果未自动跳转到Clash，请确保已安装Clash for Windows或Clash for Android。\n\n您也可以手动添加订阅链接：',
-                        () => {
-                            Elements.linkDisplay.classList.remove('hidden');
-                            Elements.subscriptionLink.textContent = url;
-                        }
-                    );
-                }, 1500);
-            },
-            
-            async copySubscriptionLink() {
-                try {
-                    const success = await Utils.copyToClipboard(State.subscriptionUrl);
-                    
-                    if (success) {
-                        // 更新按钮文本
-                        Elements.copyBtn.innerHTML = '✅ 复制成功';
-                        Elements.copyLinkAgain.innerHTML = '✅ 已复制';
-                        
-                        // 显示链接
-                        Elements.linkDisplay.classList.remove('hidden');
-                        Elements.subscriptionLink.textContent = State.subscriptionUrl;
-                        
-                        Utils.showMessage('订阅链接已复制到剪贴板', 'success');
-                        
-                        // 3秒后恢复按钮文本
-                        setTimeout(() => {
-                            Elements.copyBtn.innerHTML = '📋 仅复制订阅链接';
-                        }, 3000);
-                    } else {
-                        throw new Error('复制失败');
-                    }
-                    
-                } catch (error) {
-                    console.error('复制失败:', error);
-                    
-                    // 降级方案：显示链接让用户手动复制
-                    Elements.linkDisplay.classList.remove('hidden');
-                    Elements.subscriptionLink.textContent = State.subscriptionUrl;
-                    
-                    Modal.show(
-                        '复制失败',
-                        '自动复制失败，请手动选择并复制上面的订阅链接。',
-                        () => {
-                            // 选中文本
-                            const range = document.createRange();
-                            range.selectNodeContents(Elements.subscriptionLink);
-                            const selection = window.getSelection();
-                            selection.removeAllRanges();
-                            selection.addRange(range);
-                        }
-                    );
-                }
-            }
-        };
-
-        // 错误边界处理
-        window.addEventListener('error', (event) => {
-            console.error('全局错误:', event.error);
-            
-            // 不显示语法错误给用户
-            if (event.error instanceof SyntaxError) return;
-            
-            // 显示友好的错误信息
-            Modal.show(
-                '系统错误',
-                '抱歉，应用程序遇到了错误。\n\n' +
-                '建议您：\n' +
-                '1. 刷新页面重试\n' +
-                '2. 检查网络连接\n' +
-                '3. 清除浏览器缓存\n\n' +
-                '错误详情：' + event.message
-            );
-        });
-
-        window.addEventListener('unhandledrejection', (event) => {
-            console.error('未处理的Promise拒绝:', event.reason);
-            
-            Modal.show(
-                '请求失败',
-                '网络请求失败，请检查网络连接后重试。\n\n' +
-                '如果问题持续存在，请稍后再试。'
-            );
-        });
-
-        // 页面加载完成后初始化应用
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => App.init());
-        } else {
-            App.init();
+        function importRocket() {
+            const encodedUrl = btoa(CONFIG.subUrl);
+            window.location.href = `shadowrocket://add/sub://${encodedUrl}?remark=MagicStation`;
         }
 
-        // 页面卸载前清理
-        window.addEventListener('beforeunload', () => {
-            SakuraAnimation.stop();
-        });
+        function importClash(type) {
+            let url = CONFIG.subUrl;
+            if (type === 'backup') {
+                // 使用后端转换 API 解决 YAML 格式不兼容问题
+                url = `https://sub.id9.cc/sub?target=clash&url=${encodeURIComponent(CONFIG.subUrl)}&insert=false`;
+            }
+            window.location.href = `clash://install-config?url=${encodeURIComponent(url)}&name=MagicStation`;
+        }
+
+        async function copyLink() {
+            try {
+                await navigator.clipboard.writeText(CONFIG.subUrl);
+                alert("✅ 订阅链接已复制！");
+            } catch (err) {
+                const input = document.createElement('input');
+                input.value = CONFIG.subUrl;
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand('copy');
+                document.body.removeChild(input);
+                alert("✅ 链接已复制到剪贴板！");
+            }
+        }
+
+        // 简单的樱花动效
+        const canvas = document.getElementById('sakura-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 5 + 2;
+                this.speedX = Math.random() * 2 - 1;
+                this.speedY = Math.random() * 1 + 0.5;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.y > canvas.height) {
+                    this.y = -10;
+                    this.x = Math.random() * canvas.width;
+                }
+            }
+            draw() {
+                ctx.fillStyle = '#ffb7c5';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 30; i++) particles.push(new Particle());
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
     </script>
 </body>
 </html>
