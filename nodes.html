@@ -12,6 +12,7 @@
         .sakura-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
         .btn-shadowrocket { background: linear-gradient(135deg, #007aff, #5856d6); }
         .btn-clash { background: linear-gradient(135deg, #fb923c, #ea580c); }
+        .btn-backup { background: #fff1f2; color: #ff6b81; border: 2px solid #ffb7c5; }
     </style>
 </head>
 <body class="p-4 min-h-screen flex items-center justify-center">
@@ -20,7 +21,7 @@
     <div class="max-w-md w-full mx-auto relative z-10">
         <div class="glass-card p-8 shadow-2xl text-center">
             <div class="w-20 h-20 rounded-full border-4 border-white shadow-lg overflow-hidden bg-[#ffecf0] mx-auto mb-4">
-                <img src="tx.jpg" class="w-full h-full object-cover">
+                <img src="tx.jpg" class="w-full h-full object-cover" alt="头像">
             </div>
 
             <h2 class="text-2xl font-bold text-[#ff6b81] mb-1">✨ 魔法补给站</h2>
@@ -31,86 +32,105 @@
                     🚀 一键导入小火箭 (iOS)
                 </button>
 
-                <button onclick="importClash()" class="block w-full btn-clash text-white font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2">
-                    🔥 一键导入 Clash (安卓)
+                <button onclick="importClash('main')" class="block w-full btn-clash text-white font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2">
+                    🔥 一键导入 Clash (线路1)
                 </button>
 
-                <button onclick="copyLink()" id="copyBtn" class="block w-full bg-white text-[#ff8fa3] font-bold py-4 rounded-2xl border-2 border-[#ffb7c5]">
-                    📋 仅复制订阅链接(自动导入失败请点此)
+                <button onclick="importClash('backup')" class="block w-full btn-backup font-bold py-3 rounded-2xl transition-all active:scale-95 flex items-center justify-center gap-2">
+                    🔄 导入失败请点此 (线路2)
+                </button>
+
+                <button onclick="copyLink()" id="copyBtn" class="block w-full bg-white text-[#ff8fa3] font-bold py-4 rounded-2xl border-2 border-[#ffb7c5] transition-all">
+                    📋 仅复制订阅链接
                 </button>
             </div>
-<div class="mt-8 px-4 text-center border-t border-dashed border-pink-100 pt-6">
-    <p class="text-[11px] text-gray-400 leading-relaxed italic">
-        ⚠️ 风险提示：本页面提供的“低阶魔法”仅供网络技术研究与学习使用。请务必遵守当地法律法规。免费资源具有时效性，不保证长期稳定。
-    </p>
-    <p class="mt-4 text-[10px] text-gray-300">
-        © 2025 风的魔法小屋 | 维护网络纯净，从我做起
-    </p>
-</div>
+
+            <div class="mt-8 px-4 text-center border-t border-dashed border-pink-100 pt-6">
+                <p class="text-[11px] text-gray-400 leading-relaxed italic">
+                    ⚠️ 风险提示：本页面提供的“低阶魔法”仅供网络技术研究与学习使用。请务必遵守当地法律法规。
+                </p>
+                <p class="mt-4 text-[10px] text-gray-300">
+                    © 2025 风的魔法小屋 | 维护网络纯净
+                </p>
+            </div>
             <a href="index.html" class="inline-block mt-8 text-[#ffb7c5] text-sm hover:underline">← 返回首页</a>
         </div>
     </div>
 
     <script>
-        // 1. 改用镜像加速地址，解决国内直连报错 EOF 的问题
-const subUrl = "https://raw.gitmirror.com/feng-180/feng-180.github.io/main/sub_all.txt";
+        // 订阅原始地址
+        const subUrl = "https://raw.gitmirror.com/feng-180/feng-180.github.io/main/sub_all.txt";
 
-// 2. 小火箭导入逻辑
-function importShadowrocket() {
-    window.location.href = "shadowrocket://add/sub://" + btoa(subUrl);
-    alertTips();
-}
+        // Shadowrocket 导入
+        function importShadowrocket() {
+            window.location.href = "shadowrocket://add/sub://" + btoa(subUrl) + "?remark=" + encodeURIComponent("风的魔法小屋");
+            alertTips();
+        }
 
-// 3. Clash 导入逻辑：用subconverter转换通用订阅为YAML
-function importClash() {
-    // 用免费转换API（v1.mk或类似），自动转为Clash YAML
-    const converterUrl = "https://api.v1.mk/v1/sub?target=clash&url=" + encodeURIComponent(subUrl) + "&insert=false&config=https%3A%2F%2Fraw.githubusercontent.com%2FACL4SSR%2FACL4SSR%2Fmaster%2Fclash%2Fconfig%2FACL4SSR_Online.ini";
-    window.location.href = "clash://install-config?url=" + encodeURIComponent(converterUrl);
-    alertTips();
-}
+        // Clash 导入逻辑 (核心修复版)
+        function importClash(type) {
+            const backend = (type === 'main') ? "https://sub.d1.mk/sub?" : "https://sub.id9.cc/sub?";
+            
+            // 1. 构建转换参数
+            const configUrl = "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/config/ACL4SSR_Online.ini";
+            const convertParams = `target=clash&url=${encodeURIComponent(subUrl)}&insert=false&config=${encodeURIComponent(configUrl)}&emoji=true&new_name=Magic_Station_${type}`;
+            
+            // 2. 拼接完整转换链接
+            const fullConverterUrl = backend + convertParams;
+            
+            // 3. 执行双重编码并唤起协议
+            window.location.href = "clash://install-config?url=" + encodeURIComponent(fullConverterUrl);
+            alertTips();
+        }
 
-function copyLink() {
-    navigator.clipboard.writeText(subUrl).then(() => {
-        const btn = document.getElementById('copyBtn');
-        btn.innerText = "✅ 复制成功";
-        setTimeout(() => { btn.innerText = "📋 仅复制订阅链接(自动导入失败请点此)"; }, 2000);
-    });
-}
+        // 复制功能
+        function copyLink() {
+            const tempInput = document.createElement("input");
+            tempInput.value = subUrl;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+            
+            const btn = document.getElementById('copyBtn');
+            btn.innerText = "✅ 复制成功";
+            setTimeout(() => { btn.innerText = "📋 仅复制订阅链接"; }, 2000);
+        }
 
-function alertTips() {
-    setTimeout(() => {
-        alert('🌸 尝试唤起魔法软件中... \n如果没反应，请确保手机已安装对应软件。');
-    }, 1500);
-}
+        function alertTips() {
+            setTimeout(() => {
+                alert('🌸 尝试唤起魔法软件中...\n\n如果没反应，请确认手机已安装软件。\n如果导入后报错，请尝试点击“线路2”。');
+            }, 1000);
+        }
 
-// 樱花绘制（不变）
-const canvas = document.getElementById('sakura-canvas');
-const ctx = canvas.getContext('2d');
-let sakuraArray = [];
-function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-class Sakura {
-    constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height - canvas.height;
-        this.size = Math.random() * 7 + 3;
-        this.speedX = Math.random() * 1.5 - 0.5;
-        this.speedY = Math.random() * 1 + 1;
-        this.angle = Math.random() * 360;
-        this.spin = Math.random() * 2 - 1;
-    }
-    draw() {
-        ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.angle * Math.PI / 180);
-        ctx.fillStyle = '#ffb7c5'; ctx.beginPath();
-        ctx.ellipse(0, 0, this.size, this.size/2, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
-    }
-    update() {
-        this.x += this.speedX; this.y += this.speedY; this.angle += this.spin;
-        if (this.y > canvas.height) { this.y = -20; this.x = Math.random() * canvas.width; }
-    }
-}
-function init() { resize(); for (let i = 0; i < 20; i++) sakuraArray.push(new Sakura()); }
-function animate() { ctx.clearRect(0, 0, canvas.width, canvas.height); sakuraArray.forEach(s => { s.update(); s.draw(); }); requestAnimationFrame(animate); }
-window.addEventListener('resize', resize); init(); animate();
+        // 樱花绘制逻辑
+        const canvas = document.getElementById('sakura-canvas');
+        const ctx = canvas.getContext('2d');
+        let sakuraArray = [];
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        class Sakura {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height - canvas.height;
+                this.size = Math.random() * 7 + 3;
+                this.speedX = Math.random() * 1.5 - 0.5;
+                this.speedY = Math.random() * 1 + 1;
+                this.angle = Math.random() * 360;
+                this.spin = Math.random() * 2 - 1;
+            }
+            draw() {
+                ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.angle * Math.PI / 180);
+                ctx.fillStyle = '#ffb7c5'; ctx.beginPath();
+                ctx.ellipse(0, 0, this.size, this.size/2, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+            }
+            update() {
+                this.x += this.speedX; this.y += this.speedY; this.angle += this.spin;
+                if (this.y > canvas.height) { this.y = -20; this.x = Math.random() * canvas.width; }
+            }
+        }
+        function init() { resize(); for (let i = 0; i < 20; i++) sakuraArray.push(new Sakura()); }
+        function animate() { ctx.clearRect(0, 0, canvas.width, canvas.height); sakuraArray.forEach(s => { s.update(); s.draw(); }); requestAnimationFrame(animate); }
+        window.addEventListener('resize', resize); init(); animate();
     </script>
 </body>
 </html>
