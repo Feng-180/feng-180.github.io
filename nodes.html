@@ -2,10 +2,14 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="安全可靠的代理订阅服务">
-    <meta name="keywords" content="订阅,代理,节点,Clash,Shadowrocket">
-    <meta name="author" content="魔法补给站">
+    <!-- 修复的 viewport 设置 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=0.5, viewport-fit=cover">
+    
+    <!-- 移动端优化 meta 标签 -->
+    <meta name="HandheldFriendly" content="true">
+    <meta name="MobileOptimized" content="width">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
     <!-- 内容安全策略 -->
     <meta http-equiv="Content-Security-Policy" 
@@ -16,6 +20,10 @@
                    connect-src 'self' https://api.github.com https://fastly.jsdelivr.net;
                    frame-ancestors 'none';
                    form-action 'self'">
+    
+    <meta name="description" content="安全可靠的代理订阅服务">
+    <meta name="keywords" content="订阅,代理,节点,Clash,Shadowrocket">
+    <meta name="author" content="魔法补给站">
     
     <title>魔法补给站 - 安全极速自动化</title>
     
@@ -84,6 +92,7 @@
             align-items: center;
             justify-content: center;
             padding: 1rem;
+            overflow-x: hidden;
         }
         
         /* 可访问性：键盘焦点样式 */
@@ -251,6 +260,63 @@
             to { transform: rotate(360deg); }
         }
         
+        /* 移动端修复 - 新增的修复代码 */
+        @media screen and (max-width: 768px) {
+            html, body {
+                width: 100% !important;
+                overflow-x: hidden !important;
+                position: relative;
+                -webkit-overflow-scrolling: touch;
+                touch-action: pan-y pinch-zoom;
+            }
+            
+            body {
+                -webkit-text-size-adjust: 100% !important;
+                text-size-adjust: 100% !important;
+                padding: 0.5rem;
+            }
+            
+            .glass-card {
+                transform: translateZ(0);
+                -webkit-transform: translateZ(0);
+                padding: 1.5rem !important;
+                border-radius: 1.5rem;
+            }
+            
+            .max-w-md {
+                max-width: 100% !important;
+                padding: 0.5rem;
+            }
+            
+            h1, h2 {
+                font-size: 1.5rem !important;
+            }
+            
+            button, .btn {
+                font-size: 0.9rem !important;
+                padding: 0.75rem !important;
+            }
+        }
+        
+        /* 防止双指缩放导致的布局问题 */
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* 针对 iOS Safari 的特殊修复 */
+        @supports (-webkit-touch-callout: none) {
+            body {
+                padding-top: env(safe-area-inset-top);
+                padding-bottom: env(safe-area-inset-bottom);
+                padding-left: env(safe-area-inset-left);
+                padding-right: env(safe-area-inset-right);
+            }
+            
+            .glass-card {
+                margin-top: env(safe-area-inset-top);
+            }
+        }
+        
         /* 响应式调整 */
         @media (max-width: 640px) {
             .glass-card {
@@ -263,6 +329,7 @@
             }
         }
         
+        /* 减少运动偏好设置 */
         @media (prefers-reduced-motion: reduce) {
             *,
             *::before,
@@ -270,6 +337,12 @@
                 animation-duration: 0.01ms !important;
                 animation-iteration-count: 1 !important;
                 transition-duration: 0.01ms !important;
+            }
+            
+            .loading {
+                animation: none;
+                border: 3px solid var(--color-primary);
+                border-top-color: transparent;
             }
         }
         
@@ -283,6 +356,7 @@
             .glass-card {
                 background: rgba(30, 30, 30, 0.95);
                 border-color: #444;
+                color: #e5e5e5;
             }
             
             .btn-copy {
@@ -290,128 +364,87 @@
                 color: #ff8fa3;
                 border-color: #444;
             }
+            
+            /* 模态框暗色模式 */
+            #modal-container .glass-card {
+                background: rgba(40, 40, 40, 0.98);
+                color: #e5e5e5;
+            }
+            
+            #modal-container .glass-card h3 {
+                color: #ff6b81;
+            }
+            
+            #modal-container .glass-card p {
+                color: #cccccc;
+            }
         }
     </style>
 </head>
-<body>
-    <!-- 樱花背景 -->
-    <canvas id="sakura-canvas" class="sakura-bg" 
-            aria-hidden="true" 
-            role="presentation"></canvas>
-    
-    <!-- 主容器 -->
-    <div class="max-w-md w-full mx-auto">
-        <main>
-            <div class="glass-card p-8 shadow-2xl">
-                <!-- 用户头像 -->
-                <div class="w-20 h-20 rounded-full border-4 border-white shadow-lg overflow-hidden mx-auto mb-4">
-                    <img src="tx.jpg" 
-                         class="w-full h-full object-cover" 
-                         alt="用户头像"
-                         loading="lazy"
-                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSI0MCIgY3k9IjQwIiByPSI0MCIgZmlsbD0iI2ZmNmI4MSIvPjwvc3ZnPg=='">
-                </div>
+<body class="p-4 min-h-screen flex items-center justify-center">
+    <canvas id="sakura-canvas" class="sakura-bg"></canvas>
 
-                <!-- 标题 -->
-                <h1 class="text-2xl font-bold text-center text-[#ff6b81] mb-2">
-                    ✨ 魔法补给站
-                </h1>
-                
-                <!-- 屏幕阅读器专用标题 -->
-                <h2 class="sr-only">代理订阅服务面板</h2>
-
-                <!-- 状态指示器 -->
-                <div class="flex justify-center gap-3 mb-6 mt-3 flex-wrap">
-                    <span id="node-count" 
-                          class="bg-pink-100 text-[#ff6b81] text-xs px-3 py-1.5 rounded-full border border-pink-200 flex items-center">
-                        <span class="loading mr-2" id="node-loading"></span>
-                        <span id="node-count-text">清点节点中...</span>
-                    </span>
-                    
-                    <span id="update-time" 
-                          class="bg-blue-100 text-blue-600 text-xs px-3 py-1.5 rounded-full border border-blue-200 flex items-center">
-                        <span class="status-dot status-online mr-2"></span>
-                        <span id="update-time-text">同步中...</span>
-                    </span>
-                    
-                    <span id="server-status" 
-                          class="bg-green-100 text-green-600 text-xs px-3 py-1.5 rounded-full border border-green-200 flex items-center">
-                        <span class="status-dot status-online mr-2"></span>
-                        <span>服务器正常</span>
-                    </span>
-                </div>
-
-                <!-- 操作按钮区域 -->
-                <div class="space-y-4" role="group" aria-label="订阅操作">
-                    <!-- iOS按钮 -->
-                    <button id="btn-ios"
-                            class="btn btn-shadowrocket w-full font-bold py-4 rounded-2xl shadow-lg flex flex-col items-center justify-center"
-                            aria-label="一键导入小火箭，支持Shadowrocket和Quantumult X">
-                        <span class="text-lg">🚀 一键导入小火箭 (iOS)</span>
-                        <span class="text-xs opacity-80 font-normal mt-1">
-                            支持 Shadowrocket / Quantumult X
-                        </span>
-                    </button>
-
-                    <!-- Android按钮 -->
-                    <button id="btn-android"
-                            class="btn btn-clash w-full font-bold py-4 rounded-2xl shadow-lg flex flex-col items-center justify-center"
-                            aria-label="一键导入Clash，推荐安卓和Windows用户使用">
-                        <span class="text-lg">🔥 一键导入 Clash</span>
-                        <span class="text-xs opacity-80 font-normal mt-1">
-                            推荐安卓/Windows用户使用
-                        </span>
-                    </button>
-
-                    <!-- 备用按钮 -->
-                    <button id="btn-backup"
-                            class="btn btn-clash-backup w-full font-bold py-4 rounded-2xl shadow-lg text-sm"
-                            aria-label="导入失败时使用的备用线路">
-                        🔄 导入失败请点此 (备用线路)
-                    </button>
-
-                    <!-- 复制链接按钮 -->
-                    <button id="copyBtn"
-                            class="btn btn-copy w-full font-bold py-4 rounded-2xl transition-all text-sm"
-                            aria-label="复制订阅链接到剪贴板">
-                        📋 仅复制订阅链接
-                    </button>
-                </div>
-                
-                <!-- 订阅链接显示 -->
-                <div class="mt-6 p-3 bg-gray-50 rounded-xl border border-gray-200 hidden" id="link-display">
-                    <p class="text-xs text-gray-600 mb-2">订阅链接：</p>
-                    <div class="flex items-center gap-2">
-                        <code id="subscription-link" class="flex-1 text-xs p-2 bg-white rounded border break-all"></code>
-                        <button id="copy-link-again" class="text-xs px-3 py-2 bg-blue-100 text-blue-600 rounded hover:bg-blue-200 transition-colors">
-                            复制
-                        </button>
-                    </div>
-                </div>
-
-                <!-- 信息区域 -->
-                <footer class="mt-8 px-4 text-center border-t border-dashed border-pink-100 pt-6">
-                    <p class="text-xs text-gray-500 mb-2">
-                        <span id="cdn-status">🟢 CDN加速已启用</span>
-                        <span class="mx-2">•</span>
-                        <span id="connection-status">加密连接已建立</span>
-                    </p>
-                    
-                    <div class="mt-4 text-xs text-gray-400 space-y-1">
-                        <p>© 2025 风的魔法小屋 | 自动补货系统</p>
-                        <p class="text-[10px]">
-                            <a href="#privacy" class="text-gray-400 hover:text-gray-600 underline" id="privacy-link">
-                                隐私政策
-                            </a>
-                            <span class="mx-2">|</span>
-                            <a href="#tos" class="text-gray-400 hover:text-gray-600 underline" id="tos-link">
-                                服务条款
-                            </a>
-                        </p>
-                    </div>
-                </footer>
+    <div class="max-w-md w-full mx-auto relative z-10">
+        <div class="glass-card p-8 shadow-2xl text-center">
+            <div class="w-20 h-20 rounded-full border-4 border-white shadow-lg overflow-hidden mx-auto mb-4">
+                <img src="tx.jpg" 
+                     class="w-full h-full object-cover" 
+                     alt="用户头像"
+                     loading="lazy"
+                     onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48Y2lyY2xlIGN4PSI0MCIgY3k9IjQwIiByPSI0MCIgZmlsbD0iI2ZmNmI4MSIvPjwvc3ZnPg=='">
             </div>
-        </main>
+
+            <h1 class="text-2xl font-bold text-[#ff6b81] mb-2">
+                ✨ 魔法补给站
+            </h1>
+            
+            <div class="flex justify-center gap-2 mb-6 mt-2 flex-wrap">
+                <span id="node-count" class="bg-pink-100 text-[#ff6b81] text-xs px-3 py-1.5 rounded-full border border-pink-200 flex items-center">
+                    <span class="loading mr-2" id="node-loading"></span>
+                    <span id="node-count-text">清点节点中...</span>
+                </span>
+                <span id="update-time" class="bg-blue-100 text-blue-500 text-xs px-3 py-1.5 rounded-full border border-blue-200 flex items-center">
+                    <span class="status-dot status-online mr-2"></span>
+                    <span id="update-time-text">同步中...</span>
+                </span>
+            </div>
+            
+            <div class="space-y-4">
+                <button id="btn-ios" class="block w-full btn-shadowrocket text-white font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-95 flex flex-col items-center">
+                    <span>🚀 一键导入小火箭 (iOS)</span>
+                    <span class="text-xs opacity-80 font-normal">支持 Shadowrocket / Quantumult X</span>
+                </button>
+
+                <button id="btn-android" class="block w-full btn-clash text-white font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-95 flex flex-col items-center">
+                    <span>🔥 一键导入 Clash (极速秒推)</span>
+                    <span class="text-xs opacity-80 font-normal">推荐安卓/Windows用户使用</span>
+                </button>
+
+                <button id="btn-backup" class="block w-full btn-clash-backup text-white font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-95 text-sm">
+                    🔄 导入失败请点此 (备用线路)
+                </button>
+
+                <button id="copyBtn" class="block w-full bg-white text-[#ff8fa3] font-bold py-4 rounded-2xl border-2 border-[#ffb7c5] transition-all text-sm">
+                    📋 仅复制订阅链接
+                </button>
+            </div>
+            
+            <!-- 订阅链接显示区域 -->
+            <div class="mt-6 p-4 bg-gray-50 rounded-xl border border-gray-200 hidden" id="link-display">
+                <p class="text-xs text-gray-600 mb-2">订阅链接：</p>
+                <div class="flex items-center gap-2">
+                    <code id="subscription-link" class="flex-1 text-xs p-2 bg-white rounded border break-all"></code>
+                    <button id="copy-link-again" class="text-xs px-3 py-2 bg-blue-100 text-blue-600 rounded hover:bg-blue-200 transition-colors">
+                        复制
+                    </button>
+                </div>
+            </div>
+            
+            <div class="mt-8 px-4 text-center border-t border-dashed border-pink-100 pt-6">
+                <p class="text-xs text-gray-400 italic">🟢 当前服务器状态：良好 (CDN已加速)</p>
+                <p class="mt-4 text-[10px] text-gray-300">© 2025 风的魔法小屋 | 自动补货系统</p>
+            </div>
+        </div>
     </div>
 
     <!-- 模态框容器 -->
@@ -426,7 +459,6 @@
         </div>
     </div>
 
-    <!-- 脚本 -->
     <script>
         // 配置项 - 可修改
         const Config = {
@@ -503,7 +535,6 @@
             nodeCountText: document.getElementById('node-count-text'),
             nodeLoading: document.getElementById('node-loading'),
             updateTime: document.getElementById('update-time-text'),
-            serverStatus: document.getElementById('server-status'),
             
             // 按钮
             btnIos: document.getElementById('btn-ios'),
@@ -516,10 +547,6 @@
             linkDisplay: document.getElementById('link-display'),
             subscriptionLink: document.getElementById('subscription-link'),
             
-            // 状态指示器
-            cdnStatus: document.getElementById('cdn-status'),
-            connectionStatus: document.getElementById('connection-status'),
-            
             // 模态框
             modalContainer: document.getElementById('modal-container'),
             modalTitle: document.getElementById('modal-title'),
@@ -530,13 +557,19 @@
 
         // 工具函数
         const Utils = {
-            // 安全Base64编码
+            // 安全Base64编码 - 根据高手建议修正
             encodeBase64(str) {
                 try {
-                    return btoa(encodeURIComponent(str));
+                    // 修正版本：正确处理Unicode字符，适配Shadowrocket
+                    return btoa(unescape(encodeURIComponent(str)));
                 } catch (e) {
                     console.error('Base64编码失败:', e);
-                    return '';
+                    // 降级方案：使用标准Base64
+                    try {
+                        return btoa(str);
+                    } catch {
+                        return '';
+                    }
                 }
             },
 
@@ -621,6 +654,39 @@
                     console.warn('订阅链接验证失败:', error);
                     return false;
                 }
+            },
+
+            // 节点计数增强 - 根据高手建议改进
+            async countNodes(text) {
+                // 多种格式识别
+                const patterns = [
+                    /- name:/g,                     // Clash格式
+                    /vmess:\/\//g,                  // V2Ray格式
+                    /ss:\/\//g,                     // Shadowsocks格式
+                    /trojan:\/\//g,                 // Trojan格式
+                    /ssr:\/\//g,                    // ShadowsocksR格式
+                    /hy2:\/\//g,                    // Hysteria2格式
+                    /PROTOCOL,[^,\n]+,[^,\n]+/g    // Surge格式
+                ];
+                
+                let total = 0;
+                for (const pattern of patterns) {
+                    const matches = text.match(pattern) || [];
+                    total += matches.length;
+                }
+                
+                // 如果都没有匹配到，尝试按行分割计数
+                if (total === 0) {
+                    const lines = text.split('\n').filter(line => {
+                        return line.trim() && 
+                               !line.startsWith('#') && 
+                               !line.startsWith('//') &&
+                               line.includes('://');
+                    });
+                    total = lines.length;
+                }
+                
+                return total;
             },
 
             // 防抖函数
@@ -786,16 +852,6 @@
                     this.createParticles();
                 }
                 this.animate();
-                
-                // 性能监控：如果帧率过低，减少粒子数量
-                setTimeout(() => {
-                    if (this.particles.length > 10) {
-                        const fps = this.getFPS();
-                        if (fps < 30) {
-                            this.particles = this.particles.slice(0, 10);
-                        }
-                    }
-                }, 5000);
             },
             
             stop() {
@@ -804,18 +860,13 @@
                     cancelAnimationFrame(this.animationId);
                     this.animationId = null;
                 }
-            },
-            
-            getFPS() {
-                // 简化的FPS计算
-                return 60; // 实际应该实现帧率计算
             }
         };
 
         // 主功能
         const App = {
             async init() {
-                console.log('应用初始化...');
+                console.log('魔法补给站初始化...');
                 
                 // 初始化各个模块
                 Modal.init();
@@ -839,7 +890,7 @@
                 // 智能设备识别
                 this.autoHighlight();
                 
-                console.log('应用初始化完成');
+                console.log('魔法补给站初始化完成');
             },
             
             setupEventListeners() {
@@ -849,17 +900,6 @@
                 Elements.btnBackup.addEventListener('click', () => this.importClash('convert'));
                 Elements.copyBtn.addEventListener('click', () => this.copySubscriptionLink());
                 Elements.copyLinkAgain.addEventListener('click', () => this.copySubscriptionLink());
-                
-                // 隐私政策和服务条款
-                document.getElementById('privacy-link').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    this.showPrivacyPolicy();
-                });
-                
-                document.getElementById('tos-link').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    this.showTermsOfService();
-                });
                 
                 // 键盘快捷键
                 document.addEventListener('keydown', (e) => {
@@ -879,7 +919,6 @@
             setupNetworkListener() {
                 window.addEventListener('online', () => {
                     State.isOnline = true;
-                    Elements.connectionStatus.textContent = '加密连接已恢复';
                     Utils.showMessage('网络连接已恢复', 'success');
                     
                     // 重新获取信息
@@ -888,7 +927,6 @@
                 
                 window.addEventListener('offline', () => {
                     State.isOnline = false;
-                    Elements.connectionStatus.textContent = '网络连接已断开';
                     Utils.showMessage('网络连接已断开', 'warning');
                 });
             },
@@ -946,7 +984,7 @@
                     if (!response.ok) throw new Error('获取订阅失败');
                     
                     const text = await response.text();
-                    const count = (text.match(/- name:/g) || []).length;
+                    const count = await Utils.countNodes(text);
                     
                     State.updateNodeCount(count);
                     this.updateNodeCountDisplay(count);
@@ -994,12 +1032,7 @@
             async validateSubscription() {
                 const isValid = await Utils.validateSubscription(State.subscriptionUrl);
                 
-                if (isValid) {
-                    Elements.serverStatus.querySelector('span').textContent = '服务器正常';
-                    Elements.serverStatus.querySelector('.status-dot').className = 'status-dot status-online';
-                } else {
-                    Elements.serverStatus.querySelector('span').textContent = '服务器异常';
-                    Elements.serverStatus.querySelector('.status-dot').className = 'status-dot status-warning';
+                if (!isValid) {
                     Utils.showMessage('订阅链接验证异常，请稍后重试', 'warning');
                 }
             },
@@ -1024,10 +1057,8 @@
                 
                 if (/iphone|ipad|ipod/.test(ua)) {
                     Elements.btnIos.classList.add('recommend-active');
-                    Elements.btnIos.setAttribute('aria-label', '一键导入小火箭（推荐给当前设备）');
                 } else if (/android/.test(ua)) {
                     Elements.btnAndroid.classList.add('recommend-active');
-                    Elements.btnAndroid.setAttribute('aria-label', '一键导入Clash（推荐给当前设备）');
                 }
             },
             
@@ -1196,31 +1227,6 @@
                         }
                     );
                 }
-            },
-            
-            showPrivacyPolicy() {
-                Modal.show(
-                    '隐私政策',
-                    '我们高度重视您的隐私安全：\n\n' +
-                    '1. 我们不会收集或存储您的任何个人信息\n' +
-                    '2. 订阅链接通过加密CDN传输\n' +
-                    '3. 页面运行在本地，不会上传任何数据\n' +
-                    '4. 使用第三方服务时请注意其隐私政策\n\n' +
-                    '如有问题，请联系我们。'
-                );
-            },
-            
-            showTermsOfService() {
-                Modal.show(
-                    '服务条款',
-                    '使用本服务前请知悉：\n\n' +
-                    '1. 本服务仅提供技术支持，不提供实质内容\n' +
-                    '2. 请遵守当地法律法规使用本服务\n' +
-                    '3. 我们不对第三方服务内容负责\n' +
-                    '4. 服务可能因不可抗力因素中断\n' +
-                    '5. 保留随时修改服务条款的权利\n\n' +
-                    '继续使用即表示您同意以上条款。'
-                );
             }
         };
 
@@ -1264,13 +1270,6 @@
         window.addEventListener('beforeunload', () => {
             SakuraAnimation.stop();
         });
-
-        // Service Worker 注册（如果支持）
-        if ('serviceWorker' in navigator && location.protocol === 'https:') {
-            navigator.serviceWorker.register('/sw.js').catch(err => {
-                console.log('Service Worker 注册失败:', err);
-            });
-        }
     </script>
 </body>
 </html>
