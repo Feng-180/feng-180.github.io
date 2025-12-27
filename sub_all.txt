@@ -1,371 +1,203 @@
-url: https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/gfw.txt
-- localhost.*.qq.com
-- time.*.apple.com
-- RULE-SET,icloud,DIRECT
-- 🇨🇦_CA_加拿大
-fake-ip-range: 198.18.0.1/16
-client-fingerprint: qq
-url: https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/google.txt
-- 8080-8800
-- 🇺🇸_US_美国_1
-path: ./ruleset/icloud.yaml
-cipher: chacha20-ietf
-- resolver1.opendns.com
-- mdn.open.wo.cn
-- +.ntp.org.cn
-- 🇫🇷_FR_法国_2
-- auth.wosms.cn
-url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Ruleset/SteamCN.list
-tld-not-cn:
-- RULE-SET,ChinaDomain,🎯 全球直连
-- 🇧🇬_BG_保加利亚
-path: ./rules/providers/ProxyLite.list
-LocalAreaNetwork:
-uuid: 55975415-43c0-461c-8752-d5b8013364e3
-- type: vless
-server: 217.60.249.112
-enable: true
-- "*.example"
-- 114.114.114.114
-- +.cmbchina.com.cn
-path: ./ruleset/reject.yaml
-password: asd123456
-path: ./ruleset/direct.yaml
-skip-cert-verify: true
-- type: trojan
-- 180.76.76.76
-- network-test.debian.org
-- name: ♻️ 自动选择
-port: 26691
-name: 🇷🇺_RU_俄罗斯
-- RULE-SET,proxy,PROXY
-- 🇷🇺_RU_俄罗斯
-url: https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/tld-not-cn.txt
-- RULE-SET,reject,REJECT
-nameserver:
-server: 194.246.114.101
-mmdb: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/country.mmdb
-url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/GoogleCN.list
-password: k1dBOmOB4oqi7Ump37a1bQ
-- name: 🛑 全球拦截
-- global.stun.twilio.com
-name: 【机场推荐：https://a0a.xyz/】17
-ProxyMedia:
-path: ./ruleset/private.yaml
-url: https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/applications.txt
-- https://208.67.222.222/dns-query
-- name: FINAL
-- +.googleapis.com
-short-id: 9c8d68d581a08ea5
-applications:
-prefer-h3: true
-password: 0eC4ZBvStOgQEzTpCYjWN5
-- https://doh.pub/dns-query
-- 🇺🇸 US_188
-www.baidu.com: 114.114.114.114
-url: https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/apple.txt
-name: 🇺🇸_US_美国_4
-path: ./ruleset/gfw.yaml
-- global.turn.twilio.com
-url: "https://anaer.github.io/Sub/proxies.yaml"
-url: http://www.gstatic.com/generate_204
-- "*.home.arpa"
-- "*.localdomain"
-uuid: b8155ce4-7e08-4c40-800f-8671312b7124
-server: 62.210.196.68
-- localhost.ptlogin2.qq.com
-cipher: chacha20-ietf-poly1305
-# ;增强国外GFW：不支持
-fallback-filter:
-url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/LocalAreaNetwork.list
-- name: 🚀 节点选择
-type: load-balance
-uuid: 39e5cc2f-1294-4a42-bb58-306a8be785e1
-- RULE-SET,apple,DIRECT
-servername: speedtest.net
-path: ./proxies/SUB00.yaml
-path: ./ruleset/cncidr.yaml
-override-destination: true
-server: 219.79.214.159
-- name: 🎯 全球直连
-- name: LOAD-BALANCE
-mixed-port: 7890
-asn: https://mirror.ghproxy.com/https://github.com/xishang0128/geoip/releases/download/latest/GeoLite2-ASN.mmdb
-- +.googleapis.cn
-- RULE-SET,direct,DIRECT
-- 119.29.29.29
-- RULE-SET,google,PROXY
-sni: apple.com
-allow-lan: false
-- opencloud.wostore.cn
-name: 🇬🇧 英国 - Slough - DigitalOcean, LLC - 1
-password: uo7EbtqIwgZXXHmMv5LbLcOxptyPlNkh
-servername: v36.hdacd.com
-name: 🇮🇷_IR_伊朗
-skip-domain:
-url: https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/icloud.txt
-- +.google.cn
-geoip: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geoip.dat
-servername: www.microsoft.com
-global-client-fingerprint: chrome
-find-process-mode: strict
-geo-auto-update: true
-- localhost.sec.qq.com
-uuid: fe21e399-ec6f-4cb5-8441-e911178665b1
-grpc-service-name: ecb7f0f50489f81cd1983a56
-behavior: ipcidr
-public-key: vMBfs89AZ02R1ggA45SqOFLfe6rJQ0_mLBpsV97k3zA
-log-level: info
-- https://1.0.0.2/dns-query
-- https://dns.alidns.com/dns-query
-- 223.5.5.5
-- GEOIP,CN,DIRECT
-path: ./rules/providers/ProxyMedia.list
-cipher: aes-128-gcm
-uuid: 2c487d9d-25a1-4b79-aed1-086b8c3082ca
-network: tcp
-url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/Telegram.list
-path: ./ruleset/telegramcidr.yaml
-- +.xboxlive.com
-behavior: classical
-nameserver-policy:
-dns-hijack:
-servername: st.ozone.ru
-proxy-providers:
-- +.msftconnecttest.com
-+.internal.crop.com: 10.0.0.1
-public-key: 8W9r2aXGhKNtvPxnL6EiPpQuSm9OJT17x2xyxwxIo30
-public-key: VsmNi1ZMXVOwhCWpbCp51w-D_DzrxWX4jgfpcU0S9G4
-- 🇷🇺_RU_俄罗斯_1
-- name: PROXY
-path: ./rules/providers/BanProgramAD.list
-password: HaNqw9pIE4jcx98sg7UQgHeGNTM4R2pk
-- https://9.9.9.9/dns-query
-- RULE-SET,GoogleCN,🎯 全球直连
-encryption: none
-- xbox.*.microsoft.com
-client-fingerprint: firefox
-enable: false
-server: 178.23.190.238
-# ;增强中国IP段：不支持
-short-id: 84f70f1177981563
-- RULE-SET,lancidr,DIRECT
-auto-route: true
-short-id: 65c7748be8
-password: f8f7aCzcPKbsF8p3
-name: 🇵🇱_PL_波兰
-- time.*.edu.cn
-path: ./rules/providers/BanAD.list
-url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ChinaDomain.list
-url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/BanProgramAD.list
-server: v35.hdacd.com
-- type: hysteria
-path: ./rules/providers/Telegram.list
-down: 55 Mbps
-network: grpc
-- 🇲🇩_MD_摩尔多瓦
-- RULE-SET,cncidr,DIRECT
-public-key: r5WB5FnSCt4eeBC1FJMfkWHbzsMuabo0Rc6wuAhlZUs
-url: https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/proxy.txt
-fake-ip-filter:
-name: 🇲🇩_MD_摩尔多瓦
-path: ./rules/providers/LocalAreaNetwork.list
-name: 🇺🇸 US_188
-- cable.auth.com
-uuid: 0a21d713-6e6f-4274-8b84-464019325513
-name: 🇳🇱_NL_荷兰
-stack: system
-short-id: 55e6af1a35e64a98
-include-all-providers: true
-- LOAD-BALANCE
-external-controller: 0.0.0.0:9090
-- ntp.*.com
-server: 216.238.87.47
-path: ./ruleset/applications.yaml
-servername: cloudcircus.jp
-server: 185.47.255.22
-- 🇺🇸_US_美国_2
-url: https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/reject.txt
-- MATCH,🐟 漏网之鱼
-auth-str: dongtaiwang.com
-- 🇺🇸_US_美国_4
-- +.pingan.com.cn
-- RULE-SET,SteamCN,🎯 全球直连
-- router.asus.com
-rule-providers:
-path: ./rules/providers/SteamCN.list
-- +.blzstatic.cn
-url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyMedia.list
-flow: xtls-rprx-vision
-www.baidu.com,+.google.cn: https://doh.pub/dns-query
-server: 173.244.56.6
-- 【机场推荐：https://a0a.xyz/】17
-# ;微软分流：不支持
-path: ./ruleset/lancidr.yaml
-server: 178.239.124.30
-port: 50011
-uuid: fd4b0117-d752-46fd-9a94-21a21e360fdb
-uuid: d13fc2f5-3e05-4795-81eb-44143a09e552
-stack: mixed
-- name: FALLBACK
-port: 24170
-server: 62.60.148.21
-- RULE-SET,Telegram,🚀 节点选择
-short-id: 2fb2106a629b
-server: 178.154.205.131
-uuid: 0e8a6896-ad90-4a3b-89a3-77d64aa409e2
-ChinaCompanyIp:
-- +.twitter.com
-store-selected: true
-server: 62.210.10.186
-- +.stun.playstation.net
 allow-lan: true
-spider-x: /
-servername: v35.hdacd.com
-- "*.localhost"
-# ;不要随意改变关键字，否则会导致出错
-servername: sun6-21.userapi.com
-- 240.0.0.0/4
-interval: 3600
-path: ./ruleset/tld-not-cn.yaml
-name: 🇷🇺_RU_俄罗斯_1
-- RULE-SET,ChinaCompanyIp,🎯 全球直连
-- name: SELECT
-port: 30836
-ipv6: false
-- +.github.com
-- https://1.1.1.2/dns-query
-name: 🇨🇦_CA_加拿大
-name: 🇨🇳_CN_中国_1
-- GEOIP,LAN,DIRECT
-name: 🇨🇳_CN_中国_2
-sni: t.me/ripaojiedian
-geoip: true
-- +.logon.battle.net
-server: 45.87.175.174
-- time?.*.com
-listen: 0.0.0.0:53
-- RULE-SET,gfw,PROXY
-public-key: W9BjX6YmCIVsjhKMlz233Yoe0xcf0SVHfvPKqbf3vCg
-network: none
-path: ./rules/providers/ChinaDomain.list
-- +.cmbchina.com
-up: 11 Mbps
-geosite: https://fastly.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geosite.dat
-interval: 300
-geo-update-interval: 3
-name: 🇺🇸_US_美国_2
-- 🇫🇷_FR_法国_1
-ChinaDomain:
-url: https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/direct.txt
-# ;苹果分流：不支持
-public-key: BkAG_uWeUj7BCHqYjrz1JyH0TMvO_KywubV7WJN17ho
-server: 167.17.70.16
-- RULE-SET,ProxyLite,🚀 节点选择
-- RULE-SET,tld-not-cn,PROXY
-# ;acl4SSR规则
-default-nameserver:
-name: 🇺🇸_US_美国
-rule-set:google: 8.8.8.8
-- RULE-SET,telegramcidr,PROXY
-servername: i2pd.website
-geosite:private,apple: https://dns.alidns.com/dns-query
-- +.pool.ntp.org
-url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/BanAD.list
-- RULE-SET,ProxyMedia,🚀 节点选择
-- https://208.67.220.220/dns-query
-- +.srv.nintendo.net
-server: 82.198.246.97
-port: 30835
-server: 51.250.10.228
-- time.*.gov
-public-key: YVDo7U4O-AT2fa5H9E7hyYHKgfZd1vB6UdbAf2ggWQE
-- 🇬🇧 英国 - Slough - DigitalOcean, LLC - 1
-uuid: cbb3f877-d1fb-344c-87a9-d153bffd5484
-- "*.local"
-port: 27502
-type: fallback
-cipher: auto
-- type: vmess
-server: 208.69.78.5
-path: ./ruleset/google.yaml
-enhanced-mode: fake-ip
-cipher: aes-256-cfb
-type: url-test
-- name: 🐟 漏网之鱼
-- open.e.189.cn
-name: 🇬🇧_GB_英国
-reality-opts:
-# ;ruleset=🎯 全球直连,[]GEOIP,LAN
-name: 🇫🇷_FR_法国_2
-- RULE-SET,LocalAreaNetwork,🎯 全球直连
-proxy-groups:
-type: select
-- 🇨🇳_CN_中国_1
-- +.youtube.com
-name: 🇧🇬_BG_保加利亚
-server: 185.136.132.171
-tcp-concurrent: false
-- +.apple.com
-servername: ads.x5.ru
-- "*.invalid"
-auto-detect-interface: true
-path: ./ruleset/apple.yaml
-url: https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/lancidr.txt
-- +.logon.battlenet.com.cn
-server: 185.153.197.5
-port: 56482
-url: https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/telegramcidr.txt
-parse-pure-ip: true
-- +.google.com
-- +.cmpassport.com
-password: BxceQaOe
-url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ChinaCompanyIp.list
-client-fingerprint: chrome
-- ntp?.*.com
-short-id: ee6f3e8f44b1f0b6
-- RULE-SET,private,DIRECT
-name: 🇫🇷_FR_法国
-geoip-code: CN
-- 0.0.0.0/32
-- +.msftncsi.com
-password: shadowsocks
-port: 35511
-path: ./rules/providers/ChinaCompanyIp.list
-- RULE-SET,BanAD,🛑 全球拦截
-server: 103.149.183.80
-url: https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/cncidr.txt
-- pool.ntp.org
-url: https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/private.txt
-- detectportal.firefox.com
-path: ./ruleset/proxy.yaml
-- +.facebook.com
-server: ilta-wzxrxkdhbjpnprhkkpplsjwawhssvollvxzdhqshiqckwdgrdm.orbnet.xyz
-name: 🇫🇷_FR_法国_1
-- 🇨🇳_CN_中国_2
-- +.icitymobile.mobi
-strategy: consistent-hashing
-- time.*.com
-short-id: 672ff0
-name: 🇫🇷 法国 09
-name: 🇨🇳_CN_中国
-- RULE-SET,BanProgramAD,🛑 全球拦截
-server: v36.hdacd.com
-telegramcidr:
-store-fake-ip: true
-url: https://cp.cloudflare.com/generate_204
-geodata-mode: true
-url: https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/master/Clash/ProxyLite.list
-behavior: domain
-- MATCH,FINAL
-BanProgramAD:
-- GEOIP,CN,🎯 全球直连
-name: 🇩🇪_DE_德国
-- RULE-SET,applications,DIRECT
-- +.jegotrip.com.cn
-- Mijia Cloud
-interval: 86400
-protocol: udp
-name: 🇺🇸_US_美国_1
-path: ./rules/providers/GoogleCN.list
-- dlg.io.mi.com
+external-controller: 127.0.0.1:9090
+log-level: info
+mode: rule
+port: 7890
+proxies:
+- alpn:
+  - h3
+  auth-str: dongtaiwang.com
+  down: 55 Mbps
+  name: 🇫🇷_FR_法国
+  port: 26691
+  protocol: udp
+  server: 62.210.196.68
+  skip-cert-verify: true
+  sni: apple.com
+  type: hysteria
+  up: 11 Mbps
+- alpn:
+  - h3
+  auth-str: dongtaiwang.com
+  down: '55'
+  name: 🇫🇷_FR_法国_1
+  port: 35511
+  protocol: udp
+  server: 62.210.10.186
+  skip-cert-verify: true
+  sni: apple.com
+  type: hysteria
+  up: '11'
+- alpn:
+  - h3
+  auth-str: dongtaiwang.com
+  down: 55 Mbps
+  name: 🇫🇷_FR_法国_2
+  port: 50011
+  protocol: udp
+  server: 62.210.10.186
+  skip-cert-verify: true
+  sni: apple.com
+  type: hysteria
+  up: 11 Mbps
+- client-fingerprint: qq
+  encryption: none
+  flow: xtls-rprx-vision
+  name: 🇬🇧_GB_英国
+  network: tcp
+  port: 443
+  reality-opts:
+    public-key: r5WB5FnSCt4eeBC1FJMfkWHbzsMuabo0Rc6wuAhlZUs
+    short-id: 65c7748be8
+  server: 51.250.10.228
+  servername: sun6-21.userapi.com
+  tls: true
+  type: vless
+  uuid: fd4b0117-d752-46fd-9a94-21a21e360fdb
+- client-fingerprint: chrome
+  encryption: none
+  flow: xtls-rprx-vision
+  name: 🇷🇺_RU_俄罗斯
+  network: tcp
+  port: 443
+  reality-opts:
+    public-key: r5WB5FnSCt4eeBC1FJMfkWHbzsMuabo0Rc6wuAhlZUs
+    short-id: 672ff0
+  server: 178.154.205.131
+  servername: ads.x5.ru
+  tls: true
+  type: vless
+  uuid: fd4b0117-d752-46fd-9a94-21a21e360fdb
+- client-fingerprint: chrome
+  encryption: none
+  flow: xtls-rprx-vision
+  name: 🇺🇸_US_美国
+  network: tcp
+  port: 443
+  reality-opts:
+    public-key: YVDo7U4O-AT2fa5H9E7hyYHKgfZd1vB6UdbAf2ggWQE
+    short-id: 55e6af1a35e64a98
+  server: ilta-wzxrxkdhbjpnprhkkpplsjwawhssvollvxzdhqshiqckwdgrdm.orbnet.xyz
+  servername: i2pd.website
+  tls: true
+  type: vless
+  uuid: 0e8a6896-ad90-4a3b-89a3-77d64aa409e2
+- cipher: chacha20-ietf-poly1305
+  name: 🇩🇪_DE_德国
+  password: k1dBOmOB4oqi7Ump37a1bQ
+  port: 8080
+  server: 45.87.175.174
+  type: ss
+- client-fingerprint: chrome
+  encryption: none
+  name: 🇵🇱_PL_波兰
+  network: tcp
+  port: 24170
+  reality-opts:
+    public-key: VsmNi1ZMXVOwhCWpbCp51w-D_DzrxWX4jgfpcU0S9G4
+    short-id: 2fb2106a629b
+    spider-x: /
+  server: 185.136.132.171
+  servername: speedtest.net
+  tls: true
+  type: vless
+  uuid: fe21e399-ec6f-4cb5-8441-e911178665b1
+- alterId: 2
+  cipher: auto
+  name: 🇫🇷 法国 09
+  network: tcp
+  port: 30835
+  server: v35.hdacd.com
+  servername: v35.hdacd.com
+  type: vmess
+  uuid: cbb3f877-d1fb-344c-87a9-d153bffd5484
+- alterId: 0
+  cipher: auto
+  name: 【机场推荐：https://a0a.xyz/】17
+  network: tcp
+  port: 180
+  server: 82.198.246.97
+  type: vmess
+  uuid: d13fc2f5-3e05-4795-81eb-44143a09e552
+- cipher: chacha20-ietf-poly1305
+  name: 🇳🇱_NL_荷兰
+  password: uo7EbtqIwgZXXHmMv5LbLcOxptyPlNkh
+  port: 443
+  server: 178.23.190.238
+  type: ss
+- cipher: aes-128-gcm
+  name: 🇺🇸_US_美国_1
+  password: shadowsocks
+  port: 443
+  server: 173.244.56.6
+  type: ss
+- name: 🇨🇳_CN_中国
+  network: tcp
+  password: BxceQaOe
+  port: 443
+  server: 219.79.214.159
+  skip-cert-verify: true
+  sni: t.me/ripaojiedian
+  type: trojan
+- client-fingerprint: chrome
+  encryption: none
+  flow: xtls-rprx-vision
+  name: 🇨🇳_CN_中国_1
+  network: tcp
+  port: 443
+  reality-opts:
+    public-key: BkAG_uWeUj7BCHqYjrz1JyH0TMvO_KywubV7WJN17ho
+    short-id: ee6f3e8f44b1f0b6
+  server: 62.60.148.21
+  servername: st.ozone.ru
+  tls: true
+  type: vless
+  uuid: 39e5cc2f-1294-4a42-bb58-306a8be785e1
+- client-fingerprint: chrome
+  encryption: none
+  flow: xtls-rprx-vision
+  name: 🇨🇦_CA_加拿大
+  network: tcp
+  port: 8443
+  reality-opts:
+    public-key: 8W9r2aXGhKNtvPxnL6EiPpQuSm9OJT17x2xyxwxIo30
+    short-id: 84f70f1177981563
+  server: 167.17.70.16
+  servername: www.microsoft.com
+  tls: true
+  type: vless
+  uuid: 55975415-43c0-461c-8752-d5b8013364e3
+- client-fingerprint: chrome
+  encryption: none
+  grpc-opts:
+    grpc-service-name: ecb7f0f50489f81cd1983a56
+  name: 🇺🇸_US_美国_2
+  network: grpc
+  port: 443
+  reality-opts:
+    public-key: vMBfs89AZ02R1ggA45SqOFLfe6rJQ0_mLBpsV97k3zA
+    short-id: 9c8d68d581a08ea5
+  server: 208.69.78.5
+  servername: www.microsoft.com
+  tls: true
+  type: vless
+  uuid: 0a21d713-6e6f-4274-8b84-464019325513
+- client-fingerprint: firefox
+  flow: xtls-rprx-vision
+  name: 🇧🇬_BG_保加利亚
+  network: tcp
+  port: 56482
+  reality-opts:
+    public-key: W9BjX6YmCIVsjhKMlz233Yoe0xcf0SVHfvPKqbf3vCg
+  server: 178.239.124.30
+  servername: cloudcircus.jp
+  tls: true
+  type: vless
+  uuid: 2c487d9d-25a1-4b79-aed1-086b8c3082ca
+- cipher: chacha20-ietf-poly1305
+  name: 🇷🇺_RU_俄罗斯_1
+  password: HaNqw9pIE4jcx98sg7UQgHeGNTM4R2pk
+  port: 443
+  server: 194.246.114.101
+  type: ss
+socks-port: 7891
