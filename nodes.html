@@ -53,65 +53,64 @@
 
     <script>
         // 1. 改用镜像加速地址，解决国内直连报错 EOF 的问题
-        const subUrl = "https://raw.gitmirror.com/feng-180/feng-180.github.io/main/sub_all.txt";
+const subUrl = "https://raw.gitmirror.com/feng-180/feng-180.github.io/main/sub_all.txt";
 
-        // 2. 小火箭导入逻辑
-        function importShadowrocket() {
-            window.location.href = "shadowrocket://add/sub://" + btoa(subUrl);
-            alertTips();
-        }
-
-        // 3. Clash 导入逻辑：换用 v1.mk 后端 + 移除重复编码
-        // --- 3. Clash 导入逻辑：换用 v1.mk 后端进行格式转换 ---
-function importClash() {
-    // 放弃远程转换，改用通用的纯订阅模式，由 Clash 软件自行解析
-    const finalUrl = subUrl; 
-    window.location.href = "clash://install-config?url=" + encodeURIComponent(finalUrl);
+// 2. 小火箭导入逻辑
+function importShadowrocket() {
+    window.location.href = "shadowrocket://add/sub://" + btoa(subUrl);
     alertTips();
 }
 
-        function copyLink() {
-            navigator.clipboard.writeText(subUrl).then(() => {
-                const btn = document.getElementById('copyBtn');
-                btn.innerText = "✅ 复制成功";
-                setTimeout(() => { btn.innerText = "📋 仅复制订阅链接"; }, 2000);
-            });
-        }
+// 3. Clash 导入逻辑：用subconverter转换通用订阅为YAML
+function importClash() {
+    // 用免费转换API（v1.mk或类似），自动转为Clash YAML
+    const converterUrl = "https://api.v1.mk/v1/sub?target=clash&url=" + encodeURIComponent(subUrl) + "&insert=false&config=https%3A%2F%2Fraw.githubusercontent.com%2FACL4SSR%2FACL4SSR%2Fmaster%2Fclash%2Fconfig%2FACL4SSR_Online.ini";
+    window.location.href = "clash://install-config?url=" + encodeURIComponent(converterUrl);
+    alertTips();
+}
 
-        function alertTips() {
-            setTimeout(() => {
-                alert('🌸 尝试唤起魔法软件中...\n如果没反应，请确保手机已安装对应软件。');
-            }, 1500);
-        }
+function copyLink() {
+    navigator.clipboard.writeText(subUrl).then(() => {
+        const btn = document.getElementById('copyBtn');
+        btn.innerText = "✅ 复制成功";
+        setTimeout(() => { btn.innerText = "📋 仅复制订阅链接(自动导入失败请点此)"; }, 2000);
+    });
+}
 
-        // 樱花绘制
-        const canvas = document.getElementById('sakura-canvas');
-        const ctx = canvas.getContext('2d');
-        let sakuraArray = [];
-        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-        class Sakura {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height - canvas.height;
-                this.size = Math.random() * 7 + 3;
-                this.speedX = Math.random() * 1.5 - 0.5;
-                this.speedY = Math.random() * 1 + 1;
-                this.angle = Math.random() * 360;
-                this.spin = Math.random() * 2 - 1;
-            }
-            draw() {
-                ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.angle * Math.PI / 180);
-                ctx.fillStyle = '#ffb7c5'; ctx.beginPath();
-                ctx.ellipse(0, 0, this.size, this.size/2, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
-            }
-            update() {
-                this.x += this.speedX; this.y += this.speedY; this.angle += this.spin;
-                if (this.y > canvas.height) { this.y = -20; this.x = Math.random() * canvas.width; }
-            }
-        }
-        function init() { resize(); for (let i = 0; i < 20; i++) sakuraArray.push(new Sakura()); }
-        function animate() { ctx.clearRect(0, 0, canvas.width, canvas.height); sakuraArray.forEach(s => { s.update(); s.draw(); }); requestAnimationFrame(animate); }
-        window.addEventListener('resize', resize); init(); animate();
+function alertTips() {
+    setTimeout(() => {
+        alert('🌸 尝试唤起魔法软件中... \n如果没反应，请确保手机已安装对应软件。');
+    }, 1500);
+}
+
+// 樱花绘制（不变）
+const canvas = document.getElementById('sakura-canvas');
+const ctx = canvas.getContext('2d');
+let sakuraArray = [];
+function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+class Sakura {
+    constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height - canvas.height;
+        this.size = Math.random() * 7 + 3;
+        this.speedX = Math.random() * 1.5 - 0.5;
+        this.speedY = Math.random() * 1 + 1;
+        this.angle = Math.random() * 360;
+        this.spin = Math.random() * 2 - 1;
+    }
+    draw() {
+        ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.angle * Math.PI / 180);
+        ctx.fillStyle = '#ffb7c5'; ctx.beginPath();
+        ctx.ellipse(0, 0, this.size, this.size/2, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+    }
+    update() {
+        this.x += this.speedX; this.y += this.speedY; this.angle += this.spin;
+        if (this.y > canvas.height) { this.y = -20; this.x = Math.random() * canvas.width; }
+    }
+}
+function init() { resize(); for (let i = 0; i < 20; i++) sakuraArray.push(new Sakura()); }
+function animate() { ctx.clearRect(0, 0, canvas.width, canvas.height); sakuraArray.forEach(s => { s.update(); s.draw(); }); requestAnimationFrame(animate); }
+window.addEventListener('resize', resize); init(); animate();
     </script>
 </body>
 </html>
