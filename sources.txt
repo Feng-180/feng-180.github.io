@@ -1,7 +1,8 @@
-https://www.85la.com/wp-content/uploads/2025/12/75f0b26b286651a-3.txt
-https://www.85la.com/wp-content/uploads/2025/12/95f85cf6467e528.txt
-https://www.85la.com/wp-content/uploads/2025/12/c21f969b5f03d33-9.yaml
+https://drive.google.com/file/d/1dsH3Ud1PTsAtGUnGWbRpvGYKWRyjfsZj/view?usp=drive_link
 https://raw.githubusercontent.com/Pawdroid/Free-servers/main/sub
 https://raw.githubusercontent.com/anaer/Sub/main/clash.yaml
-https://raw.githubusercontent.com/free18/v2ray/main/v.txt
-https://raw.githubusercontent.com/free18/v2ray/main/c.yaml
+https://raw.githubusercontent.com/mfuu/v2ray/master/clash.yaml
+https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml
+https://cdn.jsdelivr.net/gh/vxiaov/free_proxies@main/clash/clash.provider.yaml
+https://freenode.openrunner.net/uploads/20240617-clash.yaml
+https://tt.vg/freeclash
