@@ -92,6 +92,27 @@
                 text.innerText = "播放旋律 ♫";
             }
         }
-    </script>
+    </script>// 在原来的 toggleMusic 函数结束大括号后插入
+function superJoinGroup() {
+    const groupNum = "691105381";
+    
+    // 1. 执行复制魔法
+    const copyInput = document.getElementById("groupNumInput");
+    copyInput.select();
+    copyInput.setSelectionRange(0, 99999); 
+    document.execCommand("copy");
+    
+    // 2. 弹出提示
+    const toast = document.getElementById("copyToast");
+    toast.style.display = "block";
+    
+    // 3. 尝试跳转 QQ 协议
+    const qqProtocol = `mqqapi://card/show_pslcard?src_type=internal&version=1&uin=${groupNum}&card_type=group&source=qrcode`;
+    
+    setTimeout(() => {
+        window.location.href = qqProtocol;
+        toast.style.display = "none";
+    }, 800);
+}
 </body>
 </html>
