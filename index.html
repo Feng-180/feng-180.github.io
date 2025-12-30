@@ -48,9 +48,9 @@
                     🚀 点击获取高阶魔法
                 </a>
 
-                <a href="nodes.html" class="block w-full btn-gradient-4 text-white font-bold py-4 rounded-2xl shadow-md">
+                <button onclick="showVerifyModal()" class="block w-full btn-gradient-4 text-white font-bold py-4 rounded-2xl shadow-md">
                     💎 获取今日低阶魔法
-                </a>
+                </button>
             </div>
 
             <div class="mt-8">
@@ -70,7 +70,60 @@
         </div>
     </div>
 
+    <div id="verifyModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+        <div class="glass-card w-full max-w-[280px] p-6 shadow-2xl scale-95 transition-transform duration-300">
+            <h3 class="text-[#ff6b81] text-lg font-bold mb-2">验证身份 ✨</h3>
+            <p class="text-gray-400 text-[12px] mb-4">魔法开启需要今日口令：</p>
+            
+            <input type="text" id="verifyInput" 
+                   class="w-full border-2 border-pink-100 rounded-xl px-4 py-2 text-center focus:outline-none focus:border-[#ffb7c5] transition-colors" 
+                   placeholder="请输入验证码">
+            
+            <p id="errorMsg" class="text-red-400 text-[11px] mt-2 hidden">验证码错误！请加群获取最新码 🍭</p>
+            
+            <div class="flex gap-2 mt-5">
+                <button onclick="checkVerifyCode()" class="flex-1 btn-gradient-4 text-white py-2 rounded-xl font-bold shadow-sm active:scale-95 transition-transform">确定</button>
+                <button onclick="closeVerifyModal()" class="flex-1 bg-gray-50 text-gray-400 py-2 rounded-xl font-bold active:scale-95 transition-transform">返回</button>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // 验证弹窗逻辑
+        const modal = document.getElementById('verifyModal');
+        const input = document.getElementById('verifyInput');
+        const errorMsg = document.getElementById('errorMsg');
+
+        function showVerifyModal() {
+            modal.classList.remove('hidden');
+            input.focus();
+        }
+
+        function closeVerifyModal() {
+            modal.classList.add('hidden');
+            errorMsg.classList.add('hidden');
+            input.classList.remove('border-red-300');
+            input.value = '';
+        }
+
+        function checkVerifyCode() {
+            const correctCode = "2025"; // 这里修改你的真实验证码
+            if (input.value.trim() === correctCode) {
+                window.location.href = "nodes.html";
+            } else {
+                // 错误提示方案
+                errorMsg.classList.remove('hidden');
+                input.classList.add('border-red-300'); // 输入框边框变红
+                input.value = '';
+                input.focus();
+            }
+        }
+
+        // 点击遮罩层关闭
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeVerifyModal();
+        });
+
         // 音乐控制逻辑
         const audio = document.getElementById('audio-player');
         const icon = document.getElementById('music-icon');
