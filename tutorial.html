@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap');
-        body { background-color: #fff5f7; font-family: 'ZCOOL KuaiLe', cursive; overflow: hidden; } /* 禁止滚动 */
+        body { background-color: #fff5f7; font-family: 'ZCOOL KuaiLe', cursive; overflow: hidden; }
         .glass-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px); border: 2px solid #ffb7c5; border-radius: 2rem; }
         .step-card { background: white; border-radius: 1.2rem; border: 1px solid #ffecf0; transition: all 0.3s; }
         .music-capsule { background: rgba(255, 255, 255, 0.9); border: 1.5px solid #ffecf0; border-radius: 50px; padding: 4px 12px; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
@@ -16,27 +16,25 @@
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="h-screen flex flex-col items-center justify-center p-3"> <div class="max-w-md w-full h-full flex flex-col">
+<body class="h-screen flex flex-col items-center justify-center p-3"> 
+    <div class="max-w-md w-full h-full flex flex-col">
         <a href="index.html" class="text-[#ff6b81] mb-2 inline-block font-bold text-sm">← 返回主页</a>
         
         <div class="glass-card p-4 shadow-xl flex-1 flex flex-col justify-between overflow-hidden">
             <header>
                 <h1 class="text-xl text-center text-[#ff6b81] font-bold">📖 科学上网·魔法手册</h1>
-                <p class="text-center text-gray-400 text-[10px] mb-2">更新：2025年12月25日</p>
+                <p class="text-center text-gray-400 text-[10px] mb-2">最后更新：2025年12月25日</p>
             </header>
 
-            <div class="flex flex-col items-center gap-3">
-    <button onclick="superJoinGroup()" class="w-full py-3 bg-pink-100 text-[#ff6b81] rounded-full font-bold active:scale-95 transition-all shadow-sm">
-        立即申请加群
-    </button>
-    <p class="text-[9px] text-gray-400">点击按钮将自动复制群号并尝试跳转</p>
-</div>
-
-<input type="text" id="groupNumInput" value="691105381" style="position: absolute; top: -9999px;">
-
-<div id="copyToast" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.7); color: white; padding: 10px 20px; border-radius: 20px; font-size: 12px; z-index: 9999; backdrop-filter: blur(5px);">
-    ✅ 群号已复制，正在前往QQ...
-</div>
+            <div class="flex-1 flex flex-col gap-3 overflow-y-auto px-1 py-2">
+                <div class="step-card p-3">
+                    <h3 class="text-[#ff6b81] font-bold text-sm mb-2">1. 加入魔法阵地</h3>
+                    <p class="text-gray-500 text-[11px] leading-tight mb-3">点击下方按钮加入官方 QQ 交流群。在群公告或群文件中，你可以获取最新发布的魔法客户端。</p>
+                    <button onclick="superJoinGroup()" class="w-full py-2.5 bg-pink-100 text-[#ff6b81] rounded-xl font-bold active:scale-95 transition-all shadow-sm">
+                        立即申请加群
+                    </button>
+                    <p class="text-[9px] text-gray-400 text-center mt-1.5 opacity-70">点击将自动复制群号并尝试跳转</p>
+                </div>
 
                 <div class="step-card p-3">
                     <h3 class="text-[#ff6b81] font-bold text-sm mb-1">2. 获取魔法链接</h3>
@@ -77,10 +75,18 @@
         </div>
     </div>
 
+    <input type="text" id="groupNumInput" value="691105381" style="position: absolute; top: -9999px;" readonly>
+
+    <div id="copyToast" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.8); color: white; padding: 12px 24px; border-radius: 50px; font-size: 13px; z-index: 10000; backdrop-filter: blur(8px); white-space: nowrap; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+        ✅ 群号已复制，正在前往QQ...
+    </div>
+
     <script>
+        // --- 音乐控制 ---
         const audio = document.getElementById('audio-player');
         const icon = document.getElementById('music-icon');
         const text = document.getElementById('music-text');
+
         function toggleMusic() {
             if (audio.paused) {
                 audio.play();
@@ -92,27 +98,30 @@
                 text.innerText = "播放旋律 ♫";
             }
         }
-    </script>// 在原来的 toggleMusic 函数结束大括号后插入
-function superJoinGroup() {
-    const groupNum = "691105381";
-    
-    // 1. 执行复制魔法
-    const copyInput = document.getElementById("groupNumInput");
-    copyInput.select();
-    copyInput.setSelectionRange(0, 99999); 
-    document.execCommand("copy");
-    
-    // 2. 弹出提示
-    const toast = document.getElementById("copyToast");
-    toast.style.display = "block";
-    
-    // 3. 尝试跳转 QQ 协议
-    const qqProtocol = `mqqapi://card/show_pslcard?src_type=internal&version=1&uin=${groupNum}&card_type=group&source=qrcode`;
-    
-    setTimeout(() => {
-        window.location.href = qqProtocol;
-        toast.style.display = "none";
-    }, 800);
-}
+
+        // --- 双重加群逻辑 ---
+        function superJoinGroup() {
+            const groupNum = "691105381";
+            
+            // 1. 自动复制
+            const copyInput = document.getElementById("groupNumInput");
+            copyInput.select();
+            copyInput.setSelectionRange(0, 99999); 
+            document.execCommand("copy");
+            
+            // 2. 弹出提示
+            const toast = document.getElementById("copyToast");
+            toast.style.display = "block";
+            
+            // 3. 尝试跳转协议
+            const qqProtocol = `mqqapi://card/show_pslcard?src_type=internal&version=1&uin=${groupNum}&card_type=group&source=qrcode`;
+            
+            setTimeout(() => {
+                window.location.href = qqProtocol;
+                // 3秒后自动消失提示框
+                setTimeout(() => { toast.style.display = "none"; }, 2000);
+            }, 500);
+        }
+    </script>
 </body>
 </html>
