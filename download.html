@@ -28,19 +28,19 @@
             </div>
             <div class="overflow-x-auto text-left">
                 <table>
-                    <thead><tr><th>应用名称</th><th>版本</th><th>系统</th><th>下载</th></tr></thead>
+                    <thead><tr><th>应用名称</th><th>版本</th><th>系统</th><th>官方网站</th></tr></thead>
                     <tbody>
-                        <tr><td>Clash for Win</td><td>v0.20.21</td><td>Win</td><td><button onclick="askVerify('https://github.com/Fndroid/clash_for_windows_pkg/releases')" class="btn-mini">前往</button></td></tr>
-                        <tr><td>Clash for Mac</td><td>v0.20.21</td><td>Mac</td><td><button onclick="askVerify('https://github.com/Fndroid/clash_for_windows_pkg/releases')" class="btn-mini">前往</button></td></tr>
-                        <tr><td>v2rayN</td><td>v6.22</td><td>Win</td><td><button onclick="askVerify('https://github.com/2rayN/v2rayN/releases')" class="btn-mini">前往</button></td></tr>
-                        <tr><td>Clash Android</td><td>v2.5.12</td><td>And</td><td><button onclick="askVerify('https://github.com/Kr328/ClashForAndroid/releases')" class="btn-mini">前往</button></td></tr>
-                        <tr><td>v2rayNG</td><td>v1.8.2</td><td>And</td><td><button onclick="askVerify('https://github.com/2rayN/v2rayNG/releases')" class="btn-mini">前往</button></td></tr>
+                        <tr><td>Clash for Win</td><td>v0.20.21</td><td>Win</td><td><button onclick="askVerify('https://clashforwindows.dev/')" class="btn-mini">前往</button></td></tr>
+                        <tr><td>Clash for Mac</td><td>v0.20.21</td><td>Mac</td><td><button onclick="askVerify('https://clashforwindows.dev/')" class="btn-mini">前往</button></td></tr>
+                        <tr><td>v2rayN</td><td>v6.22</td><td>Win</td><td><button onclick="askVerify('https://github.com/2rayN/v2rayN')" class="btn-mini">前往</button></td></tr>
+                        <tr><td>Clash Android</td><td>v2.5.12</td><td>And</td><td><button onclick="askVerify('https://github.com/Kr328/ClashForAndroid')" class="btn-mini">前往</button></td></tr>
+                        <tr><td>v2rayNG</td><td>v1.8.2</td><td>And</td><td><button onclick="askVerify('https://github.com/2rayN/v2rayNG')" class="btn-mini">前往</button></td></tr>
                         <tr><td>Shadowrocket</td><td>v2.2.28</td><td>iOS</td><td><button onclick="askVerify('https://apps.apple.com/app/shadowrocket/id932747118')" class="btn-mini">前往</button></td></tr>
                         <tr><td>Quantumult X</td><td>v1.3.0</td><td>iOS</td><td><button onclick="askVerify('https://apps.apple.com/app/quantumult-x/id1443988620')" class="btn-mini">前往</button></td></tr>
                     </tbody>
                 </table>
             </div>
-            <p class="mt-6 text-[11px] text-gray-400 italic text-center">提示：下载魔法工具需要口令验证 ✨</p>
+            <p class="mt-6 text-[11px] text-gray-400 italic text-center">提示：访问官网需要口令验证 ✨</p>
         </div>
     </div>
 
@@ -58,7 +58,7 @@
     </div>
 
     <script>
-        /* 👇👇👇 修改点击下载链接时的口令看这里 👇👇👇 */
+        /* 👇👇👇 修改口令看这里 👇👇👇 */
         const DOWNLOAD_CODE = "2026"; 
         /* 👆👆👆 修改上面引号里的数字即可 👆👆👆 */
 
@@ -72,7 +72,6 @@
             if (input.value.trim() === DOWNLOAD_CODE) { window.open(currentTargetUrl, '_blank'); closeModal(); } 
             else { errorMsg.classList.remove('hidden'); input.value = ''; }
         }
-        // 樱花特效逻辑保持一致
         const canvas = document.getElementById('sakura-canvas');
         const ctx = canvas.getContext('2d');
         let sakuraArray = [];
