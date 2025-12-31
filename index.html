@@ -29,17 +29,46 @@
             <div class="w-24 h-24 rounded-full border-4 border-white shadow-lg overflow-hidden bg-[#ffecf0] mx-auto mb-4">
                 <img src="tx.jpg" class="w-full h-full object-cover">
             </div>
+
             <h2 class="text-2xl font-bold text-[#ff6b81] mb-1">欢迎来到风的魔法小屋</h2>
             <p class="text-[#ffb7c5] text-[13px] mb-8 italic">“魔法，为我而存在。”</p>
+            
             <div class="space-y-4">
-                <a href="https://qun.qq.com/..." target="_blank" class="block w-full btn-gradient-1 text-white font-bold py-4 rounded-2xl shadow-md transition-all">💖 一键加入魔法群</a>
-                <a href="tutorial.html" class="block w-full btn-gradient-2 text-white font-bold py-4 rounded-2xl shadow-md">📚 科学上网·魔法手册</a>
-                <a href="pay.html" class="block w-full btn-gradient-3 text-white font-bold py-4 rounded-2xl shadow-md">🚀 点击获取高阶魔法</a>
-                <button onclick="showVerifyModal('download')" class="block w-full btn-gradient-download text-white font-bold py-4 rounded-2xl shadow-md active:scale-95 transition-transform">📥 魔法工具·客户端下载</button>
-                <button onclick="showVerifyModal('nodes')" class="block w-full btn-gradient-4 text-white font-bold py-4 rounded-2xl shadow-md active:scale-95 transition-transform">💎 获取今日低阶魔法</button>
+                <a href="https://qun.qq.com/universal-share/share?ac=1&authKey=guQGnlgLJG99VaGCiKE1MKQQiMLQYaJmDokWOhDmt%2BBWBpmBaUSEfHdfdk5lQg48&busi_data=eyJncm91cENvZGUiOiI2OTExMDUzODEiLCJ0b2tlbiI6ImZBbnprTGlvZURIV2lzYXZvWUpacUtNeTRaMHpWbzMycmhTcExqdUltZHNhc3FkcUZGMTZLb2haSVpTcXdYcTAiLCJ1aW4iOiIyOTAyOTM5NjkyIn0%3D&data=MUTFo3L965hUraLlNAk1JUxl-XpA7NlW55lt2xBntm936Gc-YlHk8Agx2STHouQw7zlXPZGtopJI9xrwujCLmQ&svctype=4&tempid=h5_group_info" target="_blank" class="block w-full btn-gradient-1 text-white font-bold py-4 rounded-2xl shadow-md transition-all active:scale-95">
+                    💖 一键加入魔法群
+                </a>
+
+                <a href="tutorial.html" class="block w-full btn-gradient-2 text-white font-bold py-4 rounded-2xl shadow-md">
+                    📚 科学上网·魔法手册
+                </a>
+
+                <a href="pay.html" class="block w-full btn-gradient-3 text-white font-bold py-4 rounded-2xl shadow-md">
+                    🚀 点击获取高阶魔法
+                </a>
+                
+                <button onclick="showVerifyModal('download')" class="block w-full btn-gradient-download text-white font-bold py-4 rounded-2xl shadow-md active:scale-95 transition-transform">
+                    📥 魔法工具·客户端下载
+                </button>
+
+                <button onclick="showVerifyModal('nodes')" class="block w-full btn-gradient-4 text-white font-bold py-4 rounded-2xl shadow-md active:scale-95 transition-transform">
+                    💎 获取今日低阶魔法
+                </button>
             </div>
-            <div class="mt-8"><div class="music-card shadow-sm" onclick="toggleMusic()"><img src="tx.jpg" id="music-icon" class="rotate-img border border-pink-100"><div class="text-left leading-tight"><p id="music-text" class="text-[11px] text-[#ff6b81] font-bold">点击开启魔法旋律 ♫</p></div></div><audio id="audio-player" src="bgm.mp3" loop></audio></div>
-            <div class="mt-10 border-t border-dashed border-pink-100 pt-6"><img src="https://count.getloli.com/get/@feng-180-magic?theme=moebooru" class="h-28 mx-auto" style="min-width: 280px;"><p class="mt-2 text-[10px] text-gray-400 italic">© 2025 风的魔法小屋 | 纯真永存</p></div>
+
+            <div class="mt-8">
+                <div class="music-card shadow-sm" onclick="toggleMusic()">
+                    <img src="tx.jpg" id="music-icon" class="rotate-img border border-pink-100">
+                    <div class="text-left leading-tight">
+                        <p id="music-text" class="text-[11px] text-[#ff6b81] font-bold">点击开启魔法旋律 ♫</p>
+                    </div>
+                </div>
+                <audio id="audio-player" src="bgm.mp3" loop></audio>
+            </div>
+            
+            <div class="mt-10 border-t border-dashed border-pink-100 pt-6">
+                <img src="https://count.getloli.com/get/@feng-180-magic?theme=moebooru" class="h-28 mx-auto" style="min-width: 280px;">
+                <p class="mt-2 text-[10px] text-gray-400 italic">© 2025 风的魔法小屋 | 纯真永存</p>
+            </div>
         </div>
     </div>
 
@@ -58,32 +87,71 @@
 
     <script>
         /* 👇👇👇 修改主页跳转口令看这里 👇👇👇 */
-        const TODAY_CODE = "feng2026"; 
-        /* 👆👆👆 修改上面引号里的数字即可 👆👆👆 */
+        const TODAY_CODE = "2026"; 
+        /* 👆👆👆 修改完毕 👆👆👆 */
 
         let targetPath = ""; 
         const modal = document.getElementById('verifyModal');
         const input = document.getElementById('verifyInput');
         const errorMsg = document.getElementById('errorMsg');
-        function showVerifyModal(path) { targetPath = path; modal.classList.remove('hidden'); input.focus(); }
-        function closeVerifyModal() { modal.classList.add('hidden'); errorMsg.classList.add('hidden'); input.classList.remove('border-red-300'); input.value = ''; }
-        function checkVerifyCode() {
-            if (input.value.trim() === TODAY_CODE) { window.location.href = targetPath === "download" ? "download.html" : "nodes.html"; } 
-            else { errorMsg.classList.remove('hidden'); input.classList.add('border-red-300'); input.value = ''; input.focus(); }
+
+        function showVerifyModal(path) {
+            targetPath = path; 
+            modal.classList.remove('hidden');
+            input.focus();
         }
+
+        function closeVerifyModal() {
+            modal.classList.add('hidden');
+            errorMsg.classList.add('hidden');
+            input.classList.remove('border-red-300');
+            input.value = '';
+        }
+
+        function checkVerifyCode() {
+            if (input.value.trim() === TODAY_CODE) {
+                window.location.href = targetPath === "download" ? "download.html" : "nodes.html";
+            } else {
+                errorMsg.classList.remove('hidden');
+                input.classList.add('border-red-300');
+                input.value = '';
+                input.focus();
+            }
+        }
+
         modal.addEventListener('click', (e) => { if (e.target === modal) closeVerifyModal(); });
+
         const audio = document.getElementById('audio-player');
         const icon = document.getElementById('music-icon');
         const text = document.getElementById('music-text');
-        function toggleMusic() { if (audio.paused) { audio.play(); icon.classList.add('playing'); text.innerText = "魔法旋律运行中 ✨"; } else { audio.pause(); icon.classList.remove('playing'); text.innerText = "点击开启魔法旋律 ♫"; } }
+        function toggleMusic() {
+            if (audio.paused) { audio.play(); icon.classList.add('playing'); text.innerText = "魔法旋律运行中 ✨"; } 
+            else { audio.pause(); icon.classList.remove('playing'); text.innerText = "点击开启魔法旋律 ♫"; }
+        }
+
         const canvas = document.getElementById('sakura-canvas');
         const ctx = canvas.getContext('2d');
         let sakuraArray = [];
         function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
         class Sakura {
-            constructor() { this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height - canvas.height; this.size = Math.random() * 6 + 2; this.speedX = Math.random() * 1.5 - 0.5; this.speedY = Math.random() * 1 + 0.8; this.angle = Math.random() * 360; this.spin = Math.random() * 2 - 1; }
-            draw() { ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.angle * Math.PI / 180); ctx.fillStyle = '#ffb7c5'; ctx.beginPath(); ctx.ellipse(0, 0, this.size, this.size/2, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore(); }
-            update() { this.x += this.speedX; this.y += this.speedY; this.angle += this.spin; if (this.y > canvas.height) { this.y = -20; this.x = Math.random() * canvas.width; } }
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height - canvas.height;
+                this.size = Math.random() * 6 + 2;
+                this.speedX = Math.random() * 1.5 - 0.5;
+                this.speedY = Math.random() * 1 + 0.8;
+                this.angle = Math.random() * 360;
+                this.spin = Math.random() * 2 - 1;
+            }
+            draw() {
+                ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.angle * Math.PI / 180);
+                ctx.fillStyle = '#ffb7c5'; ctx.beginPath();
+                ctx.ellipse(0, 0, this.size, this.size/2, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+            }
+            update() {
+                this.x += this.speedX; this.y += this.speedY; this.angle += this.spin;
+                if (this.y > canvas.height) { this.y = -20; this.x = Math.random() * canvas.width; }
+            }
         }
         function init() { resize(); for (let i = 0; i < 20; i++) sakuraArray.push(new Sakura()); }
         function animate() { ctx.clearRect(0, 0, canvas.width, canvas.height); sakuraArray.forEach(s => { s.update(); s.draw(); }); requestAnimationFrame(animate); }
