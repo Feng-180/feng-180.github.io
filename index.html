@@ -20,7 +20,7 @@
       background-image: var(--magic-glow);
     }
 
-    #bg-canvas { position: fixed; inset: 0; z-index: 0; opacity: 0.3; }
+    #bg-canvas { position: fixed; inset: 0; z-index: 0; opacity: 0.3; pointer-events: none; }
 
     /* 背景魔法光晕 */
     .glow-overlay {
@@ -29,16 +29,16 @@
       pointer-events: none; z-index: 1;
     }
 
-    /* --- 顶部卡牌区 --- */
+    /* --- 顶部卡牌区 (已优化填满效果) --- */
     .header-core { position: relative; z-index: 2; text-align: center; padding: 50px 20px 0; width: 100%; }
-    .card-container { position: relative; width: 120px; height: 170px; margin: 0 auto; perspective: 1000px; }
+    .card-container { position: relative; width: 140px; height: 200px; margin: 0 auto; perspective: 1000px; }
     .card-seal {
       position: relative; width: 100%; height: 100%;
       border: 1px solid rgba(179, 255, 255, 0.3); border-radius: 4px;
       overflow: hidden; box-shadow: 0 0 40px rgba(0, 242, 255, 0.15);
       animation: cardFloat 5s ease-in-out infinite; background: #000; z-index: 3;
     }
-    .logo-img { width: 100%; height: 100%; object-fit: contain; display: block; filter: contrast(1.1); }
+    .logo-img { width: 100%; height: 100%; object-fit: cover; display: block; filter: contrast(1.1); } /* 使用 cover 填满 */
     
     .magic-circle-bg {
       position: absolute; width: 300px; height: 300px;
@@ -47,7 +47,7 @@
       animation: rotateRing 60s linear infinite; pointer-events: none; z-index: 1;
     }
 
-    /* --- 中文播放器 (控制台风格) --- */
+    /* --- 播放器美化 (已增加音乐标识) --- */
     .music-console {
       margin: 25px 0; position: relative; z-index: 4; cursor: pointer;
       display: inline-flex; align-items: center; gap: 12px;
@@ -55,6 +55,7 @@
       border: 1px solid rgba(179, 255, 255, 0.1);
       clip-path: polygon(8% 0, 100% 0, 92% 100%, 0 100%);
     }
+    .music-icon { font-size: 14px; color: var(--wind-cyan); animation: notePulse 2s infinite; }
     .console-dot { width: 6px; height: 6px; background: #222; border-radius: 50%; transition: 0.4s; }
     .console-dot.active { background: var(--b-blue); box-shadow: 0 0 10px var(--b-blue); animation: pulse 1s infinite; }
     .console-label { font-size: 11px; color: #555; letter-spacing: 4px; font-weight: bold; }
@@ -74,35 +75,21 @@
     h3 { margin: 0; font-size: 16px; color: #eee; letter-spacing: 5px; font-weight: normal; }
     .desc { font-size: 10px; color: #333; margin-top: 6px; letter-spacing: 1px; }
 
-    /* --- 引导语 --- */
-    .warning-protocol { position: relative; z-index: 3; width: 100%; max-width: 380px; padding: 30px 20px 0; }
-    .warning-box { border-top: 1px solid rgba(179, 255, 255, 0.05); padding: 15px; text-align: center; }
-    .warning-text { font-size: 11px; color: #444; letter-spacing: 1px; }
-
-    /* --- 纯代码动态计数器：能量监测仪 --- */
-    .mana-monitor {
-      position: relative; z-index: 2; margin-top: 15px; text-align: center; padding-bottom: 50px;
-    }
+    /* --- 底部数据监测 (纯数字，无小人) --- */
+    .mana-monitor { position: relative; z-index: 2; margin-top: 25px; text-align: center; padding-bottom: 50px; }
     .monitor-display {
-      display: inline-block; padding: 12px 25px;
-      border: 1px solid rgba(179, 255, 255, 0.08);
-      background: rgba(0,0,0,0.6);
-      box-shadow: inset 0 0 15px rgba(0, 242, 255, 0.05);
+      display: inline-block; padding: 10px 25px;
+      border: 1px solid rgba(179, 255, 255, 0.05);
+      background: rgba(0,0,0,0.4);
     }
-    .monitor-head { font-size: 8px; color: #333; letter-spacing: 5px; margin-bottom: 8px; }
-    .digital-readout { 
-      font-family: "Courier New", monospace; 
-      font-size: 18px; 
-      color: var(--b-blue); 
-      text-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
-      letter-spacing: 2px;
-      font-weight: bold;
-    }
-    .mana-unit { font-size: 8px; color: var(--b-blue); margin-left: 8px; opacity: 0.3; }
+    .monitor-head { font-size: 8px; color: #333; letter-spacing: 5px; margin-bottom: 5px; }
+    .digital-readout { font-family: monospace; font-size: 16px; color: var(--b-blue); text-shadow: 0 0 10px rgba(0, 242, 255, 0.4); }
 
+    /* 动画定义 */
     @keyframes cardFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
     @keyframes rotateRing { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
     @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+    @keyframes notePulse { 0%, 100% { opacity: 0.4; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1.1); } }
   </style>
 </head>
 <body>
@@ -116,6 +103,7 @@
     </div>
     
     <div class="music-console" onclick="toggleMusic()">
+      <span class="music-icon">♫</span>
       <div id="status-dot" class="console-dot"></div>
       <span class="console-label" id="music-text">魔法律动：沉静</span>
     </div>
@@ -143,27 +131,18 @@
     </div>
   </main>
 
-  <div class="warning-protocol">
-    <div class="warning-box">
-      <div class="warning-text">永久更新 // 联系QQ 2902939692</div>
-    </div>
-  </div>
-
   <footer class="mana-monitor">
     <div class="monitor-display">
-      <div class="monitor-head">维度观测读数</div>
-      <div class="digital-readout">
-        <span id="counter-val">0000250850</span>
-        <span class="mana-unit">MANA</span>
-      </div>
+      <div class="monitor-head">Dimensional Observations</div>
+      <div class="digital-readout" id="counter-val">0000350859</div>
     </div>
-    <p style="font-size: 8px; color: #111; margin-top: 15px; letter-spacing: 6px;">DATA_ARCHIVE // 2026</p>
+    <p style="font-size: 10px; color: #444; margin-top: 15px; letter-spacing: 2px;">联系QQ 2902939692 // 2026</p>
   </footer>
 
   <div id="verifyModal" style="position: fixed; inset: 0; z-index: 100; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.98);">
     <div style="background: #050508; border: 1px solid rgba(179, 255, 255, 0.1); padding: 40px; width: 280px; text-align: center;">
       <div style="font-size: 11px; color:#555; letter-spacing: 5px; margin-bottom: 25px;">身份权限校验</div>
-      <input type="text" id="verifyInput" style="width: 100%; background: #000; border: 1px solid #222; color: #fff; padding: 12px; margin-bottom: 30px; text-align: center; outline: none;" placeholder="输入通关口令">
+      <input type="text" id="verifyInput" style="width: 100%; background: #000; border: 1px solid #222; color: #fff; padding: 12px; margin-bottom: 30px; text-align: center; outline: none;" placeholder="INPUT_PASSCODE">
       <div style="display:flex; gap:10px;">
         <button onclick="checkVerifyCode()" style="flex:1; background:#eee; color:#000; border:none; padding:12px; cursor:pointer; font-size:11px; font-weight:bold;">验证</button>
         <button onclick="closeVerifyModal()" style="flex:1; background:#111; color:#333; border:none; padding:12px; cursor:pointer; font-size:11px;">取消</button>
@@ -174,18 +153,16 @@
   <script>
     const TODAY_CODE = "666资源风";
     let targetPath = "";
-    
-    // --- 动态数字脚本：绝对没有小人 ---
-    let baseCount = 250850;
-    const counterEl = document.getElementById('counter-val');
-    function updateCounter() {
-      baseCount += Math.floor(Math.random() * 2); // 模拟实时观测波动
-      counterEl.innerText = baseCount.toString().padStart(10, '0');
-    }
-    setInterval(updateCounter, 3000);
-
     const modal = document.getElementById('verifyModal');
     const input = document.getElementById('verifyInput');
+
+    // 动态数字逻辑
+    let count = 350859;
+    setInterval(() => {
+      count += Math.floor(Math.random() * 2);
+      document.getElementById('counter-val').innerText = count.toString().padStart(10, '0');
+    }, 4000);
+
     function showVerifyModal(path) { targetPath = path; modal.style.display = 'flex'; }
     function closeVerifyModal() { modal.style.display = 'none'; input.value=''; }
     function checkVerifyCode() {
@@ -206,17 +183,18 @@
       }
     }
 
+    // 粒子背景逻辑
     const canvas = document.getElementById("bg-canvas"), ctx = canvas.getContext("2d");
     let w, h;
     function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
     resize(); window.onresize = resize;
-    const dots = Array.from({length: 30}, () => ({ x: Math.random()*w, y: Math.random()*h, r: Math.random()*1.1, s: Math.random()*0.12+0.05 }));
+    const dots = Array.from({length: 30}, () => ({ x: Math.random()*w, y: Math.random()*h, r: Math.random()*1, s: Math.random()*0.1+0.05 }));
     function draw() {
-      ctx.fillStyle = "rgba(3, 0, 8, 0.4)"; ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = "rgba(3, 0, 8, 0.2)"; ctx.fillRect(0, 0, w, h);
       dots.forEach(d => {
         d.y -= d.s; if(d.y < 0) d.y = h;
         ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI*2);
-        ctx.fillStyle = "rgba(179, 255, 255, 0.05)"; ctx.fill();
+        ctx.fillStyle = "rgba(179, 255, 255, 0.08)"; ctx.fill();
       });
       requestAnimationFrame(draw);
     }
