@@ -7,180 +7,166 @@
   <style>
     :root {
       --s-red: #ff3c3c; --a-gold: #ffaa00; --b-blue: #00f2ff;
-      --bg: #030008; --panel: rgba(12, 8, 25, 0.96);
       --wind-cyan: #b3ffff;
+      --magic-glow: radial-gradient(circle at center, #1a0b2e 0%, #030008 85%);
     }
     * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+    
     body {
-      margin: 0; background: var(--bg); color: #f0f0f0;
+      margin: 0; background: #030008; color: #f0f0f0;
       font-family: "Optima", "Georgia", "STSong", serif;
       overflow-x: hidden; min-height: 100vh;
       display: flex; flex-direction: column; align-items: center;
+      background-image: var(--magic-glow);
     }
-    #bg-canvas { position: fixed; inset: 0; z-index: 0; opacity: 0.6; }
 
-    /* --- 顶部卡牌立绘 --- */
-    .header-core { position: relative; z-index: 2; text-align: center; padding: 50px 20px 20px; width: 100%; }
-    .card-container {
-      position: relative; width: 160px; height: 260px; margin: 0 auto;
-      perspective: 1000px;
+    #bg-canvas { position: fixed; inset: 0; z-index: 0; opacity: 0.3; }
+
+    /* 背景魔法光晕 */
+    .glow-overlay {
+      position: fixed; inset: 0;
+      background: radial-gradient(circle at 50% 30%, rgba(0, 242, 255, 0.08) 0%, transparent 60%);
+      pointer-events: none; z-index: 1;
     }
+
+    /* --- 顶部卡牌区 --- */
+    .header-core { position: relative; z-index: 2; text-align: center; padding: 50px 20px 0; width: 100%; }
+    .card-container { position: relative; width: 120px; height: 170px; margin: 0 auto; perspective: 1000px; }
     .card-seal {
       position: relative; width: 100%; height: 100%;
-      border: 2px solid rgba(224, 179, 255, 0.8); border-radius: 8px;
-      overflow: hidden; box-shadow: 0 0 40px rgba(179, 255, 255, 0.25);
-      animation: cardAction 6s ease-in-out infinite; background: #000; z-index: 2;
+      border: 1px solid rgba(179, 255, 255, 0.3); border-radius: 4px;
+      overflow: hidden; box-shadow: 0 0 40px rgba(0, 242, 255, 0.15);
+      animation: cardFloat 5s ease-in-out infinite; background: #000; z-index: 3;
     }
-    .logo-img { width: 100%; height: 100%; object-fit: cover; display: block; filter: contrast(1.1); }
-    .magic-base {
-      position: absolute; width: 320px; height: 320px;
-      border: 1px solid rgba(179, 255, 255, 0.1); border-radius: 50%;
+    .logo-img { width: 100%; height: 100%; object-fit: contain; display: block; filter: contrast(1.1); }
+    
+    .magic-circle-bg {
+      position: absolute; width: 300px; height: 300px;
       top: 50%; left: 50%; transform: translate(-50%, -50%);
-      animation: rotateRingBase 40s linear infinite; pointer-events: none;
+      border: 1px solid rgba(179, 255, 255, 0.05); border-radius: 50%;
+      animation: rotateRing 60s linear infinite; pointer-events: none; z-index: 1;
     }
 
-    h1 {
-      margin: 30px 0 10px; font-size: clamp(24px, 7vw, 32px); font-weight: 900; letter-spacing: 10px;
-      background: linear-gradient(90deg, #fff, var(--wind-cyan), #e0b3ff, #fff);
-      background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      animation: shine 6s linear infinite; text-indent: 10px;
+    /* --- 中文播放器 (控制台风格) --- */
+    .music-console {
+      margin: 25px 0; position: relative; z-index: 4; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 12px;
+      padding: 10px 25px; background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(179, 255, 255, 0.1);
+      clip-path: polygon(8% 0, 100% 0, 92% 100%, 0 100%);
     }
+    .console-dot { width: 6px; height: 6px; background: #222; border-radius: 50%; transition: 0.4s; }
+    .console-dot.active { background: var(--b-blue); box-shadow: 0 0 10px var(--b-blue); animation: pulse 1s infinite; }
+    .console-label { font-size: 11px; color: #555; letter-spacing: 4px; font-weight: bold; }
 
-    /* --- 公告栏 --- */
-    .warning-protocol {
-      position: relative; z-index: 3; width: 100%; max-width: 400px; padding: 0 25px; margin-bottom: 35px;
-    }
-    .warning-box {
-      background: rgba(179, 255, 255, 0.02); border: 1px solid rgba(179, 255, 255, 0.15);
-      border-radius: 4px; padding: 12px; text-align: center; backdrop-filter: blur(8px);
-    }
-    .warning-text { font-size: 13px; color: var(--wind-cyan); letter-spacing: 1px; line-height: 1.5; }
-    .warning-text b { color: var(--a-gold); text-shadow: 0 0 10px rgba(255, 170, 0, 0.3); }
-
-    /* --- 极简按钮：等长设计 --- */
-    .grimoire { position: relative; z-index: 2; width: 100%; max-width: 400px; padding: 0 25px; }
-    .grid { display: flex; flex-direction: column; gap: 20px; }
-
+    /* --- 核心按钮区 --- */
+    .grimoire { position: relative; z-index: 2; width: 100%; max-width: 380px; padding: 0 20px; }
+    .grid { display: flex; flex-direction: column; gap: 15px; }
     .magic-card {
-      background: var(--panel); border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 4px; padding: 20px; position: relative;
-      text-decoration: none; color: inherit; display: block;
-      transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-      backdrop-filter: blur(15px); text-align: center;
+      background: rgba(10, 8, 18, 0.7); border: 1px solid rgba(255, 255, 255, 0.03);
+      padding: 18px; text-decoration: none; color: inherit; display: block;
+      transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); text-align: center; backdrop-filter: blur(15px);
     }
-    .magic-card:hover { 
-      transform: scale(1.02); border-color: var(--color); 
-      box-shadow: 0 0 20px rgba(179, 255, 255, 0.1);
-    }
-
+    .magic-card:hover { border-color: var(--color); transform: translateY(-2px); background: rgba(255,255,255,0.02); }
     .card-s { --color: var(--s-red); }
     .card-a { --color: var(--a-gold); }
     .card-b { --color: var(--b-blue); }
+    h3 { margin: 0; font-size: 16px; color: #eee; letter-spacing: 5px; font-weight: normal; }
+    .desc { font-size: 10px; color: #333; margin-top: 6px; letter-spacing: 1px; }
 
-    h3 { 
-      margin: 0; font-size: 18px; color: #fff; 
-      letter-spacing: 5px; font-weight: bold;
-      /* 强制文案居中并保持间距 */
-      display: inline-block; width: 100%;
-    }
-    .desc { font-size: 11px; color: #555; margin-top: 8px; letter-spacing: 1px; }
+    /* --- 引导语 --- */
+    .warning-protocol { position: relative; z-index: 3; width: 100%; max-width: 380px; padding: 30px 20px 0; }
+    .warning-box { border-top: 1px solid rgba(179, 255, 255, 0.05); padding: 15px; text-align: center; }
+    .warning-text { font-size: 11px; color: #444; letter-spacing: 1px; }
 
-    /* --- 底部计数器适配 --- */
-    .footer-tools { position: relative; z-index: 2; margin-top: 50px; text-align: center; padding-bottom: 60px; }
-    .counter-wrapper {
-      margin-bottom: 25px;
-      filter: drop-shadow(0 0 8px rgba(179, 255, 255, 0.3));
-      transform: scale(1.3); /* 放大图标 */
+    /* --- 纯代码动态计数器：能量监测仪 --- */
+    .mana-monitor {
+      position: relative; z-index: 2; margin-top: 15px; text-align: center; padding-bottom: 50px;
     }
-    .music-capsule {
-      display: inline-flex; align-items: center; justify-content: center;
-      background: rgba(179, 255, 255, 0.03); border: 1px solid rgba(179, 255, 255, 0.1);
-      padding: 6px 18px; border-radius: 20px; cursor: pointer; transition: 0.3s;
+    .monitor-display {
+      display: inline-block; padding: 12px 25px;
+      border: 1px solid rgba(179, 255, 255, 0.08);
+      background: rgba(0,0,0,0.6);
+      box-shadow: inset 0 0 15px rgba(0, 242, 255, 0.05);
     }
-    .music-capsule span { font-size: 11px; color: var(--wind-cyan); opacity: 0.7; }
+    .monitor-head { font-size: 8px; color: #333; letter-spacing: 5px; margin-bottom: 8px; }
+    .digital-readout { 
+      font-family: "Courier New", monospace; 
+      font-size: 18px; 
+      color: var(--b-blue); 
+      text-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
+      letter-spacing: 2px;
+      font-weight: bold;
+    }
+    .mana-unit { font-size: 8px; color: var(--b-blue); margin-left: 8px; opacity: 0.3; }
 
-    /* 验证弹窗 */
-    #verifyModal {
-      position: fixed; inset: 0; z-index: 100; display: none;
-      align-items: center; justify-content: center; background: rgba(0,0,0,0.92); backdrop-filter: blur(20px);
-    }
-    .modal-content {
-      background: #0c0819; border: 1px solid var(--a-gold);
-      padding: 30px; border-radius: 4px; width: 280px; text-align: center;
-    }
-    .modal-input {
-      width: 100%; background: #000; border: 1px solid #333; color: #fff;
-      padding: 10px; border-radius: 2px; margin: 20px 0; text-align: center;
-    }
-
-    @keyframes cardAction { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-    @keyframes rotateRingBase { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
-    @keyframes shine { to { background-position: 200% center; } }
+    @keyframes cardFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    @keyframes rotateRing { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
+    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
   </style>
 </head>
 <body>
+  <div class="glow-overlay"></div>
   <canvas id="bg-canvas"></canvas>
   
   <header class="header-core">
+    <div class="magic-circle-bg"></div>
     <div class="card-container">
       <div class="card-seal"><img src="logo.png" class="logo-img"></div>
-      <div class="magic-base"></div>
     </div>
-    <h1>风の魔法禁书录</h1>
+    
+    <div class="music-console" onclick="toggleMusic()">
+      <div id="status-dot" class="console-dot"></div>
+      <span class="console-label" id="music-text">魔法律动：沉静</span>
+    </div>
+    <audio id="audio-player" src="bgm.mp3" loop></audio>
   </header>
-
-  <div class="warning-protocol">
-    <div class="warning-box">
-      <div class="warning-text">
-        本站永久更新 · 获取方式请联系QQ<br><b>2902939692</b>
-      </div>
-    </div>
-  </div>
 
   <main class="grimoire">
     <div class="grid">
       <a href="tutorial.html" class="magic-card card-s">
         <h3>魔法使用教程</h3>
-        <p class="desc">核心密卷 · 权限获取与更新指引</p>
+        <p class="desc">CORE_PROTOCOL // 权限获取与更新指引</p>
       </a>
-
-      <a href="https://qun.qq.com/universal-share/share?..." target="_blank" class="magic-card card-a">
+      <a href="https://qun.qq.com/..." target="_blank" class="magic-card card-a">
         <h3>加入魔法阵地</h3>
-        <p class="desc">同步最新咒语 · 获取维度阵地坐标</p>
+        <p class="desc">BASE_STATION // 同步咒语与维度坐标</p>
       </a>
-
       <div onclick="showVerifyModal('download')" class="magic-card card-b">
         <h3>下载魔法工具</h3>
-        <p class="desc">基础驱动 · 解开维度访问限制</p>
+        <p class="desc">TOOL_DECODE // 解开维度访问限制</p>
       </div>
-
       <div onclick="showVerifyModal('nodes')" class="magic-card card-s">
         <h3>获取魔法术式</h3>
-        <p class="desc">全量禁术库 · 涵盖高低阶所有咒语</p>
+        <p class="desc">NODE_FETCH // 涵盖全阶所有咒语</p>
       </div>
     </div>
   </main>
 
-  <footer class="footer-tools">
-    <div class="counter-wrapper">
-      <img src="https://count.getloli.com/get/@feng-180-magic?theme=asoul" alt="MoeCounter">
+  <div class="warning-protocol">
+    <div class="warning-box">
+      <div class="warning-text">永久更新 // 联系QQ 2902939692</div>
     </div>
+  </div>
 
-    <div class="music-capsule" onclick="toggleMusic()">
-      <span id="music-text">开启魔法旋律 ♫</span>
+  <footer class="mana-monitor">
+    <div class="monitor-display">
+      <div class="monitor-head">维度观测读数</div>
+      <div class="digital-readout">
+        <span id="counter-val">0000250850</span>
+        <span class="mana-unit">MANA</span>
+      </div>
     </div>
-    <audio id="audio-player" src="bgm.mp3" loop></audio>
-    
-    <p style="font-size: 10px; color: #333; margin-top: 30px; letter-spacing: 2px;">© 2026 风的魔法小屋 | 纯真永存</p>
+    <p style="font-size: 8px; color: #111; margin-top: 15px; letter-spacing: 6px;">DATA_ARCHIVE // 2026</p>
   </footer>
 
-  <div id="verifyModal">
-    <div class="modal-content">
-      <h3 style="color:var(--a-gold); letter-spacing:2px;">身份验证</h3>
-      <input type="text" id="verifyInput" class="modal-input" placeholder="输入口令">
+  <div id="verifyModal" style="position: fixed; inset: 0; z-index: 100; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.98);">
+    <div style="background: #050508; border: 1px solid rgba(179, 255, 255, 0.1); padding: 40px; width: 280px; text-align: center;">
+      <div style="font-size: 11px; color:#555; letter-spacing: 5px; margin-bottom: 25px;">身份权限校验</div>
+      <input type="text" id="verifyInput" style="width: 100%; background: #000; border: 1px solid #222; color: #fff; padding: 12px; margin-bottom: 30px; text-align: center; outline: none;" placeholder="输入通关口令">
       <div style="display:flex; gap:10px;">
-        <button onclick="checkVerifyCode()" style="flex:1; background:var(--a-gold); border:none; padding:10px; cursor:pointer;">确认</button>
-        <button onclick="closeVerifyModal()" style="flex:1; background:#222; color:#666; border:none; padding:10px; cursor:pointer;">取消</button>
+        <button onclick="checkVerifyCode()" style="flex:1; background:#eee; color:#000; border:none; padding:12px; cursor:pointer; font-size:11px; font-weight:bold;">验证</button>
+        <button onclick="closeVerifyModal()" style="flex:1; background:#111; color:#333; border:none; padding:12px; cursor:pointer; font-size:11px;">取消</button>
       </div>
     </div>
   </div>
@@ -188,34 +174,49 @@
   <script>
     const TODAY_CODE = "666资源风";
     let targetPath = "";
+    
+    // --- 动态数字脚本：绝对没有小人 ---
+    let baseCount = 250850;
+    const counterEl = document.getElementById('counter-val');
+    function updateCounter() {
+      baseCount += Math.floor(Math.random() * 2); // 模拟实时观测波动
+      counterEl.innerText = baseCount.toString().padStart(10, '0');
+    }
+    setInterval(updateCounter, 3000);
+
     const modal = document.getElementById('verifyModal');
     const input = document.getElementById('verifyInput');
-
     function showVerifyModal(path) { targetPath = path; modal.style.display = 'flex'; }
     function closeVerifyModal() { modal.style.display = 'none'; input.value=''; }
     function checkVerifyCode() {
       if(input.value.trim() === TODAY_CODE) { window.location.href = targetPath + ".html"; }
-      else { alert('口令错误'); input.value=''; }
+      else { alert('验证未通过'); input.value=''; }
     }
 
     const audio = document.getElementById('audio-player');
+    const dot = document.getElementById('status-dot');
     const mText = document.getElementById('music-text');
     function toggleMusic() {
-      if(audio.paused) { audio.play(); mText.innerText = "旋律运行中 ✨"; }
-      else { audio.pause(); mText.innerText = "开启魔法旋律 ♫"; }
+      if(audio.paused) { 
+        audio.play(); dot.classList.add('active'); 
+        mText.innerText = "魔法律动：共鸣"; mText.style.color = "var(--wind-cyan)";
+      } else { 
+        audio.pause(); dot.classList.remove('active'); 
+        mText.innerText = "魔法律动：沉静"; mText.style.color = "#555";
+      }
     }
 
     const canvas = document.getElementById("bg-canvas"), ctx = canvas.getContext("2d");
     let w, h;
     function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
     resize(); window.onresize = resize;
-    const dots = Array.from({length: 30}, () => ({ x: Math.random()*w, y: Math.random()*h, r: Math.random()*1.1, s: Math.random()*0.15+0.05 }));
+    const dots = Array.from({length: 30}, () => ({ x: Math.random()*w, y: Math.random()*h, r: Math.random()*1.1, s: Math.random()*0.12+0.05 }));
     function draw() {
       ctx.fillStyle = "rgba(3, 0, 8, 0.4)"; ctx.fillRect(0, 0, w, h);
       dots.forEach(d => {
         d.y -= d.s; if(d.y < 0) d.y = h;
         ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI*2);
-        ctx.fillStyle = "rgba(179, 255, 255, 0.1)"; ctx.fill();
+        ctx.fillStyle = "rgba(179, 255, 255, 0.05)"; ctx.fill();
       });
       requestAnimationFrame(draw);
     }
