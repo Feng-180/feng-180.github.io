@@ -1,152 +1,163 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>禁书目录：魔法使用教程</title>
-  <style>
-    :root {
-      --s-red: #ff3c3c; --a-gold: #ffaa00; --b-blue: #00f2ff;
-      --wind-cyan: #b3ffff;
-      --magic-glow: radial-gradient(circle at center, #1a0b2e 0%, #030008 85%);
-    }
-    * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
-    
-    body {
-      margin: 0; background: #030008; color: #f0f0f0;
-      font-family: "Optima", "Georgia", "STSong", serif;
-      background-image: var(--magic-glow);
-      display: flex; flex-direction: column; align-items: center;
-      min-height: 100vh; padding: 40px 20px;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>魔法术式同步 - 禁书目录</title>
+    <style>
+        :root {
+            --s-red: #ff3c3c; --a-gold: #ffaa00; --b-blue: #00f2ff;
+            --wind-cyan: #b3ffff;
+            --magic-glow: radial-gradient(circle at center, #1a0b2e 0%, #030008 85%);
+        }
+        * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+        
+        body { 
+            background: #030008; background-image: var(--magic-glow);
+            color: #f0f0f0; font-family: "Optima", serif;
+            margin: 0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            overflow-x: hidden; padding: 20px;
+        }
 
-    /* 背景装饰粒子 */
-    #bg-canvas { position: fixed; inset: 0; z-index: 0; opacity: 0.3; pointer-events: none; }
+        #bg-canvas { position: fixed; inset: 0; z-index: 0; opacity: 0.3; pointer-events: none; }
 
-    /* --- 教程容器 --- */
-    .tutorial-container {
-      position: relative; z-index: 2; width: 100%; max-width: 500px;
-    }
+        .glass-card { 
+            position: relative; z-index: 2;
+            background: rgba(10, 8, 18, 0.8); 
+            border: 1px solid rgba(179, 255, 255, 0.1); 
+            padding: 30px; width: 100%; max-width: 400px;
+            backdrop-filter: blur(15px); text-align: center;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+        }
 
-    .section-card {
-      background: rgba(10, 8, 18, 0.7);
-      border: 1px solid rgba(179, 255, 255, 0.1);
-      padding: 30px; border-radius: 4px; margin-bottom: 25px;
-      backdrop-filter: blur(15px);
-    }
+        .back-link { color: #444; text-decoration: none; font-size: 11px; letter-spacing: 2px; margin-bottom: 25px; display: block; }
+        .back-link:hover { color: var(--wind-cyan); }
 
-    /* --- 步骤标签 --- */
-    .step-tag {
-      font-size: 10px; color: var(--a-gold); letter-spacing: 2px;
-      border: 1px solid var(--a-gold); display: inline-block;
-      padding: 2px 8px; margin-bottom: 15px;
-    }
+        h2 { font-size: 20px; color: var(--wind-cyan); letter-spacing: 5px; margin: 0 0 10px 0; font-weight: normal; }
+        
+        /* 状态显示区 */
+        .status-container { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; }
+        .status-tag { 
+            font-size: 10px; padding: 4px 10px; border-radius: 2px;
+            background: rgba(179, 255, 255, 0.05); border: 1px solid rgba(179, 255, 255, 0.1);
+            color: var(--b-blue);
+        }
 
-    /* --- 第一步：着重强调收款码 --- */
-    .pay-highlight {
-      border: 1px solid var(--s-red) !important;
-      box-shadow: 0 0 20px rgba(255, 60, 60, 0.15);
-      text-align: center;
-    }
-    .pay-title { font-size: 20px; color: var(--s-red); letter-spacing: 4px; margin-bottom: 15px; }
-    .qr-frame {
-      width: 220px; height: 220px; margin: 20px auto;
-      border: 2px solid #fff; padding: 5px; background: #fff;
-      box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
-    }
-    .qr-frame img { width: 100%; height: 100%; display: block; }
-    .pay-tip { font-size: 13px; color: #888; line-height: 1.6; margin-top: 15px; }
+        /* 自动化按钮组 */
+        .action-group { display: flex; flex-direction: column; gap: 15px; }
+        
+        .btn-magic {
+            position: relative; width: 100%; padding: 18px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(179, 255, 255, 0.2);
+            color: #eee; cursor: pointer; transition: 0.3s;
+            text-align: center; overflow: hidden;
+        }
+        .btn-magic:hover { border-color: var(--wind-cyan); background: rgba(179, 255, 255, 0.05); }
+        .btn-magic span { display: block; letter-spacing: 3px; font-size: 14px; font-weight: bold; }
+        .btn-magic .sub-text { font-size: 9px; color: #555; margin-top: 5px; letter-spacing: 1px; }
 
-    /* --- 后续步骤 --- */
-    .step-title { font-size: 18px; color: var(--wind-cyan); letter-spacing: 2px; margin-bottom: 10px; }
-    .step-desc { font-size: 14px; color: #666; line-height: 1.8; }
-    .back-home-link {
-      color: var(--b-blue); text-decoration: none; border-bottom: 1px solid var(--b-blue);
-      margin-left: 5px; font-weight: bold;
-    }
+        /* 特殊高亮按钮 */
+        .btn-ios { border-left: 3px solid var(--b-blue); }
+        .btn-android { border-left: 3px solid var(--a-gold); }
+        .btn-copy { border: 1px dashed rgba(179, 255, 255, 0.2); margin-top: 10px; }
 
-    /* --- 返回主页按钮 --- */
-    .nav-footer { margin-top: 20px; text-align: center; }
-    .btn-back {
-      display: inline-block; padding: 12px 40px;
-      background: rgba(179, 255, 255, 0.05);
-      border: 1px solid var(--wind-cyan);
-      color: var(--wind-cyan); text-decoration: none;
-      font-size: 12px; letter-spacing: 4px; transition: 0.3s;
-    }
-    .btn-back:hover { background: var(--wind-cyan); color: #000; }
-
-    h1 { font-size: 24px; letter-spacing: 8px; color: #fff; margin-bottom: 40px; text-align: center; }
-  </style>
+        .footer-note { font-size: 9px; color: #333; margin-top: 25px; font-style: italic; letter-spacing: 1px; }
+    </style>
 </head>
 <body>
-  <canvas id="bg-canvas"></canvas>
+    <canvas id="bg-canvas"></canvas>
 
-  <div class="tutorial-container">
-    <h1>使用教程手册</h1>
+    <div class="glass-card">
+        <a href="index.html" class="back-link">← RETURN_TERMINAL</a>
+        
+        <h2>魔法术式同步</h2>
+        
+        <div class="status-container">
+            <span class="status-tag" id="node-count">NODES: LOADING...</span>
+            <span class="status-tag">AUTO_UPDATE</span>
+        </div>
 
-    <div class="section-card pay-highlight">
-      <div class="step-tag">STEP 01</div>
-      <div class="pay-title">获取魔法通行证</div>
-      <div class="qr-frame">
-        <img src="pay_code.png" alt="请扫描收款码">
-      </div>
-      <div class="pay-tip">
-        由于维度维护成本较高<br>
-        扫描上方“赞助阵法”后方可获取魔法<br>
-        <b>请务必添加QQ: 2902939692 获取最新口令</b>
-      </div>
+        <div class="action-group">
+            <div onclick="importShadowrocket()" class="btn-magic btn-ios">
+                <span>一键导入小火箭 (iOS)</span>
+                <div class="sub-text">SUPPORT: SHADOWROCKET / QUANTUMULT X</div>
+            </div>
+
+            <div onclick="importClash()" class="btn-magic btn-android">
+                <span>一键导入 CLASH</span>
+                <div class="sub-text">RECOMMEND: ANDROID / WINDOWS / MAC</div>
+            </div>
+
+            <div onclick="copyLink()" id="copyBtn" class="btn-magic btn-copy">
+                <span>复制魔法订阅链接</span>
+                <div class="sub-text">MANUAL_COPY_PROTOCOL</div>
+            </div>
+        </div>
+
+        <p class="footer-note">DATA_SYNC_PROTOCOL // 2026 // 维度稳定</p>
     </div>
 
-    <div class="section-card">
-      <div class="step-tag">STEP 02</div>
-      <div class="step-title">进入魔法阵地</div>
-      <div class="step-desc">
-        回到<a href="index.html" class="back-home-link">主页</a>，点击<b>【加入魔法阵地】</b>。
-        进入群聊维度，这是你接收实时通告与获取最新术式的地方。
-      </div>
-    </div>
+    <script>
+        // 你的 GitHub 订阅链接配置
+        const GITHUB_USER = "feng-180";
+        const GITHUB_REPO = "feng-180.github.io";
+        const SUB_URL = `https://fastly.jsdelivr.net/gh/${GITHUB_USER}/${GITHUB_REPO}@main/sub_all.txt`;
 
-    <div class="section-card">
-      <div class="step-tag">STEP 03</div>
-      <div class="step-title">构筑魔法工具</div>
-      <div class="step-desc">
-        在<a href="index.html" class="back-home-link">主页</a>选择<b>【下载魔法工具】</b>。
-        输入站长告知的随机魔法口令，根据你的设备（iOS/安卓/PC）安装对应的维度转换器（Clash/小火箭）。
-      </div>
-    </div>
+        // 动态获取节点数量（模拟或实际获取）
+        async function updateStatus() {
+            try {
+                const response = await fetch(SUB_URL);
+                const text = await response.text();
+                const lines = text.split('\n').filter(l => l.includes('://')).length;
+                document.getElementById('node-count').innerText = `NODES: ${lines} ACTIVE`;
+            } catch (e) {
+                document.getElementById('node-count').innerText = `NODES: CONNECTED`;
+            }
+        }
 
-    <div class="section-card">
-      <div class="step-tag">STEP 04</div>
-      <div class="step-title">同步魔法术式</div>
-      <div class="step-desc">
-        最后，在<a href="index.html" class="back-home-link">主页</a>点击<b>【获取魔法术式】</b>。
-        输入站长告知的随机魔法口令，即可一键同步全球魔法节点。
-      </div>
-    </div>
+        // 小火箭导入逻辑
+        function importShadowrocket() {
+            const encodedUrl = btoa(unescape(encodeURIComponent(SUB_URL)));
+            window.location.href = "shadowrocket://add/sub://" + encodedUrl + "?remark=风の魔法禁书录";
+            alert('🌸 术式传输中...请确认是否已安装小火箭。');
+        }
 
-    <div class="nav-footer">
-      <a href="index.html" class="btn-back">返回主界面</a>
-    </div>
-  </div>
+        // Clash 导入逻辑
+        function importClash() {
+            const finalUrl = `https://sub.id9.cc/sub?target=clash&url=${encodeURIComponent(SUB_URL)}&new_name=Magic_Station`;
+            window.location.href = "clash://install-config?url=" + encodeURIComponent(finalUrl);
+            alert('🌸 能量同步中...请确认是否已安装Clash。');
+        }
 
-  <script>
-    // 维持主页同款粒子背景
-    const canvas = document.getElementById("bg-canvas"), ctx = canvas.getContext("2d");
-    let w, h;
-    function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
-    resize(); window.onresize = resize;
-    const dots = Array.from({length: 30}, () => ({ x: Math.random()*w, y: Math.random()*h, r: Math.random()*1, s: Math.random()*0.1+0.05 }));
-    function draw() {
-      ctx.fillStyle = "rgba(3, 0, 8, 0.4)"; ctx.fillRect(0, 0, w, h);
-      dots.forEach(d => {
-        d.y -= d.s; if(d.y < 0) d.y = h;
-        ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI*2);
-        ctx.fillStyle = "rgba(179, 255, 255, 0.05)"; ctx.fill();
-      });
-      requestAnimationFrame(draw);
-    }
-    draw();
-  </script>
+        // 复制链接逻辑
+        function copyLink() {
+            navigator.clipboard.writeText(SUB_URL).then(() => {
+                const btn = document.getElementById('copyBtn');
+                const originalText = btn.innerHTML;
+                btn.style.borderColor = "var(--b-blue)";
+                btn.innerHTML = "<span>✅ 术式已刻入剪贴板</span><div class='sub-text'>COPY_SUCCESSFUL</div>";
+                setTimeout(() => { btn.innerHTML = originalText; btn.style.borderColor = ""; }, 2000);
+            });
+        }
+
+        // 粒子背景效果
+        const canvas = document.getElementById("bg-canvas"), ctx = canvas.getContext("2d");
+        let w, h;
+        function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
+        resize(); window.onresize = resize;
+        const dots = Array.from({length: 30}, () => ({ x: Math.random()*w, y: Math.random()*h, r: Math.random()*1.2, s: Math.random()*0.1+0.05 }));
+        function draw() {
+            ctx.fillStyle = "rgba(3, 0, 8, 0.4)"; ctx.fillRect(0, 0, w, h);
+            dots.forEach(d => {
+                d.y -= d.s; if(d.y < 0) d.y = h;
+                ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI*2);
+                ctx.fillStyle = "rgba(179, 255, 255, 0.05)"; ctx.fill();
+            });
+            requestAnimationFrame(draw);
+        }
+        updateStatus();
+        draw();
+    </script>
 </body>
 </html>
