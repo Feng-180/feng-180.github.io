@@ -1,127 +1,152 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>魔法手册 - 风的魔法小屋</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap');
-        body { background-color: #fff5f7; font-family: 'ZCOOL KuaiLe', cursive; overflow: hidden; }
-        .glass-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px); border: 2px solid #ffb7c5; border-radius: 2rem; }
-        .step-card { background: white; border-radius: 1.2rem; border: 1px solid #ffecf0; transition: all 0.3s; }
-        .music-capsule { background: rgba(255, 255, 255, 0.9); border: 1.5px solid #ffecf0; border-radius: 50px; padding: 4px 12px; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
-        .rotate-img { width: 28px; height: 28px; border-radius: 50%; animation: spin 4s linear infinite; animation-play-state: paused; }
-        .rotate-img.playing { animation-play-state: running; }
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>禁书目录：魔法使用教程</title>
+  <style>
+    :root {
+      --s-red: #ff3c3c; --a-gold: #ffaa00; --b-blue: #00f2ff;
+      --wind-cyan: #b3ffff;
+      --magic-glow: radial-gradient(circle at center, #1a0b2e 0%, #030008 85%);
+    }
+    * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+    
+    body {
+      margin: 0; background: #030008; color: #f0f0f0;
+      font-family: "Optima", "Georgia", "STSong", serif;
+      background-image: var(--magic-glow);
+      display: flex; flex-direction: column; align-items: center;
+      min-height: 100vh; padding: 40px 20px;
+    }
+
+    /* 背景装饰粒子 */
+    #bg-canvas { position: fixed; inset: 0; z-index: 0; opacity: 0.3; pointer-events: none; }
+
+    /* --- 教程容器 --- */
+    .tutorial-container {
+      position: relative; z-index: 2; width: 100%; max-width: 500px;
+    }
+
+    .section-card {
+      background: rgba(10, 8, 18, 0.7);
+      border: 1px solid rgba(179, 255, 255, 0.1);
+      padding: 30px; border-radius: 4px; margin-bottom: 25px;
+      backdrop-filter: blur(15px);
+    }
+
+    /* --- 步骤标签 --- */
+    .step-tag {
+      font-size: 10px; color: var(--a-gold); letter-spacing: 2px;
+      border: 1px solid var(--a-gold); display: inline-block;
+      padding: 2px 8px; margin-bottom: 15px;
+    }
+
+    /* --- 第一步：着重强调收款码 --- */
+    .pay-highlight {
+      border: 1px solid var(--s-red) !important;
+      box-shadow: 0 0 20px rgba(255, 60, 60, 0.15);
+      text-align: center;
+    }
+    .pay-title { font-size: 20px; color: var(--s-red); letter-spacing: 4px; margin-bottom: 15px; }
+    .qr-frame {
+      width: 220px; height: 220px; margin: 20px auto;
+      border: 2px solid #fff; padding: 5px; background: #fff;
+      box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
+    }
+    .qr-frame img { width: 100%; height: 100%; display: block; }
+    .pay-tip { font-size: 13px; color: #888; line-height: 1.6; margin-top: 15px; }
+
+    /* --- 后续步骤 --- */
+    .step-title { font-size: 18px; color: var(--wind-cyan); letter-spacing: 2px; margin-bottom: 10px; }
+    .step-desc { font-size: 14px; color: #666; line-height: 1.8; }
+    .back-home-link {
+      color: var(--b-blue); text-decoration: none; border-bottom: 1px solid var(--b-blue);
+      margin-left: 5px; font-weight: bold;
+    }
+
+    /* --- 返回主页按钮 --- */
+    .nav-footer { margin-top: 20px; text-align: center; }
+    .btn-back {
+      display: inline-block; padding: 12px 40px;
+      background: rgba(179, 255, 255, 0.05);
+      border: 1px solid var(--wind-cyan);
+      color: var(--wind-cyan); text-decoration: none;
+      font-size: 12px; letter-spacing: 4px; transition: 0.3s;
+    }
+    .btn-back:hover { background: var(--wind-cyan); color: #000; }
+
+    h1 { font-size: 24px; letter-spacing: 8px; color: #fff; margin-bottom: 40px; text-align: center; }
+  </style>
 </head>
-<body class="h-screen flex flex-col items-center justify-center p-3"> 
-    <div class="max-w-md w-full h-full flex flex-col">
-        <a href="index.html" class="text-[#ff6b81] mb-2 inline-block font-bold text-sm">← 返回主页</a>
-        
-        <div class="glass-card p-4 shadow-xl flex-1 flex flex-col justify-between overflow-hidden">
-            <header>
-                <h1 class="text-xl text-center text-[#ff6b81] font-bold">📖 科学上网·魔法手册</h1>
-                <p class="text-center text-gray-400 text-[10px] mb-2">最后更新：2025年12月25日</p>
-            </header>
+<body>
+  <canvas id="bg-canvas"></canvas>
 
-            <div class="flex-1 flex flex-col gap-3 overflow-y-auto px-1 py-2">
-                <div class="step-card p-3">
-                    <h3 class="text-[#ff6b81] font-bold text-sm mb-2">1. 加入魔法阵地</h3>
-                    <p class="text-gray-500 text-[11px] leading-tight mb-3">点击下方按钮加入官方 QQ 交流群。在群公告或群文件中，你可以获取最新发布的魔法客户端。</p>
-                    <button onclick="superJoinGroup()" class="w-full py-2.5 bg-pink-100 text-[#ff6b81] rounded-xl font-bold active:scale-95 transition-all shadow-sm">
-                        立即申请加群
-                    </button>
-                    <p class="text-[9px] text-gray-400 text-center mt-1.5 opacity-70">点击将自动复制群号并尝试跳转</p>
-                </div>
+  <div class="tutorial-container">
+    <h1>使用教程手册</h1>
 
-                <div class="step-card p-3">
-                    <h3 class="text-[#ff6b81] font-bold text-sm mb-1">2. 获取魔法链接</h3>
-                    <p class="text-gray-500 text-[11px] leading-tight">
-                        回到主页点击“获取今日低阶魔法”并完整复制订阅地址。
-                    </p>
-                </div>
-
-                <div class="step-card p-3">
-                    <h3 class="text-[#ff6b81] font-bold text-sm mb-1">3. 导入订阅链接</h3>
-                    <p class="text-gray-500 text-[11px] leading-tight mb-1">粘贴至软件“订阅设置”并点击更新。</p>
-                    <div class="bg-pink-50 rounded-md p-1.5 text-[9px] text-[#ff8fa3]">
-                        Win: v2rayN | 安卓: Clash | iOS: 小火箭
-                    </div>
-                </div>
-
-                <div class="step-card p-3 border-2 border-dashed border-[#a18cd1]">
-                    <h3 class="text-[#a18cd1] font-bold text-sm mb-1 italic">4. 开启高阶魔法 ✨</h3>
-                    <p class="text-gray-500 text-[11px] leading-tight">
-                        点击下方链接赞助，联系主页君 QQ 开启魔法之旅。
-                    </p>
-                    <a href="pay.html" class="mt-2 block text-center py-1.5 rounded-lg bg-purple-50 text-[#a18cd1] font-bold text-[11px]">
-                        了解高阶特权 →
-                    </a>
-                </div>
-            </div>
-
-            <footer class="mt-3">
-                <div class="text-center">
-                    <div class="music-capsule shadow-sm" onclick="toggleMusic()">
-                        <img src="tx.jpg" id="music-icon" class="rotate-img">
-                        <p id="music-text" class="text-[10px] text-[#ff6b81] font-bold">播放旋律 ♫</p>
-                    </div>
-                    <audio id="audio-player" src="bgm.mp3" loop></audio>
-                </div>
-                <p class="mt-2 text-[9px] text-center text-gray-300 italic">© 2025 风的小窝 | 纯真永存</p>
-            </footer>
-        </div>
+    <div class="section-card pay-highlight">
+      <div class="step-tag">STEP 01</div>
+      <div class="pay-title">获取魔法通行证</div>
+      <div class="qr-frame">
+        <img src="pay_code.png" alt="请扫描收款码">
+      </div>
+      <div class="pay-tip">
+        由于维度维护成本较高<br>
+        扫描上方“赞助阵法”后方可获取魔法<br>
+        <b>请务必添加QQ: 2902939692 获取最新口令</b>
+      </div>
     </div>
 
-    <input type="text" id="groupNumInput" value="691105381" style="position: absolute; top: -9999px;" readonly>
-
-    <div id="copyToast" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.8); color: white; padding: 12px 24px; border-radius: 50px; font-size: 13px; z-index: 10000; backdrop-filter: blur(8px); white-space: nowrap; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
-        ✅ 群号已复制，正在前往QQ...
+    <div class="section-card">
+      <div class="step-tag">STEP 02</div>
+      <div class="step-title">进入魔法阵地</div>
+      <div class="step-desc">
+        回到<a href="index.html" class="back-home-link">主页</a>，点击<b>【加入魔法阵地】</b>。
+        进入群聊维度，这是你接收实时通告与获取最新术式的地方。
+      </div>
     </div>
 
-    <script>
-        // --- 音乐控制 ---
-        const audio = document.getElementById('audio-player');
-        const icon = document.getElementById('music-icon');
-        const text = document.getElementById('music-text');
+    <div class="section-card">
+      <div class="step-tag">STEP 03</div>
+      <div class="step-title">构筑魔法工具</div>
+      <div class="step-desc">
+        在<a href="index.html" class="back-home-link">主页</a>选择<b>【下载魔法工具】</b>。
+        输入站长告知的随机魔法口令，根据你的设备（iOS/安卓/PC）安装对应的维度转换器（Clash/小火箭）。
+      </div>
+    </div>
 
-        function toggleMusic() {
-            if (audio.paused) {
-                audio.play();
-                icon.classList.add('playing');
-                text.innerText = "旋律运行中 ✨";
-            } else {
-                audio.pause();
-                icon.classList.remove('playing');
-                text.innerText = "播放旋律 ♫";
-            }
-        }
+    <div class="section-card">
+      <div class="step-tag">STEP 04</div>
+      <div class="step-title">同步魔法术式</div>
+      <div class="step-desc">
+        最后，在<a href="index.html" class="back-home-link">主页</a>点击<b>【获取魔法术式】</b>。
+        输入站长告知的随机魔法口令，即可一键同步全球魔法节点。
+      </div>
+    </div>
 
-        // --- 双重加群逻辑 ---
-        function superJoinGroup() {
-            const groupNum = "691105381";
-            
-            // 1. 自动复制
-            const copyInput = document.getElementById("groupNumInput");
-            copyInput.select();
-            copyInput.setSelectionRange(0, 99999); 
-            document.execCommand("copy");
-            
-            // 2. 弹出提示
-            const toast = document.getElementById("copyToast");
-            toast.style.display = "block";
-            
-            // 3. 尝试跳转协议
-            const qqProtocol = `mqqapi://card/show_pslcard?src_type=internal&version=1&uin=${groupNum}&card_type=group&source=qrcode`;
-            
-            setTimeout(() => {
-                window.location.href = qqProtocol;
-                // 3秒后自动消失提示框
-                setTimeout(() => { toast.style.display = "none"; }, 2000);
-            }, 500);
-        }
-    </script>
+    <div class="nav-footer">
+      <a href="index.html" class="btn-back">返回主界面</a>
+    </div>
+  </div>
+
+  <script>
+    // 维持主页同款粒子背景
+    const canvas = document.getElementById("bg-canvas"), ctx = canvas.getContext("2d");
+    let w, h;
+    function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
+    resize(); window.onresize = resize;
+    const dots = Array.from({length: 30}, () => ({ x: Math.random()*w, y: Math.random()*h, r: Math.random()*1, s: Math.random()*0.1+0.05 }));
+    function draw() {
+      ctx.fillStyle = "rgba(3, 0, 8, 0.4)"; ctx.fillRect(0, 0, w, h);
+      dots.forEach(d => {
+        d.y -= d.s; if(d.y < 0) d.y = h;
+        ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI*2);
+        ctx.fillStyle = "rgba(179, 255, 255, 0.05)"; ctx.fill();
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+  </script>
 </body>
 </html>
