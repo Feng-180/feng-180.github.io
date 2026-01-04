@@ -20,13 +20,9 @@
       min-height: 100vh; padding: 40px 20px;
     }
 
-    /* 背景装饰粒子 */
     #bg-canvas { position: fixed; inset: 0; z-index: 0; opacity: 0.3; pointer-events: none; }
 
-    /* --- 教程容器 --- */
-    .tutorial-container {
-      position: relative; z-index: 2; width: 100%; max-width: 500px;
-    }
+    .tutorial-container { position: relative; z-index: 2; width: 100%; max-width: 500px; }
 
     .section-card {
       background: rgba(10, 8, 18, 0.7);
@@ -35,37 +31,41 @@
       backdrop-filter: blur(15px);
     }
 
-    /* --- 步骤标签 --- */
     .step-tag {
       font-size: 10px; color: var(--a-gold); letter-spacing: 2px;
       border: 1px solid var(--a-gold); display: inline-block;
       padding: 2px 8px; margin-bottom: 15px;
     }
 
-    /* --- 第一步：着重强调收款码 --- */
+    /* --- 第一步：收款码修复区 --- */
     .pay-highlight {
       border: 1px solid var(--s-red) !important;
       box-shadow: 0 0 20px rgba(255, 60, 60, 0.15);
       text-align: center;
     }
     .pay-title { font-size: 20px; color: var(--s-red); letter-spacing: 4px; margin-bottom: 15px; }
+    
+    /* 修复：确保图片容器比例正确 */
     .qr-frame {
-      width: 220px; height: 220px; margin: 20px auto;
-      border: 2px solid #fff; padding: 5px; background: #fff;
-      box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
+      width: 200px; height: 200px; margin: 20px auto;
+      border: 1px solid rgba(255, 255, 255, 0.1); 
+      padding: 5px; background: #fff;
+      box-shadow: 0 0 30px rgba(255, 255, 255, 0.05);
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
     }
-    .qr-frame img { width: 100%; height: 100%; display: block; }
-    .pay-tip { font-size: 13px; color: #888; line-height: 1.6; margin-top: 15px; }
+    /* 关键：使用 object-fit 确保图片填满且不失真 */
+    .qr-frame img { 
+        width: 100%; height: 100%; 
+        object-fit: cover; 
+        display: block; 
+    }
 
-    /* --- 后续步骤 --- */
+    .pay-tip { font-size: 13px; color: #888; line-height: 1.6; margin-top: 15px; }
     .step-title { font-size: 18px; color: var(--wind-cyan); letter-spacing: 2px; margin-bottom: 10px; }
     .step-desc { font-size: 14px; color: #666; line-height: 1.8; }
-    .back-home-link {
-      color: var(--b-blue); text-decoration: none; border-bottom: 1px solid var(--b-blue);
-      margin-left: 5px; font-weight: bold;
-    }
+    .back-home-link { color: var(--b-blue); text-decoration: none; border-bottom: 1px solid var(--b-blue); font-weight: bold; }
 
-    /* --- 返回主页按钮 --- */
     .nav-footer { margin-top: 20px; text-align: center; }
     .btn-back {
       display: inline-block; padding: 12px 40px;
@@ -76,7 +76,7 @@
     }
     .btn-back:hover { background: var(--wind-cyan); color: #000; }
 
-    h1 { font-size: 24px; letter-spacing: 8px; color: #fff; margin-bottom: 40px; text-align: center; }
+    h1 { font-size: 22px; letter-spacing: 8px; color: #fff; margin-bottom: 40px; text-align: center; }
   </style>
 </head>
 <body>
@@ -89,7 +89,7 @@
       <div class="step-tag">STEP 01</div>
       <div class="pay-title">获取魔法通行证</div>
       <div class="qr-frame">
-        <img src="pay_code.png" alt="请扫描收款码">
+        <img src="skm.jpg" alt="加载中...">
       </div>
       <div class="pay-tip">
         由于维度维护成本较高<br>
@@ -102,7 +102,7 @@
       <div class="step-tag">STEP 02</div>
       <div class="step-title">进入魔法阵地</div>
       <div class="step-desc">
-        回到<a href="index.html" class="back-home-link">主页</a>，点击<b>【加入魔法阵地】</b>。
+        回到<a href="index.html" class="back-home-link">主页</a>，点击<b>【加入魔法阵地】</b>。<br>
         进入群聊维度，这是你接收实时通告与获取最新术式的地方。
       </div>
     </div>
@@ -111,8 +111,8 @@
       <div class="step-tag">STEP 03</div>
       <div class="step-title">构筑魔法工具</div>
       <div class="step-desc">
-        在<a href="index.html" class="back-home-link">主页</a>选择<b>【下载魔法工具】</b>。
-        输入站长告知的随机魔法口令，根据你的设备（iOS/安卓/PC）安装对应的维度转换器（Clash/小火箭）。
+        在<a href="index.html" class="back-home-link">主页</a>选择<b>【下载魔法工具】</b>。<br>
+        输入站长告知的随机魔法口令，根据设备安装对应的维度转换器。
       </div>
     </div>
 
@@ -120,8 +120,8 @@
       <div class="step-tag">STEP 04</div>
       <div class="step-title">同步魔法术式</div>
       <div class="step-desc">
-        最后，在<a href="index.html" class="back-home-link">主页</a>点击<b>【获取魔法术式】</b>。
-        输入站长告知的随机魔法口令，即可一键同步全球魔法节点。
+        最后，在<a href="index.html" class="back-home-link">主页</a>点击<b>【获取魔法术式】</b>。<br>
+        输入魔法口令，即可一键复制或导入全球魔法节点。
       </div>
     </div>
 
@@ -131,7 +131,6 @@
   </div>
 
   <script>
-    // 维持主页同款粒子背景
     const canvas = document.getElementById("bg-canvas"), ctx = canvas.getContext("2d");
     let w, h;
     function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
