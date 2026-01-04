@@ -1,86 +1,141 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>魔法工具下载 - 风的魔法小屋</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap');
-        body { background-color: #fff5f7; font-family: 'ZCOOL KuaiLe', cursive; margin: 0; overflow-x: hidden; }
-        .glass-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(15px); border: 2px solid #ffb7c5; border-radius: 2rem; }
-        .sakura-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
-        table { width: 100%; border-collapse: collapse; }
-        th { color: #ff6b81; border-bottom: 2px solid #ffecf0; padding: 12px 8px; text-align: left; font-size: 15px; }
-        td { border-bottom: 1px solid #ffecf0; padding: 12px 8px; font-size: 13px; color: #666; vertical-align: middle; }
-        .btn-mini { background: linear-gradient(135deg, #f4a7b9, #ff8fa3); color: white; padding: 6px 14px; border-radius: 12px; font-size: 12px; cursor: pointer; border: none; font-weight: bold; }
-        .back-link { color: #ffb7c5; text-decoration: none; font-size: 14px; transition: color 0.3s; }
-        .back-link:hover { color: #ff6b81; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>禁书目录：魔法工具库</title>
+  <style>
+    :root {
+      --s-red: #ff3c3c; --a-gold: #ffaa00; --b-blue: #00f2ff;
+      --wind-cyan: #b3ffff;
+      --magic-glow: radial-gradient(circle at center, #1a0b2e 0%, #030008 85%);
+    }
+    * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+    
+    body {
+      margin: 0; background: #030008; color: #f0f0f0;
+      font-family: "Optima", "Georgia", "STSong", serif;
+      overflow-x: hidden; min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center;
+      background-image: var(--magic-glow); padding: 40px 15px;
+    }
+
+    #bg-canvas { position: fixed; inset: 0; z-index: 0; opacity: 0.3; pointer-events: none; }
+
+    /* --- 核心容器 --- */
+    .download-container {
+      position: relative; z-index: 2; width: 100%; max-width: 600px;
+      background: rgba(10, 8, 18, 0.7); border: 1px solid rgba(179, 255, 255, 0.1);
+      padding: 30px 20px; backdrop-filter: blur(15px);
+    }
+
+    .header-box { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid rgba(179, 255, 255, 0.05); padding-bottom: 15px; }
+    .header-box h2 { font-size: 18px; color: var(--wind-cyan); letter-spacing: 2px; margin: 0; font-weight: normal; }
+    .back-link { color: #555; text-decoration: none; font-size: 11px; letter-spacing: 1px; transition: 0.3s; }
+    .back-link:hover { color: var(--wind-cyan); }
+
+    /* --- 科技感表格 --- */
+    .table-wrapper { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 450px; }
+    th { font-size: 10px; color: #444; text-transform: uppercase; letter-spacing: 2px; padding: 12px 8px; text-align: left; border-bottom: 1px solid rgba(179, 255, 255, 0.1); }
+    td { font-size: 12px; padding: 15px 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.02); color: #ccc; }
+    
+    .sys-tag { font-size: 10px; background: rgba(179, 255, 255, 0.05); color: var(--b-blue); padding: 2px 6px; border-radius: 2px; }
+    
+    /* --- 极简按钮 --- */
+    .btn-download {
+      background: transparent; color: var(--wind-cyan);
+      border: 1px solid rgba(179, 255, 255, 0.3);
+      padding: 6px 12px; font-size: 11px; cursor: pointer;
+      transition: 0.3s; letter-spacing: 1px;
+    }
+    .btn-download:hover { background: var(--wind-cyan); color: #000; box-shadow: 0 0 15px rgba(179, 255, 255, 0.3); }
+
+    .footer-tip { margin-top: 30px; text-align: center; font-size: 10px; color: #333; letter-spacing: 1px; }
+
+    /* --- 验证弹窗 (与主页一致) --- */
+    #verifyModal { position: fixed; inset: 0; z-index: 100; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.95); }
+    .modal-content { background: #050508; border: 1px solid rgba(179, 255, 255, 0.1); padding: 40px; width: 280px; text-align: center; }
+    .modal-title { font-size: 11px; color:#555; letter-spacing: 5px; margin-bottom: 25px; }
+    #verifyInput { width: 100%; background: #000; border: 1px solid #222; color: #fff; padding: 12px; margin-bottom: 30px; text-align: center; outline: none; font-size: 12px; }
+    .modal-btns { display: flex; gap: 10px; }
+    .btn-confirm { flex: 1; background: #eee; color: #000; border: none; padding: 12px; cursor: pointer; font-size: 11px; font-weight: bold; }
+    .btn-cancel { flex: 1; background: #111; color: #333; border: none; padding: 12px; cursor: pointer; font-size: 11px; }
+  </style>
 </head>
-<body class="p-4 min-h-screen flex items-center justify-center">
-    <canvas id="sakura-canvas" class="sakura-bg"></canvas>
+<body>
+  <canvas id="bg-canvas"></canvas>
 
-    <div class="max-w-2xl w-full mx-auto relative z-10">
-        <div class="glass-card p-6 shadow-xl text-center">
-            <div class="flex justify-between items-center mb-6 px-2">
-                <h2 class="text-xl font-bold text-[#ff6b81]">📥 魔法工具库 (链接已修复)</h2>
-                <a href="index.html" class="back-link">← 返回小屋</a>
-            </div>
-
-            <div class="overflow-x-auto text-left">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>应用名称</th>
-                            <th>版本号</th>
-                            <th>系统</th>
-                            <th>下载渠道</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>Clash for Windows</td><td>v0.20.21</td><td>Windows</td><td><button onclick="askVerify('https://github.com/clash-for-windows-backup/clash-for-windows-backup/releases')" class="btn-mini">点击前往</button></td></tr>
-                        <tr><td>v2rayN</td><td>v6.22</td><td>Windows</td><td><button onclick="askVerify('https://github.com/2rayN/v2rayN/releases')" class="btn-mini">点击前往</button></td></tr>
-                        <tr><td>Winxray</td><td>v4.4</td><td>Windows</td><td><button onclick="askVerify('https://github.com/TheWanderingCoel/WinXray/releases')" class="btn-mini">点击前往</button></td></tr>
-                        
-                        <tr><td>Clash Android</td><td>v2.5.12</td><td>Android</td><td><button onclick="askVerify('https://github.com/MetaCubeX/ClashMetaForAndroid/releases')" class="btn-mini">点击前往</button></td></tr>
-                        <tr><td>v2rayNG</td><td>v1.8.2</td><td>Android</td><td><button onclick="askVerify('https://github.com/2rayN/v2rayNG/releases')" class="btn-mini">点击前往</button></td></tr>
-                        
-                        <tr><td>Shadowrocket</td><td>最新版</td><td>iOS</td><td><button onclick="askVerify('https://apps.apple.com/app/shadowrocket/id932747118')" class="btn-mini">点击前往</button></td></tr>
-                        <tr><td>Quantumult X</td><td>最新版</td><td>iOS</td><td><button onclick="askVerify('https://apps.apple.com/app/quantumult-x/id1443988620')" class="btn-mini">点击前往</button></td></tr>
-                        
-                        <tr><td>Clash for Mac</td><td>v0.20.21</td><td>MacOS</td><td><button onclick="askVerify('https://github.com/clash-for-windows-backup/clash-for-windows-backup/releases')" class="btn-mini">点击前往</button></td></tr>
-                    </tbody>
-                </table>
-            </div>
-            <p class="mt-6 text-[11px] text-gray-400 italic">💡 提示：所有资源均来自社区官方备份，请放心使用 ✨</p>
-        </div>
+  <div class="download-container">
+    <div class="header-box">
+      <h2>📥 魔法工具库</h2>
+      <a href="index.html" class="back-link">← RETURN_HOME</a>
     </div>
 
-    <div id="verifyModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-        <div class="glass-card w-full max-w-[280px] p-6 shadow-2xl">
-            <h3 class="text-[#ff6b81] text-lg font-bold mb-2 text-center">魔法验证 ✨</h3>
-            <p class="text-gray-400 text-[12px] mb-4 text-center">请输入今日最新口令：</p>
-            <input type="text" id="verifyInput" class="w-full border-2 border-pink-100 rounded-xl px-4 py-2 text-center focus:outline-none" placeholder="在这里输入...">
-            <div class="flex gap-2 mt-5">
-                <button onclick="confirmDownload()" class="flex-1 btn-mini py-2 rounded-xl">确定</button>
-                <button onclick="closeModal()" class="flex-1 bg-gray-50 text-gray-400 py-2 rounded-xl">取消</button>
-            </div>
-        </div>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>应用组件</th>
+            <th>系统环境</th>
+            <th>下载指令</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Clash for Win</td><td><span class="sys-tag">Windows</span></td><td><button onclick="askVerify('https://github.com/clash-for-windows-backup/clash-for-windows-backup/releases')" class="btn-download">FETCH</button></td></tr>
+          <tr><td>v2rayN</td><td><span class="sys-tag">Windows</span></td><td><button onclick="askVerify('https://github.com/2rayN/v2rayN/releases')" class="btn-download">FETCH</button></td></tr>
+          <tr><td>Clash Android</td><td><span class="sys-tag">Android</span></td><td><button onclick="askVerify('https://github.com/MetaCubeX/ClashMetaForAndroid/releases')" class="btn-download">FETCH</button></td></tr>
+          <tr><td>v2rayNG</td><td><span class="sys-tag">Android</span></td><td><button onclick="askVerify('https://github.com/2rayN/v2rayNG/releases')" class="btn-download">FETCH</button></td></tr>
+          <tr><td>Shadowrocket</td><td><span class="sys-tag">iOS</span></td><td><button onclick="askVerify('https://apps.apple.com/app/shadowrocket/id932747118')" class="btn-download">FETCH</button></td></tr>
+          <tr><td>Quantumult X</td><td><span class="sys-tag">iOS</span></td><td><button onclick="askVerify('https://apps.apple.com/app/quantumult-x/id1443988620')" class="btn-download">FETCH</button></td></tr>
+          <tr><td>Clash for Mac</td><td><span class="sys-tag">MacOS</span></td><td><button onclick="askVerify('https://github.com/clash-for-windows-backup/clash-for-windows-backup/releases')" class="btn-download">FETCH</button></td></tr>
+        </tbody>
+      </table>
     </div>
 
-    <script>
-        const DOWNLOAD_CODE = "资源feng"; // 修改口令位置
-        let currentTargetUrl = ""; 
-        const modal = document.getElementById('verifyModal');
-        const input = document.getElementById('verifyInput');
-        function askVerify(url) { currentTargetUrl = url; modal.classList.remove('hidden'); input.focus(); }
-        function closeModal() { modal.classList.add('hidden'); input.value = ''; }
-        function confirmDownload() {
-            if (input.value.trim() === DOWNLOAD_CODE) { window.open(currentTargetUrl, '_blank'); closeModal(); } 
-            else { alert('口令不对哦！'); input.value = ''; }
-        }
-        // 樱花逻辑... (省略以节省空间)
-    </script>
+    <div class="footer-tip">💡 DATA_PROTOCOL: 资源均来自官方镜像备份 ✨</div>
+  </div>
+
+  <div id="verifyModal">
+    <div class="modal-content">
+      <div class="modal-title">身份权限校验</div>
+      <input type="text" id="verifyInput" placeholder="INPUT_PASSCODE">
+      <div class="modal-btns">
+        <button onclick="confirmDownload()" class="btn-confirm">验证</button>
+        <button onclick="closeModal()" class="btn-cancel">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const DOWNLOAD_CODE = "资源feng"; 
+    let currentTargetUrl = ""; 
+    const modal = document.getElementById('verifyModal');
+    const input = document.getElementById('verifyInput');
+
+    function askVerify(url) { currentTargetUrl = url; modal.style.display = 'flex'; input.focus(); }
+    function closeModal() { modal.style.display = 'none'; input.value = ''; }
+    function confirmDownload() {
+      if (input.value.trim() === DOWNLOAD_CODE) { window.open(currentTargetUrl, '_blank'); closeModal(); } 
+      else { alert('验证未通过'); input.value = ''; }
+    }
+
+    // 维持主页同款粒子背景
+    const canvas = document.getElementById("bg-canvas"), ctx = canvas.getContext("2d");
+    let w, h;
+    function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
+    resize(); window.onresize = resize;
+    const dots = Array.from({length: 30}, () => ({ x: Math.random()*w, y: Math.random()*h, r: Math.random()*1, s: Math.random()*0.08+0.05 }));
+    function draw() {
+      ctx.fillStyle = "rgba(3, 0, 8, 0.4)"; ctx.fillRect(0, 0, w, h);
+      dots.forEach(d => {
+        d.y -= d.s; if(d.y < 0) d.y = h;
+        ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI*2);
+        ctx.fillStyle = "rgba(179, 255, 255, 0.05)"; ctx.fill();
+      });
+      requestAnimationFrame(draw);
+    }
+    draw();
+  </script>
 </body>
 </html>
