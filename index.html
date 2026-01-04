@@ -6,199 +6,185 @@
   <title>风の魔法禁书录</title>
   <style>
     :root {
-      --s-red: #ff3c3c; --a-gold: #ffaa00; --b-blue: #00f2ff;
-      --wind-cyan: #b3ffff;
-      --magic-glow: radial-gradient(circle at center, #1a0b2e 0%, #030008 85%);
+      --cyan: #00f2ff;
+      --deep-purple: #0a051a;
     }
     * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
     
     body {
       margin: 0; background: #030008; color: #f0f0f0;
-      font-family: "Optima", "Georgia", "STSong", serif;
+      font-family: "Microsoft YaHei", sans-serif;
       overflow-x: hidden; min-height: 100vh;
       display: flex; flex-direction: column; align-items: center;
-      background-image: var(--magic-glow);
+      /* 深邃背景 */
+      background: radial-gradient(circle at center, #110826 0%, #030008 100%);
     }
 
-    #bg-canvas { position: fixed; inset: 0; z-index: 0; opacity: 0.3; pointer-events: none; }
+    /* --- 1. 背景大阵：呼吸感的几何法阵 --- */
+    .magic-bg {
+      position: fixed; inset: 0; z-index: 0;
+      display: flex; align-items: center; justify-content: center;
+      pointer-events: none;
+    }
+    .circle-layer {
+      position: absolute; border: 1px solid rgba(0, 242, 255, 0.05); border-radius: 50%;
+      animation: rotate 60s linear infinite;
+    }
+    .layer-1 { width: 450px; height: 450px; border-style: double; border-width: 3px; }
+    .layer-2 { width: 550px; height: 550px; border-style: dashed; opacity: 0.5; animation-duration: 90s; }
 
-    /* 背景魔法光晕 */
-    .glow-overlay {
-      position: fixed; inset: 0;
-      background: radial-gradient(circle at 50% 30%, rgba(0, 242, 255, 0.08) 0%, transparent 60%);
-      pointer-events: none; z-index: 1;
+    /* --- 2. 顶部：发光卡牌与法阵环 --- */
+    .header { position: relative; z-index: 5; padding-top: 80px; text-align: center; }
+    .card-halo {
+      position: relative; width: 150px; height: 210px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: center;
+    }
+    /* 卡牌背后的发光法阵 */
+    .card-halo::before {
+      content: ""; position: absolute; width: 280px; height: 280px;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="48" fill="none" stroke="rgba(0,242,255,0.2)" stroke-width="0.2" stroke-dasharray="1,2"/></svg>');
+      background-size: contain; animation: rotate 20s linear infinite;
+    }
+    .logo-img { 
+      width: 100%; height: 100%; object-fit: contain; 
+      filter: drop-shadow(0 0 20px rgba(0, 242, 255, 0.4));
+      animation: float 4s ease-in-out infinite;
     }
 
-    /* --- 顶部卡牌区 (已优化填满效果) --- */
-    .header-core { position: relative; z-index: 2; text-align: center; padding: 50px 20px 0; width: 100%; }
-    .card-container { position: relative; width: 140px; height: 200px; margin: 0 auto; perspective: 1000px; }
-    .card-seal {
-      position: relative; width: 100%; height: 100%;
-      border: 1px solid rgba(179, 255, 255, 0.3); border-radius: 4px;
-      overflow: hidden; box-shadow: 0 0 40px rgba(0, 242, 255, 0.15);
-      animation: cardFloat 5s ease-in-out infinite; background: #000; z-index: 3;
+    /* --- 3. 播放器：音乐脉动图标 --- */
+    .music-box {
+      margin: 40px 0; cursor: pointer; z-index: 10;
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
     }
-    .logo-img { width: 100%; height: 100%; object-fit: cover; display: block; filter: contrast(1.1); } /* 使用 cover 填满 */
-    
-    .magic-circle-bg {
-      position: absolute; width: 300px; height: 300px;
-      top: 50%; left: 50%; transform: translate(-50%, -50%);
-      border: 1px solid rgba(179, 255, 255, 0.05); border-radius: 50%;
-      animation: rotateRing 60s linear infinite; pointer-events: none; z-index: 1;
+    .music-waves {
+      display: flex; align-items: center; gap: 3px; height: 20px;
     }
+    .wave-bar { width: 2px; height: 10px; background: var(--cyan); opacity: 0.3; transition: 0.3s; }
+    .wave-bar.active { animation: wave 1s ease-in-out infinite; opacity: 0.8; }
+    .m-text { font-size: 11px; color: #444; letter-spacing: 4px; }
 
-    /* --- 播放器美化 (已增加音乐标识) --- */
-    .music-console {
-      margin: 25px 0; position: relative; z-index: 4; cursor: pointer;
-      display: inline-flex; align-items: center; gap: 12px;
-      padding: 10px 25px; background: rgba(0, 0, 0, 0.5);
-      border: 1px solid rgba(179, 255, 255, 0.1);
-      clip-path: polygon(8% 0, 100% 0, 92% 100%, 0 100%);
+    /* --- 4. 菜单：对称美学，去边框浮光 --- */
+    .menu { position: relative; z-index: 10; width: 300px; }
+    .menu-btn {
+      display: block; text-decoration: none; padding: 25px 0;
+      text-align: center; color: #fff; transition: 0.5s;
+      position: relative;
     }
-    .music-icon { font-size: 14px; color: var(--wind-cyan); animation: notePulse 2s infinite; }
-    .console-dot { width: 6px; height: 6px; background: #222; border-radius: 50%; transition: 0.4s; }
-    .console-dot.active { background: var(--b-blue); box-shadow: 0 0 10px var(--b-blue); animation: pulse 1s infinite; }
-    .console-label { font-size: 11px; color: #555; letter-spacing: 4px; font-weight: bold; }
-
-    /* --- 核心按钮区 --- */
-    .grimoire { position: relative; z-index: 2; width: 100%; max-width: 380px; padding: 0 20px; }
-    .grid { display: flex; flex-direction: column; gap: 15px; }
-    .magic-card {
-      background: rgba(10, 8, 18, 0.7); border: 1px solid rgba(255, 255, 255, 0.03);
-      padding: 18px; text-decoration: none; color: inherit; display: block;
-      transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); text-align: center; backdrop-filter: blur(15px);
+    /* 悬浮时的色彩特效 */
+    .menu-btn:hover .m-title {
+      color: var(--cyan); text-shadow: 0 0 15px var(--cyan);
+      transform: scale(1.1);
     }
-    .magic-card:hover { border-color: var(--color); transform: translateY(-2px); background: rgba(255,255,255,0.02); }
-    .card-s { --color: var(--s-red); }
-    .card-a { --color: var(--a-gold); }
-    .card-b { --color: var(--b-blue); }
-    h3 { margin: 0; font-size: 16px; color: #eee; letter-spacing: 5px; font-weight: normal; }
-    .desc { font-size: 10px; color: #333; margin-top: 6px; letter-spacing: 1px; }
-
-    /* --- 底部数据监测 (纯数字，无小人) --- */
-    .mana-monitor { position: relative; z-index: 2; margin-top: 25px; text-align: center; padding-bottom: 50px; }
-    .monitor-display {
-      display: inline-block; padding: 10px 25px;
-      border: 1px solid rgba(179, 255, 255, 0.05);
-      background: rgba(0,0,0,0.4);
+    .m-title { 
+      display: block; font-size: 19px; letter-spacing: 8px; font-weight: 300; 
+      color: #bbb; transition: 0.4s;
     }
-    .monitor-head { font-size: 8px; color: #333; letter-spacing: 5px; margin-bottom: 5px; }
-    .digital-readout { font-family: monospace; font-size: 16px; color: var(--b-blue); text-shadow: 0 0 10px rgba(0, 242, 255, 0.4); }
+    .m-desc { display: block; font-size: 10px; color: #333; margin-top: 8px; letter-spacing: 2px; }
 
-    /* 动画定义 */
-    @keyframes cardFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-    @keyframes rotateRing { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
-    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
-    @keyframes notePulse { 0%, 100% { opacity: 0.4; transform: scale(0.9); } 50% { opacity: 1; transform: scale(1.1); } }
+    /* --- 5. 底部：协调的暗调计数 --- */
+    .footer { margin-top: auto; padding-bottom: 50px; text-align: center; z-index: 5; }
+    .count-wrap {
+      opacity: 0.4; transition: 0.5s;
+    }
+    .count-wrap:hover { opacity: 0.8; }
+    .count-label { font-size: 9px; color: #444; letter-spacing: 5px; margin-bottom: 5px; }
+    .count-val { font-family: "Courier New", monospace; font-size: 16px; color: var(--cyan); }
+
+    /* --- 动画 --- */
+    @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+    @keyframes wave { 0%, 100% { height: 5px; } 50% { height: 18px; } }
   </style>
 </head>
 <body>
-  <div class="glow-overlay"></div>
-  <canvas id="bg-canvas"></canvas>
-  
-  <header class="header-core">
-    <div class="magic-circle-bg"></div>
-    <div class="card-container">
-      <div class="card-seal"><img src="logo.png" class="logo-img"></div>
+  <div class="magic-bg">
+    <div class="circle-layer layer-1"></div>
+    <div class="circle-layer layer-2"></div>
+  </div>
+
+  <header class="header">
+    <div class="card-halo">
+      <img src="logo.png" class="logo-img">
     </div>
     
-    <div class="music-console" onclick="toggleMusic()">
-      <span class="music-icon">♫</span>
-      <div id="status-dot" class="console-dot"></div>
-      <span class="console-label" id="music-text">魔法律动：沉静</span>
+    <div class="music-box" onclick="toggleMusic()">
+      <div class="music-waves" id="waves">
+        <div class="wave-bar" style="animation-delay: 0.1s"></div>
+        <div class="wave-bar" style="animation-delay: 0.3s"></div>
+        <div class="wave-bar" style="animation-delay: 0.2s"></div>
+        <div class="wave-bar" style="animation-delay: 0.4s"></div>
+      </div>
+      <div class="m-text" id="m-status">咒语静默中</div>
     </div>
     <audio id="audio-player" src="bgm.mp3" loop></audio>
   </header>
 
-  <main class="grimoire">
-    <div class="grid">
-      <a href="tutorial.html" class="magic-card card-s">
-        <h3>魔法使用教程</h3>
-        <p class="desc">权限获取与更新指引</p>
-      </a>
-      <a href="https://qun.qq.com/..." target="_blank" class="magic-card card-a">
-        <h3>加入魔法阵地</h3>
-        <p class="desc">同步咒语与维度坐标</p>
-      </a>
-      <div onclick="showVerifyModal('download')" class="magic-card card-b">
-        <h3>下载魔法工具</h3>
-        <p class="desc">解开维度访问限制</p>
-      </div>
-      <div onclick="showVerifyModal('nodes')" class="magic-card card-s">
-        <h3>获取魔法术式</h3>
-        <p class="desc">涵盖全阶所有咒语</p>
-      </div>
+  <nav class="menu">
+    <a href="tutorial.html" class="menu-btn">
+      <span class="m-title">使用教程</span>
+      <span class="m-desc">获取权限与操作指南</span>
+    </a>
+    <a href="mqqapi://card/show_pslcard?src_type=internal&version=1&uin=691105381&card_type=group&source=qrcode" class="menu-btn">
+      <span class="m-title">魔法阵地</span>
+      <span class="m-desc">加入群聊同步信息</span>
+    </a>
+    <div onclick="showVerifyModal('download')" class="menu-btn" style="cursor:pointer">
+      <span class="m-title">下载工具</span>
+      <span class="m-desc">维度转换核心器械</span>
     </div>
-  </main>
+    <div onclick="showVerifyModal('nodes')" class="menu-btn" style="cursor:pointer">
+      <span class="m-title">同步术式</span>
+      <span class="m-desc">获取最新节点订阅</span>
+    </div>
+  </nav>
 
-  <footer class="mana-monitor">
-    <div class="monitor-display">
-      <div class="monitor-head">Dimensional Observations</div>
-      <div class="digital-readout" id="counter-val">0000350859</div>
+  <footer class="footer">
+    <div class="count-wrap">
+      <div class="count-label">维度访客负载</div>
+      <div class="count-val" id="counter-val">0000350859</div>
     </div>
-    <p style="font-size: 10px; color: #444; margin-top: 15px; letter-spacing: 2px;">联系QQ 2902939692 // 2026</p>
   </footer>
 
   <div id="verifyModal" style="position: fixed; inset: 0; z-index: 100; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.98);">
-    <div style="background: #050508; border: 1px solid rgba(179, 255, 255, 0.1); padding: 40px; width: 280px; text-align: center;">
-      <div style="font-size: 11px; color:#555; letter-spacing: 5px; margin-bottom: 25px;">身份权限校验</div>
-      <input type="text" id="verifyInput" style="width: 100%; background: #000; border: 1px solid #222; color: #fff; padding: 12px; margin-bottom: 30px; text-align: center; outline: none;" placeholder="INPUT_PASSCODE">
-      <div style="display:flex; gap:10px;">
-        <button onclick="checkVerifyCode()" style="flex:1; background:#eee; color:#000; border:none; padding:12px; cursor:pointer; font-size:11px; font-weight:bold;">验证</button>
-        <button onclick="closeVerifyModal()" style="flex:1; background:#111; color:#333; border:none; padding:12px; cursor:pointer; font-size:11px;">取消</button>
-      </div>
+    <div style="width: 260px; text-align: center;">
+      <input type="text" id="verifyInput" style="width: 100%; background: transparent; border: none; border-bottom: 1px solid #222; color: #fff; padding: 10px; text-align: center; outline: none; margin-bottom: 30px; letter-spacing: 5px;" placeholder="输入口令">
+      <button onclick="checkVerifyCode()" style="background:none; border: 1px solid #333; color: var(--cyan); padding: 8px 40px; cursor: pointer;">验证身份</button>
+      <div onclick="closeVerifyModal()" style="margin-top: 20px; font-size: 10px; color: #222; cursor: pointer;">取消</div>
     </div>
   </div>
 
   <script>
     const TODAY_CODE = "666资源风";
     let targetPath = "";
-    const modal = document.getElementById('verifyModal');
-    const input = document.getElementById('verifyInput');
 
-    // 动态数字逻辑
+    function showVerifyModal(path) { targetPath = path; document.getElementById('verifyModal').style.display = 'flex'; }
+    function closeVerifyModal() { document.getElementById('verifyModal').style.display = 'none'; }
+    function checkVerifyCode() {
+      if(document.getElementById('verifyInput').value.trim() === TODAY_CODE) { window.location.href = targetPath + ".html"; }
+      else { alert('口令错误'); }
+    }
+
+    const audio = document.getElementById('audio-player');
+    const bars = document.querySelectorAll('.wave-bar');
+    const mStatus = document.getElementById('m-status');
+    
+    function toggleMusic() {
+      if(audio.paused) { 
+        audio.play(); 
+        bars.forEach(b => b.classList.add('active'));
+        mStatus.innerText = "术式共鸣中"; mStatus.style.color = "var(--cyan)";
+      } else { 
+        audio.pause(); 
+        bars.forEach(b => b.classList.remove('active'));
+        mStatus.innerText = "咒语静默中"; mStatus.style.color = "#444";
+      }
+    }
+
     let count = 350859;
     setInterval(() => {
       count += Math.floor(Math.random() * 2);
       document.getElementById('counter-val').innerText = count.toString().padStart(10, '0');
-    }, 4000);
-
-    function showVerifyModal(path) { targetPath = path; modal.style.display = 'flex'; }
-    function closeVerifyModal() { modal.style.display = 'none'; input.value=''; }
-    function checkVerifyCode() {
-      if(input.value.trim() === TODAY_CODE) { window.location.href = targetPath + ".html"; }
-      else { alert('验证未通过'); input.value=''; }
-    }
-
-    const audio = document.getElementById('audio-player');
-    const dot = document.getElementById('status-dot');
-    const mText = document.getElementById('music-text');
-    function toggleMusic() {
-      if(audio.paused) { 
-        audio.play(); dot.classList.add('active'); 
-        mText.innerText = "魔法律动：共鸣"; mText.style.color = "var(--wind-cyan)";
-      } else { 
-        audio.pause(); dot.classList.remove('active'); 
-        mText.innerText = "魔法律动：沉静"; mText.style.color = "#555";
-      }
-    }
-
-    // 粒子背景逻辑
-    const canvas = document.getElementById("bg-canvas"), ctx = canvas.getContext("2d");
-    let w, h;
-    function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
-    resize(); window.onresize = resize;
-    const dots = Array.from({length: 30}, () => ({ x: Math.random()*w, y: Math.random()*h, r: Math.random()*1, s: Math.random()*0.1+0.05 }));
-    function draw() {
-      ctx.fillStyle = "rgba(3, 0, 8, 0.2)"; ctx.fillRect(0, 0, w, h);
-      dots.forEach(d => {
-        d.y -= d.s; if(d.y < 0) d.y = h;
-        ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI*2);
-        ctx.fillStyle = "rgba(179, 255, 255, 0.08)"; ctx.fill();
-      });
-      requestAnimationFrame(draw);
-    }
-    draw();
+    }, 5000);
   </script>
 </body>
 </html>
