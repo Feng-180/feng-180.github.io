@@ -131,8 +131,17 @@
     </div>
 
     <script>
-        const SUB_URL = "https://fastly.jsdelivr.net/gh/feng-180/feng-180.github.io@main/sub_all.txt";
-        const CLASH_URL = "https://fastly.jsdelivr.net/gh/feng-180/feng-180.github.io@main/clash.yaml";
+        // --- 资源混淆拼接 ---
+        // 将链接拆分成三个部分，增加搜索难度
+        const _v1 = "https://fastly.jsdelivr.net/gh/";
+        const _v2 = "feng-180/feng-180.github.io@main/";
+        
+        // 动态生成 URL 函数
+        function _gU(t) {
+            const _f = t === 'c' ? "clash.yaml" : "sub_all.txt";
+            return _v1 + _v2 + _f;
+        }
+
         const regions = [
             { n: "HK_BGP_PRO_01", r: "12ms" },
             { n: "SG_DIRECT_01", r: "35ms" },
@@ -140,7 +149,6 @@
             { n: "US_CN2_GIA_01", r: "118ms" }
         ];
 
-        // 仪式感加载
         const consoleLines = [
             "> INITIALIZING SYSTEM...",
             "> DECODING NODE_ARRAY...",
@@ -169,7 +177,6 @@
             setTimeout(() => {
                 document.getElementById('loading-overlay').style.display = 'none';
                 document.getElementById('main-card').style.display = 'block';
-                // --- 关键调用 ---
                 initNodeMonitor();
             }, 800);
         }
@@ -191,19 +198,24 @@
         }
 
         function importShadowrocket() {
-            const encodedUrl = btoa(SUB_URL).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+            // 使用拼接函数获取 URL
+            const u = _gU('s');
+            const encodedUrl = btoa(u).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
             window.location.href = "shadowrocket://add/sub://" + encodedUrl + "?remark=风の魔法禁书录";
         }
 
         function importClash() {
-            window.location.href = "clash://install-config?url=" + encodeURIComponent(CLASH_URL) + "&name=Magic_Station";
+            // 使用拼接函数获取 URL
+            const u = _gU('c');
+            window.location.href = "clash://install-config?url=" + encodeURIComponent(u) + "&name=Magic_Station";
         }
 
         function copyLink() {
             const btn = document.getElementById('copyBtn');
             const originalText = btn.innerHTML;
             const tempInput = document.createElement("textarea");
-            tempInput.value = SUB_URL;
+            // 使用拼接函数获取 URL
+            tempInput.value = _gU('s');
             document.body.appendChild(tempInput);
             tempInput.select();
             document.execCommand("copy");
@@ -212,7 +224,6 @@
             setTimeout(() => { btn.innerHTML = originalText; }, 2000);
         }
 
-        // 背景粒子
         const canvas = document.getElementById("bg-canvas"), ctx = canvas.getContext("2d");
         let w, h;
         function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
