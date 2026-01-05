@@ -8,7 +8,7 @@
     :root {
       --m-cyan: #00f2ff;
       --m-deep: #05020a;
-      --glow: 0 0 15px rgba(0, 242, 255, 0.5);
+      --glow: 0 0 20px rgba(0, 242, 255, 0.4);
     }
     * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
     
@@ -17,102 +17,96 @@
       font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
       overflow-x: hidden; min-height: 100vh;
       display: flex; flex-direction: column; align-items: center;
-    }
-
-    /* --- 背景：动态星图法阵 --- */
-    #magic-canvas {
-      position: fixed; inset: 0; z-index: 0;
       background: radial-gradient(circle at center, #0f0821 0%, #030008 100%);
     }
 
-    /* --- 顶部：卡牌比例锁定版 --- */
-    .header { position: relative; z-index: 5; padding-top: 60px; margin-bottom: 10px; }
-    
-    .card-portal {
+    /* --- 核心：对标图二的卡牌传送门效果 --- */
+    .header { 
       position: relative; 
-      width: 140px; 
-      height: 220px; 
-      display: flex; align-items: center; justify-content: center;
+      z-index: 5; 
+      padding-top: 80px; /* 增加顶部间距，让呼吸感更足 */
+      margin-bottom: 20px;
+    }
+
+    .card-container {
+      position: relative;
+      width: 300px; /* 圆环的宽度 */
+      height: 300px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       margin: 0 auto;
     }
-    
+
+    /* 图二那种淡淡的背景大圆环 */
+    .outer-circle {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border: 1px solid rgba(0, 242, 255, 0.1);
+      border-radius: 50%;
+      box-shadow: inset 0 0 50px rgba(0, 242, 255, 0.05);
+      animation: rotate 30s linear infinite;
+    }
+
+    /* 紧贴卡牌的发光呼吸环 */
+    .inner-glow {
+      position: absolute;
+      width: 180px;
+      height: 260px;
+      background: radial-gradient(ellipse at center, rgba(0, 242, 255, 0.15) 0%, transparent 70%);
+      filter: blur(15px);
+      animation: breathe 4s ease-in-out infinite;
+    }
+
     .logo-img { 
-      width: 100%; 
-      height: 100%; 
-      object-fit: cover; 
-      border-radius: 8px; 
-      filter: drop-shadow(0 0 10px var(--m-cyan));
-      z-index: 10; 
+      position: relative;
+      width: 130px; /* 调整卡牌大小，让其在圆环内更协调 */
+      height: auto;
+      aspect-ratio: 2 / 3.5; /* 严格对标图二的修长比例 */
+      object-fit: contain;
+      z-index: 10;
+      filter: drop-shadow(0 0 15px rgba(0, 242, 255, 0.3));
       animation: float 4s ease-in-out infinite;
-      border: 1px solid rgba(0, 242, 255, 0.3);
     }
 
-    .halo {
-      position: absolute; border: 1px solid rgba(0, 242, 255, 0.15); border-radius: 50%;
-      pointer-events: none;
-    }
-    .h1 { width: 260px; height: 260px; animation: rotate 20s linear infinite; border-style: dashed; }
-    .h2 { width: 300px; height: 300px; animation: rotate 40s linear infinite reverse; opacity: 0.5; }
+    /* --- 菜单与交互样式 --- */
+    .player-trigger { margin: 20px 0 40px; cursor: pointer; z-index: 10; text-align: center; }
+    .audio-bars { display: flex; align-items: flex-end; gap: 4px; height: 16px; justify-content: center; margin-bottom: 8px;}
+    .bar { width: 2px; height: 4px; background: var(--m-cyan); opacity: 0.2; }
+    .bar.playing { animation: pulse 0.6s infinite alternate; opacity: 0.8; }
+    .player-status { font-size: 11px; color: rgba(255,255,255,0.3); letter-spacing: 4px; }
 
-    /* --- 播放器 --- */
-    .player-trigger { margin: 30px 0; cursor: pointer; z-index: 10; display: flex; flex-direction: column; align-items: center; gap: 8px; }
-    .audio-bars { display: flex; align-items: flex-end; gap: 4px; height: 16px; }
-    .bar { width: 2px; height: 4px; background: var(--m-cyan); transition: 0.3s; opacity: 0.2; }
-    .bar.playing { animation: pulse 0.6s infinite alternate; opacity: 0.8; box-shadow: var(--glow); }
-    .player-status { font-size: 10px; color: #444; letter-spacing: 5px; font-weight: bold; }
+    .menu { position: relative; z-index: 10; width: 100%; max-width: 350px; text-align: center; }
+    .menu-item { display: block; text-decoration: none; padding: 25px 0; color: rgba(255, 255, 255, 0.5); transition: 0.4s; }
+    .menu-item:hover .m-title { color: var(--m-cyan); text-shadow: var(--glow); letter-spacing: 12px; }
+    .m-title { display: block; font-size: 22px; letter-spacing: 8px; font-weight: 300; transition: 0.4s; }
+    .m-desc { display: block; font-size: 10px; color: #333; margin-top: 8px; letter-spacing: 2px; }
 
-    /* --- 菜单 --- */
-    .menu { position: relative; z-index: 10; width: 320px; text-align: center; }
-    .menu-item { display: block; text-decoration: none; padding: 20px 0; color: rgba(255, 255, 255, 0.6); transition: 0.5s; position: relative; }
-    .menu-item:hover .m-title { color: #fff; text-shadow: 0 0 20px var(--m-cyan); letter-spacing: 10px; }
-    .m-title { display: block; font-size: 19px; letter-spacing: 6px; transition: 0.5s; font-weight: 300; }
-    .m-desc { display: block; font-size: 9px; color: #333; margin-top: 6px; letter-spacing: 2px; }
+    /* --- 底部计数 --- */
+    .footer { margin-top: auto; padding: 50px 0; text-align: center; z-index: 5; }
+    .counter-label { font-size: 10px; color: #333; letter-spacing: 4px; margin-bottom: 8px; font-weight: bold; }
+    .stat-val { font-family: "Courier New", monospace; font-size: 18px; color: var(--m-cyan); opacity: 0.4; letter-spacing: 3px; }
 
-    /* --- 底部计数器：新增文字标识 --- */
-    .footer { margin-top: auto; padding: 40px 0; z-index: 5; text-align: center; }
-    .counter-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 5px;
-    }
-    .counter-label {
-      font-size: 10px;
-      color: #333;
-      letter-spacing: 3px;
-      font-weight: bold;
-      text-transform: uppercase;
-    }
-    .stat-val { 
-      font-family: "Courier New", monospace; 
-      font-size: 16px; 
-      color: var(--m-cyan); 
-      opacity: 0.5; 
-      letter-spacing: 2px; 
-    }
-
-    /* --- 动画 --- */
+    /* --- 动画库 --- */
     @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+    @keyframes breathe { 0%, 100% { opacity: 0.3; transform: scale(1); } 50% { opacity: 0.6; transform: scale(1.1); } }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
     @keyframes pulse { from { height: 4px; } to { height: 16px; } }
 
     /* --- 验证弹窗 --- */
-    #modal { position: fixed; inset: 0; z-index: 100; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.95); backdrop-filter: blur(15px); }
-    .modal-card { width: 280px; text-align: center; position: relative; }
-    .scan-line { position: absolute; left: 0; width: 100%; height: 2px; background: var(--m-cyan); box-shadow: 0 0 15px var(--m-cyan); top: 0; display: none; animation: scan 2s linear infinite; }
-    @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
-    .m-input { width: 100%; background: transparent; border: none; border-bottom: 1px solid #222; color: #fff; padding: 15px; text-align: center; outline: none; font-size: 16px; margin-bottom: 30px; letter-spacing: 5px; }
-    .m-btn { background: #fff; color: #000; border: none; padding: 12px 50px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-    .m-btn:hover { background: var(--m-cyan); }
+    #modal { position: fixed; inset: 0; z-index: 100; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.96); backdrop-filter: blur(20px); }
+    .modal-card { width: 280px; text-align: center; }
+    .m-input { width: 100%; background: transparent; border: none; border-bottom: 1px solid #222; color: #fff; padding: 15px; text-align: center; outline: none; font-size: 18px; margin-bottom: 30px; letter-spacing: 5px; }
+    .m-btn { background: #fff; color: #000; border: none; padding: 12px 60px; cursor: pointer; font-weight: bold; border-radius: 2px; }
   </style>
 </head>
 <body>
-  <canvas id="magic-canvas"></canvas>
 
   <header class="header">
-    <div class="card-portal">
-      <div class="halo h1"></div>
-      <div class="halo h2"></div>
+    <div class="card-container">
+      <div class="outer-circle"></div>
+      <div class="inner-glow"></div>
       <img src="logo.png" class="logo-img">
     </div>
     
@@ -126,73 +120,54 @@
   </header>
 
   <nav class="menu">
-    <a href="tutorial.html" class="menu-item"><span class="m-title">使用教程</span><span class="m-desc">CORE_PROTOCOL // 通行指引</span></a>
-    <a href="mqqapi://card/show_pslcard?src_type=internal&version=1&uin=691105381&card_type=group&source=qrcode" class="menu-item"><span class="m-title">魔法阵地</span><span class="m-desc">SYNC_STATION // 群组坐标</span></a>
-    <div onclick="showModal('download')" class="menu-item" style="cursor:pointer"><span class="m-title">下载工具</span><span class="m-desc">TOOLS_DECODE // 核心器械</span></div>
-    <div onclick="showModal('nodes')" class="menu-item" style="cursor:pointer"><span class="m-title">同步术式</span><span class="m-desc">NODE_UPDATE // 实时订阅</span></div>
+    <a href="tutorial.html" class="menu-item">
+      <span class="m-title">使用教程</span>
+      <span class="m-desc">CORE_PROTOCOL // 通行指引</span>
+    </a>
+    <a href="mqqapi://card/show_pslcard?src_type=internal&version=1&uin=691105381&card_type=group&source=qrcode" class="menu-item">
+      <span class="m-title">魔法阵地</span>
+      <span class="m-desc">SYNC_STATION // 群组坐标</span>
+    </a>
+    <div onclick="showModal('download')" class="menu-item" style="cursor:pointer">
+      <span class="m-title">下载工具</span>
+      <span class="m-desc">TOOLS_DECODE // 核心器械</span>
+    </div>
+    <div onclick="showModal('nodes')" class="menu-item" style="cursor:pointer">
+      <span class="m-title">同步术式</span>
+      <span class="m-desc">NODE_UPDATE // 实时订阅</span>
+    </div>
   </nav>
 
   <footer class="footer">
-    <div class="counter-container">
-      <div class="counter-label">今日魔法使用人数</div>
-      <div class="stat-val" id="counter-val">0000350859</div>
-    </div>
+    <div class="counter-label">今日魔法使用人数</div>
+    <div class="stat-val" id="counter-val">0000350859</div>
   </footer>
 
   <div id="modal">
     <div class="modal-card">
-      <div class="scan-line" id="scanner"></div>
-      <div id="modal-tip" style="font-size: 10px; color: #444; letter-spacing: 4px; margin-bottom: 15px;">WAITING FOR KEY...</div>
-      <input type="text" id="m-input" placeholder="输入识别口令" autocomplete="off">
-      <button onclick="checkCode()" class="m-btn" id="verify-btn">识别权限</button>
-      <div onclick="closeModal()" style="margin-top: 25px; font-size: 11px; color: #333; cursor: pointer;">CANCEL // 取消</div>
+      <input type="text" id="m-input" placeholder="输入口令" autocomplete="off">
+      <button onclick="checkCode()" class="m-btn">验证身份</button>
+      <div onclick="closeModal()" style="margin-top: 30px; font-size: 11px; color: #333; cursor: pointer;">CANCEL</div>
     </div>
   </div>
 
   <script>
     /************************************************************
-     * ⚠️ [ 修改口令在这里 ] 
+     * ⚠️ [ 唯一修改口令处 ] 
      ************************************************************/
     const TODAY_CODE = "666资源风"; 
     /************************************************************/
-
-    const canvas = document.getElementById('magic-canvas');
-    const ctx = canvas.getContext('2d');
-    let w, h, particles = [];
-    function init() {
-      w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight;
-      particles = Array.from({length: 60}, () => ({ x: Math.random() * w, y: Math.random() * h, size: Math.random() * 1.5, speed: Math.random() * 0.3 + 0.1, opacity: Math.random() * 0.5 }));
-    }
-    function draw() {
-      ctx.clearRect(0, 0, w, h);
-      particles.forEach(p => { p.y -= p.speed; if (p.y < 0) p.y = h; ctx.fillStyle = `rgba(0, 242, 255, ${p.opacity})`; ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill(); });
-      requestAnimationFrame(draw);
-    }
-    window.onresize = init; init(); draw();
 
     let target = "";
     function showModal(t) { target = t; document.getElementById('modal').style.display = 'flex'; }
     function closeModal() { document.getElementById('modal').style.display = 'none'; }
     
     function checkCode() {
-      const input = document.getElementById('m-input').value.trim();
-      const scanner = document.getElementById('scanner');
-      const tip = document.getElementById('modal-tip');
-      const btn = document.getElementById('verify-btn');
-      scanner.style.display = 'block';
-      tip.innerText = "SCANNING...";
-      btn.innerText = "识别中...";
-
-      setTimeout(() => {
-        if(input === TODAY_CODE) {
-          window.location.href = target + ".html";
-        } else {
-          scanner.style.display = 'none';
-          tip.innerText = "DENIED";
-          btn.innerText = "重试";
-          alert('口令错误');
-        }
-      }, 1200);
+      if(document.getElementById('m-input').value.trim() === TODAY_CODE) {
+        window.location.href = target + ".html";
+      } else {
+        alert('口令错误');
+      }
     }
 
     const audio = document.getElementById('audio-player');
@@ -201,14 +176,12 @@
       if(audio.paused) { 
         audio.play(); bars.forEach(b => b.classList.add('playing')); 
         document.getElementById('p-status').innerText = "ACTIVE // 律动共鸣"; 
-        document.getElementById('p-status').style.color = "var(--m-cyan)"; 
-      }
-      else { 
+      } else { 
         audio.pause(); bars.forEach(b => b.classList.remove('playing')); 
         document.getElementById('p-status').innerText = "MUTE // 吟唱魔法"; 
-        document.getElementById('p-status').style.color = "#444"; 
       }
     }
+
     let count = 350859; 
     setInterval(() => { count += Math.floor(Math.random() * 2); document.getElementById('counter-val').innerText = count.toString().padStart(10, '0'); }, 4000);
   </script>
