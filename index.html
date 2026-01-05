@@ -9,7 +9,7 @@
       --m-cyan: #00f2ff;
       --m-deep: #05020a;
       --glow: 0 0 25px rgba(0, 242, 255, 0.4);
-      --card-w: 160px; /* 宽度稍微调大 */
+      --card-w: 160px; 
     }
     * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
     
@@ -52,9 +52,9 @@
     
     .logo-img { 
       width: 100%; 
-      max-height: 200px; /* 限制最大高度防止纵向拉伸 */
+      max-height: 200px; 
       height: auto; 
-      object-fit: contain; /* 关键：保持原图比例 */
+      object-fit: contain; 
       border-radius: 8px; 
       filter: drop-shadow(0 0 15px rgba(0, 242, 255, 0.6));
       display: block;
@@ -184,7 +184,9 @@
   </div>
 
   <script>
+    // ✨ [PINK_STYLE] 动态口令标记，将被 Python 脚本自动修改
     const TODAY_CODE = "666资源风"; 
+
     const canvas = document.getElementById("bg-canvas"), ctx = canvas.getContext("2d");
     let w, h, dots = [];
 
@@ -201,8 +203,7 @@
     function render() {
       ctx.clearRect(0, 0, w, h);
       dots.forEach(d => {
-        d.y -= d.s; 
-        d.x += Math.sin(d.y * 0.01) * 0.15;
+        d.y -= d.s; d.x += Math.sin(d.y * 0.01) * 0.15;
         if(d.y < 0) d.y = h;
         ctx.fillStyle = `rgba(0, 242, 255, ${d.o})`;
         ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI*2); ctx.fill();
@@ -224,7 +225,7 @@
         document.getElementById('m-input').value = "";
     }
 
-    // 绑定回车键
+    // ✨ 绑定回车键逻辑
     document.getElementById('m-input').addEventListener('keypress', (e) => {
         if (e.key === 'Enter') checkCode();
     });
@@ -234,7 +235,8 @@
       if(input === TODAY_CODE) {
         window.location.href = currentTarget + ".html";
       } else {
-        alert('权限拒绝：口令共鸣失败');
+        // ✨ 失败时的智能引导
+        alert('权限拒绝：口令共鸣失败！\n\n最新口令请查看“魔法阵地”群公告。');
       }
     }
 
@@ -242,7 +244,7 @@
     const bars = document.querySelectorAll('.bar');
     function toggleMusic() {
       if(audio.paused) { 
-        audio.play().catch(e => console.log("需用户交互触发")); 
+        audio.play().catch(e => console.log("需交互")); 
         bars.forEach(b => b.classList.add('playing')); 
         document.getElementById('p-status').innerText = "SIGNAL_ACTIVE"; 
       } else { 
