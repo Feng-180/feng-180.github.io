@@ -23,27 +23,34 @@
 
         #bg-canvas { position: fixed; inset: 0; z-index: 0; opacity: 0.5; pointer-events: none; }
 
+        /* --- 核心加载器：仪式感来源 --- */
+        #loading-overlay {
+            position: fixed; inset: 0; z-index: 100;
+            background: var(--m-deep);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .console-box {
+            width: 80%; max-width: 300px; font-family: "Courier New", monospace;
+            font-size: 11px; color: var(--m-cyan); line-height: 1.8;
+        }
+        .line { opacity: 0; transform: translateY(5px); animation: lineIn 0.3s forwards; }
+
         .glass-card { 
-            position: relative; z-index: 2;
+            position: relative; z-index: 2; display: none; /* 初始隐藏，加载完显示 */
             background: rgba(255, 255, 255, 0.03); 
             border: 1px solid rgba(0, 242, 255, 0.1); 
             padding: 40px 30px; width: 100%; max-width: 420px;
             backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
             text-align: center; border-radius: 4px;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-        }
-
-        .glass-card::before {
-            content: ""; position: absolute; top: -50px; left: 50%; transform: translateX(-50%);
-            width: 100px; height: 100px; border: 1px solid rgba(0, 242, 255, 0.1);
-            border-radius: 50%; border-style: dashed; animation: rotate 10s linear infinite;
+            animation: cardFadeIn 1s forwards;
         }
 
         .back-link { 
             color: rgba(255, 255, 255, 0.2); text-decoration: none; font-size: 10px; 
-            letter-spacing: 3px; margin-bottom: 30px; display: block; transition: 0.3s;
+            letter-spacing: 3px; margin-bottom: 30px; display: block;
         }
-        .back-link:hover { color: var(--m-cyan); text-shadow: var(--glow); }
 
         h2 { font-size: 22px; color: #fff; letter-spacing: 6px; margin: 0 0 15px 0; font-weight: 300; text-shadow: var(--glow); }
         
@@ -54,143 +61,143 @@
             color: var(--m-cyan); letter-spacing: 1px;
         }
 
-        .action-group { display: flex; flex-direction: column; gap: 20px; }
+        .action-group { display: flex; flex-direction: column; gap: 15px; }
         
         .btn-magic {
-            position: relative; width: 100%; padding: 20px;
+            width: 100%; padding: 18px;
             background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(255, 255, 255, 0.05);
-            color: #fff; cursor: pointer; transition: 0.4s cubic-bezier(0.2, 1, 0.3, 1);
-            text-align: center; overflow: hidden;
-            -webkit-tap-highlight-color: transparent;
+            color: #fff; cursor: pointer; transition: 0.3s;
+            text-align: center; border-radius: 4px;
         }
-        .btn-magic:hover { 
-            border-color: var(--m-cyan); 
-            background: rgba(0, 242, 255, 0.05); 
-            transform: translateY(-3px);
-            box-shadow: var(--glow);
-        }
+        .btn-magic:active { transform: scale(0.98); }
+        .btn-magic:hover { border-color: var(--m-cyan); background: rgba(0, 242, 255, 0.05); box-shadow: var(--glow); }
         
-        .btn-magic span { display: block; letter-spacing: 4px; font-size: 15px; font-weight: 300; }
-        .btn-magic .sub-text { font-size: 9px; color: rgba(255,255,255,0.2); margin-top: 8px; letter-spacing: 2px; }
+        .btn-magic span { display: block; letter-spacing: 3px; font-size: 14px; }
+        .btn-magic .sub-text { font-size: 8px; color: rgba(255,255,255,0.2); margin-top: 6px; letter-spacing: 1px; }
 
-        .btn-ios { border-left: 2px solid var(--m-cyan); }
-        .btn-android { border-left: 2px solid var(--m-gold); }
+        .btn-ios { border-left: 3px solid var(--m-cyan); }
+        .btn-android { border-left: 3px solid var(--m-gold); }
         .btn-copy { border: 1px dashed rgba(255, 255, 255, 0.1); margin-top: 10px; }
 
-        .footer-note { font-size: 10px; color: rgba(255,255,255,0.1); margin-top: 40px; letter-spacing: 2px; }
-
-        @keyframes rotate { from { transform: translateX(-50%) rotate(0deg); } to { transform: translateX(-50%) rotate(360deg); } }
+        @keyframes lineIn { to { opacity: 1; transform: translateY(0); } }
+        @keyframes cardFadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
     </style>
 </head>
 <body>
     <canvas id="bg-canvas"></canvas>
 
-    <div class="glass-card">
+    <div id="loading-overlay">
+        <div class="console-box" id="console">
+            </div>
+    </div>
+
+    <div class="glass-card" id="main-card">
         <a href="index.html" class="back-link">TERMINAL_EXIT // 返回</a>
-        
-        <h2>魔法术式同步</h2>
+        <h2>同步魔法术式</h2>
         
         <div class="status-container">
-            <span class="status-tag" id="node-count">NODES: SYNCING...</span>
-            <span class="status-tag">AUTO_UPDATE</span>
+            <span class="status-tag">STATUS: ACTIVE</span>
+            <span class="status-tag">ENCRYPTION: AES-256</span>
         </div>
 
         <div class="action-group">
             <div onclick="importShadowrocket()" class="btn-magic btn-ios">
-                <span>一键导入小火箭 (iOS)</span>
-                <div class="sub-text">SUPPORT: SHADOWROCKET / QUANTX</div>
+                <span>一键同步到 Shadowrocket</span>
+                <div class="sub-text">IOS_STATION // 小火箭专用</div>
             </div>
 
             <div onclick="importClash()" class="btn-magic btn-android">
-                <span>一键导入 CLASH</span>
-                <div class="sub-text">DIRECT_YAML_LINK // 优先推荐</div>
+                <span>一键同步到 Clash</span>
+                <div class="sub-text">ANDROID_PC // 订阅导入</div>
             </div>
 
             <div onclick="copyLink()" id="copyBtn" class="btn-magic btn-copy">
-                <span>复制魔法订阅链接</span>
-                <div class="sub-text">MANUAL_COPY_PROTOCOL</div>
+                <span>复制手动订阅链接</span>
+                <div class="sub-text">MANUAL_COPY_LINK</div>
             </div>
         </div>
-
-        <p class="footer-note">DATA_SYNC_PROTOCOL // 2026 // 维度稳定</p>
     </div>
 
     <script>
-        // --- 核心逻辑配置 ---
-        const GITHUB_USER = "feng-180";
-        const GITHUB_REPO = "feng-180.github.io";
-        
-        // 使用 jsDelivr 加速链接
-        const BASE_URL = `https://fastly.jsdelivr.net/gh/${GITHUB_USER}/${GITHUB_REPO}@main/`;
-        const SUB_URL = BASE_URL + "sub_all.txt";
-        const CLASH_URL = BASE_URL + "clash.yaml";
+        // 配置区
+        const SUB_URL = "https://fastly.jsdelivr.net/gh/feng-180/feng-180.github.io@main/sub_all.txt";
+        const CLASH_URL = "https://fastly.jsdelivr.net/gh/feng-180/feng-180.github.io@main/clash.yaml";
 
-        async function updateStatus() {
-            try {
-                const response = await fetch(SUB_URL);
-                const text = await response.text();
-                // 统计非空行且非注释行
-                const lines = text.split('\n').filter(l => l.trim() && !l.startsWith('#')).length;
-                document.getElementById('node-count').innerText = `NODES: ${lines} ACTIVE`;
-            } catch (e) {
-                document.getElementById('node-count').innerText = `NODES: CONNECTED`;
-            }
+        // 模拟加载逻辑
+        const consoleLines = [
+            "> INITIALIZING SYSTEM...",
+            "> DECODING NODE_ARRAY...",
+            "> [OK] HK_BGP_PRO RELAY ACTIVE",
+            "> [OK] US_CN2_GIA TUNNEL ACTIVE",
+            "> [OK] SG_DIRECT PEERING ACTIVE",
+            "> SYNCHRONIZING PROTOCOLS...",
+            "> DONE. WELCOME, MAGE."
+        ];
+
+        function startLoading() {
+            const consoleBox = document.getElementById('console');
+            consoleLines.forEach((text, i) => {
+                setTimeout(() => {
+                    const div = document.createElement('div');
+                    div.className = 'line';
+                    div.innerText = text;
+                    consoleBox.appendChild(div);
+                    if(i === consoleLines.length - 1) {
+                        setTimeout(showCard, 600);
+                    }
+                }, i * 250);
+            });
         }
 
+        function showCard() {
+            document.getElementById('loading-overlay').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('loading-overlay').style.display = 'none';
+                document.getElementById('main-card').style.display = 'block';
+            }, 800);
+        }
+
+        // 功能函数
         function importShadowrocket() {
-            // 小火箭通常使用 Base64 的 sub_all.txt 链接
-            const encodedUrl = btoa(unescape(encodeURIComponent(SUB_URL)));
-            window.location.href = "shadowrocket://add/sub://" + encodedUrl + "?remark=" + encodeURIComponent("风の魔法禁书录");
+            const encodedUrl = btoa(SUB_URL).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+            window.location.href = "shadowrocket://add/sub://" + encodedUrl + "?remark=风の魔法禁书录";
         }
 
         function importClash() {
-            // 直接导入我们生成的满分 clash.yaml 配置文件
-            const finalUrl = encodeURIComponent(CLASH_URL);
-            window.location.href = "clash://install-config?url=" + finalUrl + "&name=" + encodeURIComponent("Magic_Station");
+            window.location.href = "clash://install-config?url=" + encodeURIComponent(CLASH_URL) + "&name=Magic_Station";
         }
 
         function copyLink() {
             const btn = document.getElementById('copyBtn');
             const originalText = btn.innerHTML;
-
-            // 兼容性复制函数
-            const textArea = document.createElement("textarea");
-            textArea.value = SUB_URL;
-            document.body.appendChild(textArea);
-            textArea.select();
-            try {
-                document.execCommand('copy');
-                btn.innerHTML = "<span>✅ 术式已刻入剪贴板</span><div class='sub-text'>COPY_SUCCESSFUL</div>";
-                setTimeout(() => { btn.innerHTML = originalText; }, 2000);
-            } catch (err) {
-                console.error('复制失败', err);
-            }
-            document.body.removeChild(textArea);
+            const tempInput = document.createElement("textarea");
+            tempInput.value = SUB_URL;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+            btn.innerHTML = "<span>✅ 术式已刻入剪贴板</span><div class='sub-text'>SUCCESSFUL</div>";
+            setTimeout(() => { btn.innerHTML = originalText; }, 2000);
         }
 
-        // 背景粒子绘制
+        // 背景粒子
         const canvas = document.getElementById("bg-canvas"), ctx = canvas.getContext("2d");
         let w, h;
         function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
         resize(); window.onresize = resize;
-        const dots = Array.from({length: 40}, () => ({ 
-            x: Math.random()*w, y: Math.random()*h, 
-            r: Math.random()*1.2, 
-            s: Math.random()*0.15 + 0.05 
-        }));
+        const dots = Array.from({length: 30}, () => ({ x: Math.random()*w, y: Math.random()*h, r: Math.random()*1, s: Math.random()*0.1 + 0.05 }));
         function draw() {
             ctx.clearRect(0, 0, w, h);
             dots.forEach(d => {
                 d.y -= d.s; if(d.y < 0) d.y = h;
                 ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI*2);
-                ctx.fillStyle = "rgba(0, 242, 255, 0.15)"; 
-                ctx.fill();
+                ctx.fillStyle = "rgba(0, 242, 255, 0.2)"; ctx.fill();
             });
             requestAnimationFrame(draw);
         }
-        updateStatus();
         draw();
+        window.onload = startLoading;
     </script>
 </body>
 </html>
