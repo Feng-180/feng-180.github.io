@@ -11,19 +11,19 @@
             --m-deep: #05020a;
             --glow: 0 0 20px rgba(0, 242, 255, 0.4);
         }
-        * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+        * { box-sizing: border-box; -webkit-font-smoothing: antialiased; user-select: none; }
         
         body { 
             background: var(--m-deep);
             color: #f0f0f0; font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
             margin: 0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            overflow-x: hidden; padding: 20px;
+            overflow: hidden; padding: 20px;
             background: radial-gradient(circle at center, #0f0821 0%, #030008 100%);
         }
 
         #bg-canvas { position: fixed; inset: 0; z-index: 0; opacity: 0.5; pointer-events: none; }
 
-        /* --- 核心加载器 --- */
+        /* --- 加载层 --- */
         #loading-overlay {
             position: fixed; inset: 0; z-index: 100;
             background: var(--m-deep);
@@ -50,13 +50,6 @@
         .back-link { color: rgba(255, 255, 255, 0.2); text-decoration: none; font-size: 10px; letter-spacing: 3px; margin-bottom: 30px; display: block; }
         h2 { font-size: 22px; color: #fff; letter-spacing: 6px; margin: 0 0 15px 0; font-weight: 300; text-shadow: var(--glow); }
         
-        .status-container { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; }
-        .status-tag { 
-            font-size: 9px; padding: 4px 12px; border-radius: 2px;
-            background: rgba(0, 242, 255, 0.05); border: 1px solid rgba(0, 242, 255, 0.1);
-            color: var(--m-cyan); letter-spacing: 1px;
-        }
-
         /* --- 监控面板 --- */
         .monitor-panel {
             background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(0, 242, 255, 0.1);
@@ -101,11 +94,6 @@
         <a href="index.html" class="back-link">TERMINAL_EXIT // 返回</a>
         <h2>同步魔法术式</h2>
         
-        <div class="status-container">
-            <span class="status-tag">STATUS: ACTIVE</span>
-            <span class="status-tag">ENCRYPTION: AES-256</span>
-        </div>
-
         <div class="monitor-panel">
             <div class="monitor-header">
                 <span>GLOBAL_NODE_CLUSTER</span>
@@ -131,17 +119,29 @@
     </div>
 
     <script>
-        // --- 资源混淆拼接 ---
-        // 将链接拆分成三个部分，增加搜索难度
-        const _v1 = "https://fastly.jsdelivr.net/gh/";
-        const _v2 = "feng-180/feng-180.github.io@main/";
-        
-        // 动态生成 URL 函数
-        function _gU(t) {
-            const _f = t === 'c' ? "clash.yaml" : "sub_all.txt";
-            return _v1 + _v2 + _f;
-        }
+        // --- 1. 安全防御装甲 ---
+        (function() {
+            document.oncontextmenu = () => false; // 禁用右键
+            document.onkeydown = (e) => {
+                // 屏蔽 F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+                if (e.keyCode === 123 || (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) || (e.ctrlKey && e.keyCode === 85)) {
+                    return false;
+                }
+            };
+            // 调试检测陷阱
+            setInterval(() => {
+                const start = Date.now();
+                debugger; 
+                if (Date.now() - start > 100) window.location.href = "about:blank";
+            }, 1000);
+        })();
 
+        // --- 2. 资源混淆逻辑 ---
+        const _p1 = "https://fastly.jsdelivr.net/gh/";
+        const _p2 = "feng-180/feng-180.github.io@main/";
+        function _g(t) { return _p1 + _p2 + (t === 'c' ? "clash.yaml" : "sub_all.txt"); }
+
+        // --- 3. 页面交互逻辑 ---
         const regions = [
             { n: "HK_BGP_PRO_01", r: "12ms" },
             { n: "SG_DIRECT_01", r: "35ms" },
@@ -150,12 +150,11 @@
         ];
 
         const consoleLines = [
-            "> INITIALIZING SYSTEM...",
+            "> INITIALIZING DEFENSE...",
             "> DECODING NODE_ARRAY...",
-            "> [OK] HK_BGP_PRO RELAY ACTIVE",
-            "> [OK] US_CN2_GIA TUNNEL ACTIVE",
-            "> [OK] SG_DIRECT PEERING ACTIVE",
-            "> SYNCHRONIZING PROTOCOLS...",
+            "> [OK] HK_BGP_PRO ACTIVE",
+            "> [OK] US_CN2_GIA ACTIVE",
+            "> [OK] SG_DIRECT ACTIVE",
             "> DONE. WELCOME, MAGE."
         ];
 
@@ -187,43 +186,36 @@
                 setTimeout(() => {
                     const item = document.createElement('div');
                     item.className = 'node-item';
-                    item.innerHTML = `
-                        <span class="node-name">[${node.n}]</span>
-                        <span class="node-load">${(Math.random()*30 + 10).toFixed(1)}%</span>
-                        <span class="node-ms">${node.r}</span>
-                    `;
+                    item.innerHTML = `<span class="node-name">[${node.n}]</span><span class="node-load">${(Math.random()*20+10).toFixed(1)}%</span><span class="node-ms">${node.r}</span>`;
                     list.appendChild(item);
                 }, i * 300);
             });
         }
 
         function importShadowrocket() {
-            // 使用拼接函数获取 URL
-            const u = _gU('s');
+            const u = _g('s');
             const encodedUrl = btoa(u).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
             window.location.href = "shadowrocket://add/sub://" + encodedUrl + "?remark=风の魔法禁书录";
         }
 
         function importClash() {
-            // 使用拼接函数获取 URL
-            const u = _gU('c');
-            window.location.href = "clash://install-config?url=" + encodeURIComponent(u) + "&name=Magic_Station";
+            window.location.href = "clash://install-config?url=" + encodeURIComponent(_g('c')) + "&name=Magic_Station";
         }
 
         function copyLink() {
             const btn = document.getElementById('copyBtn');
             const originalText = btn.innerHTML;
-            const tempInput = document.createElement("textarea");
-            // 使用拼接函数获取 URL
-            tempInput.value = _gU('s');
-            document.body.appendChild(tempInput);
-            tempInput.select();
+            const temp = document.createElement("textarea");
+            temp.value = _g('s');
+            document.body.appendChild(temp);
+            temp.select();
             document.execCommand("copy");
-            document.body.removeChild(tempInput);
+            document.body.removeChild(temp);
             btn.innerHTML = "<span>✅ 术式已刻入剪贴板</span><div class='sub-text'>SUCCESSFUL</div>";
             setTimeout(() => { btn.innerHTML = originalText; }, 2000);
         }
 
+        // 背景粒子绘制
         const canvas = document.getElementById("bg-canvas"), ctx = canvas.getContext("2d");
         let w, h;
         function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
@@ -238,8 +230,7 @@
             });
             requestAnimationFrame(draw);
         }
-        draw();
-        window.onload = startLoading;
+        draw(); window.onload = startLoading;
     </script>
 </body>
 </html>
