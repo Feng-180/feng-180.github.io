@@ -23,7 +23,7 @@
 
         #bg-canvas { position: fixed; inset: 0; z-index: 0; opacity: 0.5; pointer-events: none; }
 
-        /* --- 核心加载器：仪式感来源 --- */
+        /* --- 核心加载器 --- */
         #loading-overlay {
             position: fixed; inset: 0; z-index: 100;
             background: var(--m-deep);
@@ -37,7 +37,7 @@
         .line { opacity: 0; transform: translateY(5px); animation: lineIn 0.3s forwards; }
 
         .glass-card { 
-            position: relative; z-index: 2; display: none; /* 初始隐藏，加载完显示 */
+            position: relative; z-index: 2; display: none;
             background: rgba(255, 255, 255, 0.03); 
             border: 1px solid rgba(0, 242, 255, 0.1); 
             padding: 40px 30px; width: 100%; max-width: 420px;
@@ -47,39 +47,45 @@
             animation: cardFadeIn 1s forwards;
         }
 
-        .back-link { 
-            color: rgba(255, 255, 255, 0.2); text-decoration: none; font-size: 10px; 
-            letter-spacing: 3px; margin-bottom: 30px; display: block;
-        }
-
+        .back-link { color: rgba(255, 255, 255, 0.2); text-decoration: none; font-size: 10px; letter-spacing: 3px; margin-bottom: 30px; display: block; }
         h2 { font-size: 22px; color: #fff; letter-spacing: 6px; margin: 0 0 15px 0; font-weight: 300; text-shadow: var(--glow); }
         
-        .status-container { display: flex; justify-content: center; gap: 10px; margin-bottom: 40px; }
+        .status-container { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; }
         .status-tag { 
             font-size: 9px; padding: 4px 12px; border-radius: 2px;
             background: rgba(0, 242, 255, 0.05); border: 1px solid rgba(0, 242, 255, 0.1);
             color: var(--m-cyan); letter-spacing: 1px;
         }
 
+        /* --- 监控面板 --- */
+        .monitor-panel {
+            background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(0, 242, 255, 0.1);
+            border-radius: 4px; padding: 15px; margin-bottom: 25px; text-align: left;
+        }
+        .monitor-header {
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 9px; color: #444; margin-bottom: 12px; letter-spacing: 2px;
+        }
+        .pulse-dot { width: 6px; height: 6px; background: var(--m-cyan); border-radius: 50%; box-shadow: 0 0 10px var(--m-cyan); animation: pulse-ring 1.5s infinite; }
+        .node-item { display: flex; justify-content: space-between; font-family: "Courier New", monospace; font-size: 11px; margin-bottom: 8px; color: rgba(255,255,255,0.6); }
+        .node-name { color: #888; }
+        .node-ms { color: var(--m-cyan); }
+        .node-load { color: var(--m-gold); }
+
         .action-group { display: flex; flex-direction: column; gap: 15px; }
-        
         .btn-magic {
-            width: 100%; padding: 18px;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            color: #fff; cursor: pointer; transition: 0.3s;
+            width: 100%; padding: 18px; background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05); color: #fff; cursor: pointer; transition: 0.3s;
             text-align: center; border-radius: 4px;
         }
-        .btn-magic:active { transform: scale(0.98); }
         .btn-magic:hover { border-color: var(--m-cyan); background: rgba(0, 242, 255, 0.05); box-shadow: var(--glow); }
-        
         .btn-magic span { display: block; letter-spacing: 3px; font-size: 14px; }
         .btn-magic .sub-text { font-size: 8px; color: rgba(255,255,255,0.2); margin-top: 6px; letter-spacing: 1px; }
-
         .btn-ios { border-left: 3px solid var(--m-cyan); }
         .btn-android { border-left: 3px solid var(--m-gold); }
         .btn-copy { border: 1px dashed rgba(255, 255, 255, 0.1); margin-top: 10px; }
 
+        @keyframes pulse-ring { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(2); opacity: 0; } }
         @keyframes lineIn { to { opacity: 1; transform: translateY(0); } }
         @keyframes cardFadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
     </style>
@@ -88,8 +94,7 @@
     <canvas id="bg-canvas"></canvas>
 
     <div id="loading-overlay">
-        <div class="console-box" id="console">
-            </div>
+        <div class="console-box" id="console"></div>
     </div>
 
     <div class="glass-card" id="main-card">
@@ -101,17 +106,23 @@
             <span class="status-tag">ENCRYPTION: AES-256</span>
         </div>
 
+        <div class="monitor-panel">
+            <div class="monitor-header">
+                <span>GLOBAL_NODE_CLUSTER</span>
+                <span class="pulse-dot"></span>
+            </div>
+            <div id="node-list" class="node-list"></div>
+        </div>
+
         <div class="action-group">
             <div onclick="importShadowrocket()" class="btn-magic btn-ios">
                 <span>一键同步到 Shadowrocket</span>
                 <div class="sub-text">IOS_STATION // 小火箭专用</div>
             </div>
-
             <div onclick="importClash()" class="btn-magic btn-android">
                 <span>一键同步到 Clash</span>
                 <div class="sub-text">ANDROID_PC // 订阅导入</div>
             </div>
-
             <div onclick="copyLink()" id="copyBtn" class="btn-magic btn-copy">
                 <span>复制手动订阅链接</span>
                 <div class="sub-text">MANUAL_COPY_LINK</div>
@@ -120,11 +131,16 @@
     </div>
 
     <script>
-        // 配置区
         const SUB_URL = "https://fastly.jsdelivr.net/gh/feng-180/feng-180.github.io@main/sub_all.txt";
         const CLASH_URL = "https://fastly.jsdelivr.net/gh/feng-180/feng-180.github.io@main/clash.yaml";
+        const regions = [
+            { n: "HK_BGP_PRO_01", r: "12ms" },
+            { n: "SG_DIRECT_01", r: "35ms" },
+            { n: "JP_SOFTBANK_01", r: "42ms" },
+            { n: "US_CN2_GIA_01", r: "118ms" }
+        ];
 
-        // 模拟加载逻辑
+        // 仪式感加载
         const consoleLines = [
             "> INITIALIZING SYSTEM...",
             "> DECODING NODE_ARRAY...",
@@ -143,9 +159,7 @@
                     div.className = 'line';
                     div.innerText = text;
                     consoleBox.appendChild(div);
-                    if(i === consoleLines.length - 1) {
-                        setTimeout(showCard, 600);
-                    }
+                    if(i === consoleLines.length - 1) setTimeout(showCard, 600);
                 }, i * 250);
             });
         }
@@ -155,10 +169,27 @@
             setTimeout(() => {
                 document.getElementById('loading-overlay').style.display = 'none';
                 document.getElementById('main-card').style.display = 'block';
+                // --- 关键调用 ---
+                initNodeMonitor();
             }, 800);
         }
 
-        // 功能函数
+        function initNodeMonitor() {
+            const list = document.getElementById('node-list');
+            regions.forEach((node, i) => {
+                setTimeout(() => {
+                    const item = document.createElement('div');
+                    item.className = 'node-item';
+                    item.innerHTML = `
+                        <span class="node-name">[${node.n}]</span>
+                        <span class="node-load">${(Math.random()*30 + 10).toFixed(1)}%</span>
+                        <span class="node-ms">${node.r}</span>
+                    `;
+                    list.appendChild(item);
+                }, i * 300);
+            });
+        }
+
         function importShadowrocket() {
             const encodedUrl = btoa(SUB_URL).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
             window.location.href = "shadowrocket://add/sub://" + encodedUrl + "?remark=风の魔法禁书录";
