@@ -2,50 +2,74 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>时间电台 - 专注每一刻</title>
     <style>
         :root { --bg: #ffffff; --text: #1d1d1f; }
         body { 
             margin: 0; background: var(--bg); color: var(--text);
-            font-family: -apple-system, sans-serif;
+            font-family: -apple-system, "SF Pro Text", "Helvetica Neue", sans-serif;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            height: 100vh; transition: 0.5s;
+            height: 100vh; overflow: hidden;
         }
-        #clock { font-size: 5rem; font-weight: 200; letter-spacing: -2px; margin-bottom: 20px; }
-        .motto { font-size: 0.9rem; color: #86868b; letter-spacing: 1px; }
+        #clock { font-size: 4.5rem; font-weight: 200; letter-spacing: -2px; margin-bottom: 10px; }
+        .motto { font-size: 0.85rem; color: #86868b; letter-spacing: 2px; font-weight: 300; }
         
-        /* 秘密按钮：伪装成底部的版权信息分割线 */
-        .secret-gate {
-            position: fixed; bottom: 50px; width: 30px; height: 2px;
-            background: #eee; cursor: default; transition: 0.3s;
+        /* 秘密入口：伪装成底部的极细装饰线 */
+        .footer-line {
+            position: fixed; bottom: 40px; width: 30px; height: 1px;
+            background: #e5e5e5; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        /* 只有长按或连续点击时才会有反应，平时隐形 */
-        .secret-gate:active { background: #00f2ff; transform: scaleX(2); }
+        /* 激活时的视觉反馈 */
+        .footer-line.active { background: #00f2ff; width: 60px; box-shadow: 0 0 10px #00f2ff; }
+        
+        #tips {
+            position: fixed; bottom: 20px; font-size: 10px; color: #d2d2d7;
+            letter-spacing: 1px;
+        }
     </style>
 </head>
 <body>
-    <div id="clock">00:00:00</div>
-    <div class="motto">STAY HUNGRY. STAY FOOLISH.</div>
 
-    <div class="secret-gate" id="gate"></div>
+    <div id="clock">00:00:00</div>
+    <div class="motto">Stay hungry, Stay foolish.</div>
+
+    <div class="footer-line" id="gate"></div>
+    <div id="tips">© 2026 DIGITAL_STATION</div>
 
     <script>
-        // 时钟逻辑
+        // 1. 实时时钟
         function update() {
             const d = new Date();
-            document.getElementById('clock').innerText = d.toLocaleTimeString('en-GB');
+            const h = String(d.getHours()).padStart(2, '0');
+            const m = String(d.getMinutes()).padStart(2, '0');
+            const s = String(d.getSeconds()).padStart(2, '0');
+            document.getElementById('clock').innerText = `${h}:${m}:${s}`;
         }
         setInterval(update, 1000); update();
 
-        // 秘密入口：连点 5 次触发跳转
+        // 2. 秘密入口逻辑：连续点击 5 次
         let count = 0;
-        document.getElementById('gate').onclick = function() {
+        let timer = null;
+        const gate = document.getElementById('gate');
+
+        gate.onclick = function() {
             count++;
+            gate.classList.add('active'); // 给予点击反馈
+            
+            // 每次点击重置定时器，如果 2 秒内没点够 5 次就重置
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+                count = 0;
+                gate.classList.remove('active');
+            }, 2000);
+
             if(count >= 5) {
-                window.location.href = "portal.html"; // 跳转到你的真实魔法主页
+                // 震动反馈（仅部分移动端支持）
+                if (window.navigator.vibrate) window.navigator.vibrate(50);
+                // 跳转到你改名后的真实主页
+                window.location.href = "portal.html";
             }
-            setTimeout(() => { count = 0; }, 2000);
         };
     </script>
 </body>
