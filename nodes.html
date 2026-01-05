@@ -88,31 +88,40 @@
 
     <div class="glass-card">
         <a href="index.html" class="back-link">TERMINAL_EXIT // 返回</a>
+        
         <h2>魔法术式同步</h2>
+        
         <div class="status-container">
             <span class="status-tag" id="node-count">NODES: SYNCING...</span>
             <span class="status-tag">AUTO_UPDATE</span>
         </div>
+
         <div class="action-group">
             <div onclick="importShadowrocket()" class="btn-magic btn-ios">
                 <span>一键导入小火箭 (iOS)</span>
                 <div class="sub-text">SUPPORT: SHADOWROCKET / QUANTX</div>
             </div>
+
             <div onclick="importClash()" class="btn-magic btn-android">
                 <span>一键导入 CLASH</span>
-                <div class="sub-text">DIRECT_YAML_IMPORT</div>
+                <div class="sub-text">DIRECT_YAML_LINK // 优先推荐</div>
             </div>
+
             <div onclick="copyLink()" id="copyBtn" class="btn-magic btn-copy">
                 <span>复制魔法订阅链接</span>
                 <div class="sub-text">MANUAL_COPY_PROTOCOL</div>
             </div>
         </div>
+
         <p class="footer-note">DATA_SYNC_PROTOCOL // 2026 // 维度稳定</p>
     </div>
 
     <script>
+        // --- 核心逻辑配置 ---
         const GITHUB_USER = "feng-180";
         const GITHUB_REPO = "feng-180.github.io";
+        
+        // 使用 jsDelivr 加速链接
         const BASE_URL = `https://fastly.jsdelivr.net/gh/${GITHUB_USER}/${GITHUB_REPO}@main/`;
         const SUB_URL = BASE_URL + "sub_all.txt";
         const CLASH_URL = BASE_URL + "clash.yaml";
@@ -120,56 +129,55 @@
         async function updateStatus() {
             try {
                 const response = await fetch(SUB_URL);
-                if (!response.ok) throw new Error();
                 const text = await response.text();
-                // 仅统计包含特征的行，排除空行和注释
-                const lines = text.split('\n').filter(l => l.includes(':') || l.length > 30).length;
+                // 统计非空行且非注释行
+                const lines = text.split('\n').filter(l => l.trim() && !l.startsWith('#')).length;
                 document.getElementById('node-count').innerText = `NODES: ${lines} ACTIVE`;
             } catch (e) {
-                document.getElementById('node-count').innerText = `NODES: ONLINE`;
+                document.getElementById('node-count').innerText = `NODES: CONNECTED`;
             }
         }
 
         function importShadowrocket() {
+            // 小火箭通常使用 Base64 的 sub_all.txt 链接
             const encodedUrl = btoa(unescape(encodeURIComponent(SUB_URL)));
-            window.location.href = `shadowrocket://add/sub://${encodedUrl}?remark=${encodeURIComponent("风の魔法禁书录")}`;
+            window.location.href = "shadowrocket://add/sub://" + encodedUrl + "?remark=" + encodeURIComponent("风の魔法禁书录");
         }
 
         function importClash() {
-            // 直接导入脚本生成的满分节点配置文件
+            // 直接导入我们生成的满分 clash.yaml 配置文件
             const finalUrl = encodeURIComponent(CLASH_URL);
-            window.location.href = `clash://install-config?url=${finalUrl}&name=${encodeURIComponent("Magic_Station")}`;
+            window.location.href = "clash://install-config?url=" + finalUrl + "&name=" + encodeURIComponent("Magic_Station");
         }
 
         function copyLink() {
             const btn = document.getElementById('copyBtn');
-            const originalContent = btn.innerHTML;
-            const handleSuccess = () => {
-                btn.innerHTML = "<span>✅ 术式已刻入剪贴板</span><div class='sub-text'>COPY_SUCCESSFUL</div>";
-                setTimeout(() => { btn.innerHTML = originalContent; }, 2000);
-            };
+            const originalText = btn.innerHTML;
 
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(SUB_URL).then(handleSuccess);
-            } else {
-                const input = document.createElement('textarea');
-                input.value = SUB_URL;
-                document.body.appendChild(input);
-                input.select();
+            // 兼容性复制函数
+            const textArea = document.createElement("textarea");
+            textArea.value = SUB_URL;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
                 document.execCommand('copy');
-                document.body.removeChild(input);
-                handleSuccess();
+                btn.innerHTML = "<span>✅ 术式已刻入剪贴板</span><div class='sub-text'>COPY_SUCCESSFUL</div>";
+                setTimeout(() => { btn.innerHTML = originalText; }, 2000);
+            } catch (err) {
+                console.error('复制失败', err);
             }
+            document.body.removeChild(textArea);
         }
 
-        // 绘制背景粒子
+        // 背景粒子绘制
         const canvas = document.getElementById("bg-canvas"), ctx = canvas.getContext("2d");
         let w, h;
         function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
         resize(); window.onresize = resize;
         const dots = Array.from({length: 40}, () => ({ 
             x: Math.random()*w, y: Math.random()*h, 
-            r: Math.random()*1.2, s: Math.random()*0.15 + 0.05 
+            r: Math.random()*1.2, 
+            s: Math.random()*0.15 + 0.05 
         }));
         function draw() {
             ctx.clearRect(0, 0, w, h);
