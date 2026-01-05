@@ -58,20 +58,22 @@
     }
     .qr-frame img { width: 100%; height: 100%; object-fit: contain; display: block; }
 
-    /* 跳转按钮修复 */
+    /* 跳转按钮：增加点击反馈 */
     .contact-btn {
-      display: block; width: 100%; padding: 15px;
+      display: block; width: 100%; padding: 16px;
       background: var(--m-red); color: #fff;
       text-align: center; text-decoration: none;
       font-weight: bold; font-size: 14px; letter-spacing: 2px;
       border-radius: 4px; margin: 20px 0;
       box-shadow: 0 4px 15px rgba(255, 60, 60, 0.3);
+      cursor: pointer; border: none; outline: none;
     }
+    .contact-btn:active { transform: scale(0.98); opacity: 0.9; }
 
     .pay-tip { font-size: 13px; color: rgba(255,255,255,0.4); text-align: center; line-height: 1.8; }
-    .pay-tip b { color: #fff; }
+    .pay-tip b { color: var(--m-cyan); }
 
-    /* --- 步骤文字 --- */
+    /* --- 步骤文字样式 --- */
     .step-title { font-size: 19px; color: var(--m-cyan); letter-spacing: 3px; margin-bottom: 12px; font-weight: 300; }
     .step-desc { font-size: 14px; color: rgba(255,255,255,0.5); line-height: 2; letter-spacing: 1px; }
     .back-home-link { color: var(--m-cyan); text-decoration: none; border-bottom: 1px solid rgba(0,242,255,0.3); }
@@ -96,13 +98,15 @@
       <div class="qr-frame">
         <img src="skm.jpg" alt="赞助阵法">
       </div>
-      <a href="https://wpa.qq.com/msgrd?v=3&uin=2902939692&site=qq&menu=yes" class="contact-btn">
+      
+      <button onclick="invokeQQ()" class="contact-btn">
         完成支付 // 召唤站长获取口令
-      </a>
+      </button>
+
       <div class="pay-tip">
         识别上方“赞助阵法”后方可唤醒魔法<br>
-        支付后点击上方按钮跳转私聊<br>
-        或手动添加 QQ: <b style="color:var(--m-cyan)">2902939692</b>
+        支付后点击按钮自动复制QQ并跳转<br>
+        或手动添加 QQ: <b>2902939692</b>
       </div>
     </div>
 
@@ -139,7 +143,7 @@
   </div>
 
   <script>
-    // 保持背景粒子效果
+    // 渲染粒子
     const canvas = document.getElementById("bg-canvas"), ctx = canvas.getContext("2d");
     let w, h;
     function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
@@ -155,6 +159,32 @@
       requestAnimationFrame(draw);
     }
     draw();
+
+    // ✨ 强制唤醒与自动复制函数
+    function invokeQQ() {
+        const qq = "2902939692";
+        
+        // 1. 自动复制 QQ 到剪贴板
+        const textArea = document.createElement("textarea");
+        textArea.value = qq;
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+            document.execCommand('copy');
+        } catch (err) {
+            console.error('复制失败');
+        }
+        document.body.removeChild(textArea);
+
+        // 2. 尝试唤醒 QQ (多重协议尝试)
+        // 协议1: 通用个人卡片
+        window.location.href = "mqqapi://card/show_pslcard?src_type=internal&version=1&uin=" + qq + "&card_type=person&source=qrcode";
+        
+        // 延时提示
+        setTimeout(() => {
+            alert("「召唤术式启动」\n\n1. 已尝试为您拉起QQ私聊\n2. 站长QQ已同步至剪贴板\n\n若未成功跳转，请在QQ搜索：2902939692");
+        }, 600);
+    }
   </script>
 </body>
 </html>
