@@ -1,0 +1,7 @@
+proxies: []
+proxy-groups:
+- name: 🚀 魔法枢纽
+  type: select
+  proxies: []
+rules:
+- MATCH,🚀 魔法枢纽
