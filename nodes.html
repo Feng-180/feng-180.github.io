@@ -23,18 +23,16 @@
 
         #bg-canvas { position: fixed; inset: 0; z-index: 0; opacity: 0.5; pointer-events: none; }
 
-        /* --- 核心卡牌：魔法传送门风格 --- */
         .glass-card { 
             position: relative; z-index: 2;
             background: rgba(255, 255, 255, 0.03); 
             border: 1px solid rgba(0, 242, 255, 0.1); 
             padding: 40px 30px; width: 100%; max-width: 420px;
-            backdrop-filter: blur(25px); text-align: center;
-            border-radius: 4px;
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            text-align: center; border-radius: 4px;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
         }
 
-        /* 顶部旋转光环 */
         .glass-card::before {
             content: ""; position: absolute; top: -50px; left: 50%; transform: translateX(-50%);
             width: 100px; height: 100px; border: 1px solid rgba(0, 242, 255, 0.1);
@@ -49,7 +47,6 @@
 
         h2 { font-size: 22px; color: #fff; letter-spacing: 6px; margin: 0 0 15px 0; font-weight: 300; text-shadow: var(--glow); }
         
-        /* 状态显示区 */
         .status-container { display: flex; justify-content: center; gap: 10px; margin-bottom: 40px; }
         .status-tag { 
             font-size: 9px; padding: 4px 12px; border-radius: 2px;
@@ -57,7 +54,6 @@
             color: var(--m-cyan); letter-spacing: 1px;
         }
 
-        /* 自动化按钮组 */
         .action-group { display: flex; flex-direction: column; gap: 20px; }
         
         .btn-magic {
@@ -66,6 +62,7 @@
             border: 1px solid rgba(255, 255, 255, 0.05);
             color: #fff; cursor: pointer; transition: 0.4s cubic-bezier(0.2, 1, 0.3, 1);
             text-align: center; overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
         }
         .btn-magic:hover { 
             border-color: var(--m-cyan); 
@@ -77,7 +74,6 @@
         .btn-magic span { display: block; letter-spacing: 4px; font-size: 15px; font-weight: 300; }
         .btn-magic .sub-text { font-size: 9px; color: rgba(255,255,255,0.2); margin-top: 8px; letter-spacing: 2px; }
 
-        /* 特殊边框色 */
         .btn-ios { border-left: 2px solid var(--m-cyan); }
         .btn-android { border-left: 2px solid var(--m-gold); }
         .btn-copy { border: 1px dashed rgba(255, 255, 255, 0.1); margin-top: 10px; }
@@ -92,79 +88,88 @@
 
     <div class="glass-card">
         <a href="index.html" class="back-link">TERMINAL_EXIT // 返回</a>
-        
         <h2>魔法术式同步</h2>
-        
         <div class="status-container">
             <span class="status-tag" id="node-count">NODES: SYNCING...</span>
             <span class="status-tag">AUTO_UPDATE</span>
         </div>
-
         <div class="action-group">
             <div onclick="importShadowrocket()" class="btn-magic btn-ios">
                 <span>一键导入小火箭 (iOS)</span>
                 <div class="sub-text">SUPPORT: SHADOWROCKET / QUANTX</div>
             </div>
-
             <div onclick="importClash()" class="btn-magic btn-android">
                 <span>一键导入 CLASH</span>
-                <div class="sub-text">SUPPORT: ANDROID / WIN / MAC</div>
+                <div class="sub-text">DIRECT_YAML_IMPORT</div>
             </div>
-
             <div onclick="copyLink()" id="copyBtn" class="btn-magic btn-copy">
                 <span>复制魔法订阅链接</span>
                 <div class="sub-text">MANUAL_COPY_PROTOCOL</div>
             </div>
         </div>
-
         <p class="footer-note">DATA_SYNC_PROTOCOL // 2026 // 维度稳定</p>
     </div>
 
     <script>
-        // 配置区
         const GITHUB_USER = "feng-180";
         const GITHUB_REPO = "feng-180.github.io";
-        const SUB_URL = `https://fastly.jsdelivr.net/gh/${GITHUB_USER}/${GITHUB_REPO}@main/sub_all.txt`;
+        const BASE_URL = `https://fastly.jsdelivr.net/gh/${GITHUB_USER}/${GITHUB_REPO}@main/`;
+        const SUB_URL = BASE_URL + "sub_all.txt";
+        const CLASH_URL = BASE_URL + "clash.yaml";
 
         async function updateStatus() {
             try {
                 const response = await fetch(SUB_URL);
+                if (!response.ok) throw new Error();
                 const text = await response.text();
-                const lines = text.split('\n').filter(l => l.includes('://')).length;
+                // 仅统计包含特征的行，排除空行和注释
+                const lines = text.split('\n').filter(l => l.includes(':') || l.length > 30).length;
                 document.getElementById('node-count').innerText = `NODES: ${lines} ACTIVE`;
             } catch (e) {
-                document.getElementById('node-count').innerText = `NODES: CONNECTED`;
+                document.getElementById('node-count').innerText = `NODES: ONLINE`;
             }
         }
 
         function importShadowrocket() {
             const encodedUrl = btoa(unescape(encodeURIComponent(SUB_URL)));
-            window.location.href = "shadowrocket://add/sub://" + encodedUrl + "?remark=风の魔法禁书录";
+            window.location.href = `shadowrocket://add/sub://${encodedUrl}?remark=${encodeURIComponent("风の魔法禁书录")}`;
         }
 
         function importClash() {
-            const finalUrl = `https://sub.id9.cc/sub?target=clash&url=${encodeURIComponent(SUB_URL)}&new_name=Magic_Station`;
-            window.location.href = "clash://install-config?url=" + encodeURIComponent(finalUrl);
+            // 直接导入脚本生成的满分节点配置文件
+            const finalUrl = encodeURIComponent(CLASH_URL);
+            window.location.href = `clash://install-config?url=${finalUrl}&name=${encodeURIComponent("Magic_Station")}`;
         }
 
         function copyLink() {
-            navigator.clipboard.writeText(SUB_URL).then(() => {
-                const btn = document.getElementById('copyBtn');
-                const originalText = btn.innerHTML;
+            const btn = document.getElementById('copyBtn');
+            const originalContent = btn.innerHTML;
+            const handleSuccess = () => {
                 btn.innerHTML = "<span>✅ 术式已刻入剪贴板</span><div class='sub-text'>COPY_SUCCESSFUL</div>";
-                setTimeout(() => { btn.innerHTML = originalText; }, 2000);
-            });
+                setTimeout(() => { btn.innerHTML = originalContent; }, 2000);
+            };
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(SUB_URL).then(handleSuccess);
+            } else {
+                const input = document.createElement('textarea');
+                input.value = SUB_URL;
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand('copy');
+                document.body.removeChild(input);
+                handleSuccess();
+            }
         }
 
-        // 绘制主页同款粒子
+        // 绘制背景粒子
         const canvas = document.getElementById("bg-canvas"), ctx = canvas.getContext("2d");
         let w, h;
         function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
         resize(); window.onresize = resize;
         const dots = Array.from({length: 40}, () => ({ 
             x: Math.random()*w, y: Math.random()*h, 
-            r: Math.random()*1.2, 
-            s: Math.random()*0.15 + 0.05 
+            r: Math.random()*1.2, s: Math.random()*0.15 + 0.05 
         }));
         function draw() {
             ctx.clearRect(0, 0, w, h);
