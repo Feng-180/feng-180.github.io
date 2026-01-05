@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>时间电台 - 专注每一刻</title>
+    <style>
+        :root { --bg: #ffffff; --text: #1d1d1f; }
+        body { 
+            margin: 0; background: var(--bg); color: var(--text);
+            font-family: -apple-system, sans-serif;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 100vh; transition: 0.5s;
+        }
+        #clock { font-size: 5rem; font-weight: 200; letter-spacing: -2px; margin-bottom: 20px; }
+        .motto { font-size: 0.9rem; color: #86868b; letter-spacing: 1px; }
+        
+        /* 秘密按钮：伪装成底部的版权信息分割线 */
+        .secret-gate {
+            position: fixed; bottom: 50px; width: 30px; height: 2px;
+            background: #eee; cursor: default; transition: 0.3s;
+        }
+        /* 只有长按或连续点击时才会有反应，平时隐形 */
+        .secret-gate:active { background: #00f2ff; transform: scaleX(2); }
+    </style>
+</head>
+<body>
+    <div id="clock">00:00:00</div>
+    <div class="motto">STAY HUNGRY. STAY FOOLISH.</div>
+
+    <div class="secret-gate" id="gate"></div>
+
+    <script>
+        // 时钟逻辑
+        function update() {
+            const d = new Date();
+            document.getElementById('clock').innerText = d.toLocaleTimeString('en-GB');
+        }
+        setInterval(update, 1000); update();
+
+        // 秘密入口：连点 5 次触发跳转
+        let count = 0;
+        document.getElementById('gate').onclick = function() {
+            count++;
+            if(count >= 5) {
+                window.location.href = "portal.html"; // 跳转到你的真实魔法主页
+            }
+            setTimeout(() => { count = 0; }, 2000);
+        };
+    </script>
+</body>
+</html>
