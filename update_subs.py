@@ -2,70 +2,119 @@ import requests
 import base64
 import yaml
 import time
+import re
+from concurrent.futures import ThreadPoolExecutor
 
-# 你的源链接列表文件
+# --- 配置区 ---
 SOURCE_FILE = 'sources.txt'
-# 生成的最终订阅文件
-OUTPUT_FILE = 'sub_all.txt'
+OUTPUT_FILE = 'sub_all.txt'  # 原始通用订阅
+CLASH_FILE = 'clash.yaml'     # 专门的 Clash 配置文件
+CONVERTER_API = "https://sub.id9.cc/sub?target=clash&url=" # 转换后端
+
+# ✨ [PINK_STYLE] 测速超时设置 (秒)
+TIMEOUT = 5 
+# ✨ [PINK_STYLE] 并发检测线程数
+MAX_WORKERS = 20 
 
 def get_content(url):
+    """ ✨ [PINK_STYLE] 执行核心抓取术式 """
     try:
-        # 设置超时，防止某个源挂了导致整个 Action 失败
-        response = requests.get(url, timeout=15)
+        headers = {'User-Agent': 'ClashforWindows/0.19.23'}
+        response = requests.get(url, headers=headers, timeout=15)
         if response.status_code == 200:
             return response.text
     except Exception as e:
-        print(f"抓取失败 {url}: {e}")
+        print(f"❌ 抓取失败 {url}: {e}")
     return ""
 
+def check_node(proxy):
+    """ ✨ [PINK_STYLE] 节点生命力检测 (满分筛选逻辑) """
+    try:
+        # 提取节点服务器和端口
+        server = proxy.get('server')
+        port = proxy.get('port')
+        if not server or not port:
+            return None
+        
+        # 简单的 TCP 联通性测试
+        import socket
+        start_time = time.time()
+        s = socket.create_connection((server, int(port)), timeout=TIMEOUT)
+        delay = int((time.time() - start_time) * 1000)
+        s.close()
+        
+        # 将延迟信息注入节点名 (实现“满分”标记)
+        proxy['name'] = f"⚡{delay}ms | {proxy.get('name', 'Magic-Node')}"
+        return proxy
+    except:
+        return None
+
 def main():
+    print("🔮 正在启动魔法术式：节点自动筛选与更新...")
+    
     with open(SOURCE_FILE, 'r') as f:
-        urls = [line.strip() for line in f if line.strip()]
+        urls = [line.strip() for line in f if line.strip() and not line.startswith('#')]
 
     all_proxies = []
-    
-    # 基础的 Clash 配置头
-    clash_config = {
-        "port": 7890,
-        "socks-port": 7891,
-        "allow-lan": True,
-        "mode": "rule",
-        "log-level": "info",
-        "external-controller": "127.0.0.1:9090",
-        "proxies": []
-    }
 
+    # 1. 遍历并转换源
     for url in urls:
-        content = get_content(url)
-        if not content:
-            continue
-            
-        # 逻辑：如果是 YAML 格式（通常包含 'proxies:'）
+        print(f"📡 正在解析源: {url[:30]}...")
+        # 优先通过转换后端获取标准化的 YAML 格式节点
+        convert_url = f"{CONVERTER_API}{requests.utils.quote(url)}&insert=false"
+        content = get_content(convert_url)
+        
         if 'proxies:' in content:
             try:
                 data = yaml.safe_load(content)
                 if 'proxies' in data:
                     all_proxies.extend(data['proxies'])
             except:
-                pass
-        # 逻辑：如果是 Base64 格式（尝试通过转换器抓取节点）
-        else:
-            # 这里的 subUrl 需要指向一个在线转换后端来提取里面的纯节点列表
-            # 为了简单起见，建议在这里直接存储原始链接，
-            # 真正的“合并”交给网页端的一键导入代码（即我之前给你的双重编码逻辑）
-            pass
+                continue
 
-    # 如果你希望脚本直接生成完整的 YAML
-    if all_proxies:
-        clash_config['proxies'] = all_proxies
-        # 写入文件
-        with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
-            yaml.dump(clash_config, f, allow_unicode=True)
-            print(f"成功更新 {len(all_proxies)} 个节点")
-    else:
-        # 如果脚本只负责汇总链接（保持你现在的逻辑），请确保网页端有转换器
-        with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
-            f.write(content)
+    # 2. 节点去重 (按服务器地址)
+    unique_proxies = {p['server']+str(p['port']): p for p in all_proxies}.values()
+    print(f"🔍 初始发现 {len(unique_proxies)} 个潜在节点，准备进行可用性筛选...")
+
+    # 3. 多线程测速筛选 (剔除不可用)
+    valid_proxies = []
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
+        results = executor.map(check_node, unique_proxies)
+        for res in results:
+            if res:
+                valid_proxies.append(res)
+
+    # 4. 排序：按延迟从小到大排列 (实现优质节点优先)
+    # 逻辑：提取我们刚刚注入的名字中的延迟数字
+    valid_proxies.sort(key=lambda x: int(re.search(r'\d+', x['name']).group()) if re.search(r'\d+', x['name']) else 999)
+
+    # 5. 生成结果
+    # 写入 Clash 专用文件
+    clash_config = {
+        "proxies": valid_proxies,
+        "proxy-groups": [
+            {
+                "name": "🚀 魔法枢纽",
+                "type": "select",
+                "proxies": [p['name'] for p in valid_proxies]
+            }
+        ],
+        "rules": ["MATCH,🚀 魔法枢纽"]
+    }
+
+    with open(CLASH_FILE, 'w', encoding='utf-8') as f:
+        yaml.dump(clash_config, f, allow_unicode=True, sort_keys=False)
+
+    # 写入通用订阅文件 (Base64 格式，方便小火箭)
+    # 这里我们采取简单策略：将有效的节点信息存入，或保持原始汇总
+    with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
+        # 为了兼容，我们把所有原始链接重新打包（示例逻辑）
+        f.write("# UPDATED BY MAGIC_SYSTEM\n")
+        # 如果需要生成 Base64，可以在此进行转换，这里先保持文本方便你手动修改
+        for p in valid_proxies:
+            f.write(f"{p['name']} -> {p['server']}:{p['port']}\n")
+
+    print(f"✅ 术式同步完成！共存留 {len(valid_proxies)} 个满分节点。")
 
 if __name__ == "__main__":
     main()
