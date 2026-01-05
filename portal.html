@@ -41,7 +41,6 @@
     .r2 { width: 280px; height: 280px; border-style: dashed; animation: rotate 20s linear infinite reverse; opacity: 0.5; }
     .r3 { width: 220px; height: 220px; border-width: 1px; animation: rotate 10s linear infinite; border-color: rgba(0, 242, 255, 0.4); }
 
-    /* --- 图片显示：卡牌样式 & 不裁剪 --- */
     .card-wrap {
       position: relative; z-index: 10;
       width: var(--card-w);
@@ -56,18 +55,13 @@
     }
     
     .logo-img { 
-      width: 100%; 
-      height: auto; 
-      max-height: 180px;
-      object-fit: contain; /* 确保图片内容完整展示 */
-      filter: drop-shadow(0 0 10px rgba(0, 242, 255, 0.3));
-      display: block;
-      border-radius: 8px;
+      width: 100%; height: auto; max-height: 180px;
+      object-fit: contain; filter: drop-shadow(0 0 10px rgba(0, 242, 255, 0.3));
+      display: block; border-radius: 8px;
     }
 
     .card-backlight {
-      position: absolute; 
-      width: 200px; height: 120px;
+      position: absolute; width: 200px; height: 120px;
       background: var(--m-cyan); filter: blur(60px);
       border-radius: 50%; opacity: 0.15; z-index: -1;
       left: 50%; top: 50%; transform: translate(-50%, -50%);
@@ -85,33 +79,24 @@
     .bar { width: 2px; height: 3px; background: var(--m-cyan); opacity: 0.2; transition: 0.3s; }
     .bar.playing { animation: pulse 0.7s infinite alternate; opacity: 0.8; box-shadow: 0 0 8px var(--m-cyan); }
 
-    /* --- 菜单排版优化 --- */
+    /* --- 菜单 --- */
     .menu { position: relative; z-index: 10; width: 100%; max-width: 380px; padding: 0 25px; }
     .menu-item { 
       display: block; text-decoration: none; padding: 20px 25px; 
-      margin-bottom: 15px;
-      background: rgba(255, 255, 255, 0.02);
+      margin-bottom: 15px; background: rgba(255, 255, 255, 0.02);
       border: 1px solid rgba(255, 255, 255, 0.05);
-      border-left: 3px solid rgba(0, 242, 255, 0.3); 
-      border-radius: 4px;
+      border-left: 3px solid rgba(0, 242, 255, 0.3); border-radius: 4px;
       transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      position: relative;
-      overflow: hidden;
+      position: relative; overflow: hidden;
     }
     
     .menu-item:hover { 
-      background: rgba(0, 242, 255, 0.05);
-      border-left-color: var(--m-cyan);
-      transform: translateX(10px); 
-      box-shadow: -5px 0 15px rgba(0, 242, 255, 0.1);
+      background: rgba(0, 242, 255, 0.05); border-left-color: var(--m-cyan);
+      transform: translateX(10px); box-shadow: -5px 0 15px rgba(0, 242, 255, 0.1);
     }
     
-    .m-title { 
-      display: block; font-size: 18px; letter-spacing: 4px; font-weight: 400; 
-      transition: 0.4s; color: rgba(255, 255, 255, 0.8);
-    }
+    .m-title { display: block; font-size: 18px; letter-spacing: 4px; font-weight: 400; transition: 0.4s; color: rgba(255, 255, 255, 0.8); }
     .menu-item:hover .m-title { color: var(--m-cyan); text-shadow: var(--glow); letter-spacing: 6px; }
-    
     .m-desc { display: block; font-size: 9px; color: #555; margin-top: 6px; letter-spacing: 1px; }
 
     /* --- 底部 & 弹窗 --- */
@@ -124,7 +109,6 @@
     .m-input:focus { border-bottom-color: var(--m-cyan); }
     .m-btn { background: var(--m-cyan); color: #000; border: none; padding: 15px 0; width: 100%; cursor: pointer; font-weight: bold; font-size: 12px; letter-spacing: 4px; transition: 0.3s; border-radius: 4px; }
 
-    /* --- 动画库 --- */
     @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     @keyframes breathe-ultra { 0%, 100% { opacity: 0.1; transform: translate(-50%, -50%) scale(0.8); } 50% { opacity: 0.2; transform: translate(-50%, -50%) scale(1.1); } }
     @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
@@ -173,10 +157,10 @@
       <span class="m-title">同步术式</span>
       <span class="m-desc">NODE_UPDATE // 实时订阅</span>
     </div>
-    <div onclick="showModal('download')" class="menu-item" style="cursor:pointer">
+    <a href="download.html" class="menu-item">
       <span class="m-title">工具介绍</span>
       <span class="m-desc">TOOLS_DECODE // 核心器械</span>
-    </div>
+    </a>
   </nav>
 
   <footer class="footer">
