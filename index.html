@@ -25,66 +25,85 @@
       background: radial-gradient(circle at center, #0f0821 0%, #030008 100%);
     }
 
-    /* --- 顶部：卡牌与三重符文环 --- */
-    .header { position: relative; z-index: 5; padding-top: 70px; margin-bottom: 20px; }
+    /* --- 顶部：卡牌比例锁定版 --- */
+    .header { position: relative; z-index: 5; padding-top: 60px; margin-bottom: 10px; }
+    
     .card-portal {
-      position: relative; width: 160px; height: 220px;
+      position: relative; 
+      width: 140px; 
+      height: 220px; 
       display: flex; align-items: center; justify-content: center;
+      margin: 0 auto;
     }
+    
     .logo-img { 
-      width: 100%; height: 100%; object-fit: contain; 
+      width: 100%; 
+      height: 100%; 
+      object-fit: cover; 
+      border-radius: 8px; 
       filter: drop-shadow(0 0 10px var(--m-cyan));
-      z-index: 10; animation: float 4s ease-in-out infinite;
+      z-index: 10; 
+      animation: float 4s ease-in-out infinite;
+      border: 1px solid rgba(0, 242, 255, 0.3);
     }
+
     .halo {
       position: absolute; border: 1px solid rgba(0, 242, 255, 0.15); border-radius: 50%;
       pointer-events: none;
     }
-    .h1 { width: 280px; height: 280px; animation: rotate 20s linear infinite; border-style: dashed; }
-    .h2 { width: 320px; height: 320px; animation: rotate 40s linear infinite reverse; opacity: 0.5; }
+    .h1 { width: 260px; height: 260px; animation: rotate 20s linear infinite; border-style: dashed; }
+    .h2 { width: 300px; height: 300px; animation: rotate 40s linear infinite reverse; opacity: 0.5; }
 
-    /* --- 播放器：流光跳动 --- */
-    .player-trigger {
-      margin: 40px 0; cursor: pointer; z-index: 10;
-      display: flex; flex-direction: column; align-items: center; gap: 10px;
-    }
-    .audio-bars { display: flex; align-items: flex-end; gap: 4px; height: 20px; }
+    /* --- 播放器 --- */
+    .player-trigger { margin: 30px 0; cursor: pointer; z-index: 10; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+    .audio-bars { display: flex; align-items: flex-end; gap: 4px; height: 16px; }
     .bar { width: 2px; height: 4px; background: var(--m-cyan); transition: 0.3s; opacity: 0.2; }
     .bar.playing { animation: pulse 0.6s infinite alternate; opacity: 0.8; box-shadow: var(--glow); }
     .player-status { font-size: 10px; color: #444; letter-spacing: 5px; font-weight: bold; }
 
-    /* --- 菜单：极简对称排列 --- */
+    /* --- 菜单 --- */
     .menu { position: relative; z-index: 10; width: 320px; text-align: center; }
-    .menu-item {
-      display: block; text-decoration: none; padding: 22px 0;
-      color: rgba(255, 255, 255, 0.6); transition: 0.5s cubic-bezier(0.2, 1, 0.3, 1);
-      position: relative;
-    }
-    .menu-item:hover .m-title { color: #fff; text-shadow: 0 0 20px var(--m-cyan); letter-spacing: 12px; }
-    .m-title { display: block; font-size: 20px; letter-spacing: 8px; transition: 0.5s; font-weight: 300; }
-    .m-desc { display: block; font-size: 10px; color: #333; margin-top: 6px; letter-spacing: 2px; }
+    .menu-item { display: block; text-decoration: none; padding: 20px 0; color: rgba(255, 255, 255, 0.6); transition: 0.5s; position: relative; }
+    .menu-item:hover .m-title { color: #fff; text-shadow: 0 0 20px var(--m-cyan); letter-spacing: 10px; }
+    .m-title { display: block; font-size: 19px; letter-spacing: 6px; transition: 0.5s; font-weight: 300; }
+    .m-desc { display: block; font-size: 9px; color: #333; margin-top: 6px; letter-spacing: 2px; }
 
-    /* --- 底部：晶体计数器 --- */
-    .footer { margin-top: auto; padding: 60px 0; z-index: 5; text-align: center; }
-    .stat-box {
-      display: inline-block; padding: 8px 30px;
-      border-left: 1px solid var(--m-cyan); border-right: 1px solid var(--m-cyan);
+    /* --- 底部计数器：新增文字标识 --- */
+    .footer { margin-top: auto; padding: 40px 0; z-index: 5; text-align: center; }
+    .counter-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
     }
-    .stat-val { font-family: "Courier New", monospace; font-size: 18px; color: var(--m-cyan); opacity: 0.6; }
+    .counter-label {
+      font-size: 10px;
+      color: #333;
+      letter-spacing: 3px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+    .stat-val { 
+      font-family: "Courier New", monospace; 
+      font-size: 16px; 
+      color: var(--m-cyan); 
+      opacity: 0.5; 
+      letter-spacing: 2px; 
+    }
 
-    /* --- 动画库 --- */
+    /* --- 动画 --- */
     @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
-    @keyframes pulse { from { height: 4px; } to { height: 20px; } }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+    @keyframes pulse { from { height: 4px; } to { height: 16px; } }
 
     /* --- 验证弹窗 --- */
     #modal { position: fixed; inset: 0; z-index: 100; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.95); backdrop-filter: blur(15px); }
     .modal-card { width: 280px; text-align: center; position: relative; }
     .scan-line { position: absolute; left: 0; width: 100%; height: 2px; background: var(--m-cyan); box-shadow: 0 0 15px var(--m-cyan); top: 0; display: none; animation: scan 2s linear infinite; }
     @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
-    .m-input { width: 100%; background: transparent; border: none; border-bottom: 1px solid #222; color: #fff; padding: 15px; text-align: center; outline: none; font-size: 16px; margin-bottom: 30px; letter-spacing: 10px; }
-    .m-btn { background: #fff; color: #000; border: none; padding: 12px 50px; cursor: pointer; font-weight: bold; transition: 0.3s; border-radius: 2px; }
-    .m-btn:hover { background: var(--m-cyan); box-shadow: var(--glow); }
+    .m-input { width: 100%; background: transparent; border: none; border-bottom: 1px solid #222; color: #fff; padding: 15px; text-align: center; outline: none; font-size: 16px; margin-bottom: 30px; letter-spacing: 5px; }
+    .m-btn { background: #fff; color: #000; border: none; padding: 12px 50px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+    .m-btn:hover { background: var(--m-cyan); }
   </style>
 </head>
 <body>
@@ -101,7 +120,7 @@
       <div class="audio-bars">
         <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
       </div>
-      <div class="player-status" id="p-status">MUTE // 禁书封印</div>
+      <div class="player-status" id="p-status">MUTE // 吟唱魔法</div>
     </div>
     <audio id="audio-player" src="bgm.mp3" loop></audio>
   </header>
@@ -114,7 +133,8 @@
   </nav>
 
   <footer class="footer">
-    <div class="stat-box">
+    <div class="counter-container">
+      <div class="counter-label">今日魔法使用人数</div>
       <div class="stat-val" id="counter-val">0000350859</div>
     </div>
   </footer>
@@ -131,22 +151,11 @@
 
   <script>
     /************************************************************
-     * *
-     * ⚠️  [ 魔法禁书目录 - 核心权限配置 ]  ⚠️            *
-     * *
-     * 在此修改下方引号内的文字，即可更改全站通行口令：             *
-     * *
+     * ⚠️ [ 修改口令在这里 ] 
      ************************************************************/
-    
     const TODAY_CODE = "666资源风"; 
-    
-    /************************************************************
-     * *
-     * [ 权限配置结束，以下代码请勿修改 ]                          *
-     * *
-     ************************************************************/
+    /************************************************************/
 
-    // 背景 Canvas 渲染
     const canvas = document.getElementById('magic-canvas');
     const ctx = canvas.getContext('2d');
     let w, h, particles = [];
@@ -161,7 +170,6 @@
     }
     window.onresize = init; init(); draw();
 
-    // 弹窗与识别逻辑
     let target = "";
     function showModal(t) { target = t; document.getElementById('modal').style.display = 'flex'; }
     function closeModal() { document.getElementById('modal').style.display = 'none'; }
@@ -171,25 +179,22 @@
       const scanner = document.getElementById('scanner');
       const tip = document.getElementById('modal-tip');
       const btn = document.getElementById('verify-btn');
-
       scanner.style.display = 'block';
-      tip.innerText = "SCANNIG KEY...";
+      tip.innerText = "SCANNING...";
       btn.innerText = "识别中...";
 
       setTimeout(() => {
         if(input === TODAY_CODE) {
-          tip.innerText = "ACCESS GRANTED";
           window.location.href = target + ".html";
         } else {
           scanner.style.display = 'none';
-          tip.innerText = "ACCESS DENIED";
+          tip.innerText = "DENIED";
           btn.innerText = "重试";
-          alert('口令无法引起法阵共鸣');
+          alert('口令错误');
         }
-      }, 1500);
+      }, 1200);
     }
 
-    // 播放器控制
     const audio = document.getElementById('audio-player');
     const bars = document.querySelectorAll('.bar');
     function toggleMusic() {
@@ -204,8 +209,6 @@
         document.getElementById('p-status').style.color = "#444"; 
       }
     }
-    
-    // 计数器
     let count = 350859; 
     setInterval(() => { count += Math.floor(Math.random() * 2); document.getElementById('counter-val').innerText = count.toString().padStart(10, '0'); }, 4000);
   </script>
