@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>禁书目录：魔法工具库</title>
+  <title>情报局：外网维度解析</title>
   <style>
     :root {
       --m-cyan: #00f2ff;
@@ -15,209 +15,123 @@
     body {
       margin: 0; background: var(--m-deep); color: #fff;
       font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
-      overflow-x: hidden; min-height: 100vh;
-      display: flex; flex-direction: column; align-items: center;
-      /* 这里的渐变与主页完全一致 */
-      background: radial-gradient(circle at center, #0f0821 0%, #030008 100%);
-      padding: 30px 15px;
+      background: radial-gradient(circle at center, #130a2b 0%, #030008 100%);
+      padding: 30px 15px; display: flex; flex-direction: column; align-items: center;
     }
 
-    #bg-canvas { position: fixed; inset: 0; z-index: 0; opacity: 0.5; pointer-events: none; }
+    #bg-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.4; }
 
-    /* --- 核心容器：磨砂玻璃质感 --- */
-    .download-container {
-      position: relative; z-index: 2; width: 100%; max-width: 600px;
-      background: rgba(255, 255, 255, 0.03); 
-      border: 1px solid rgba(0, 242, 255, 0.1);
-      padding: 30px 20px; 
-      backdrop-filter: blur(20px);
-      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-      border-radius: 4px;
+    header { position: relative; z-index: 2; text-align: center; margin-bottom: 40px; }
+    h1 { font-size: 22px; letter-spacing: 8px; font-weight: 300; text-shadow: var(--glow); margin-bottom: 10px; }
+    .subtitle { font-size: 10px; color: #555; letter-spacing: 3px; }
+
+    /* --- 媒体展示网格 --- */
+    .media-grid {
+      position: relative; z-index: 2; width: 100%; max-width: 450px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
     }
 
-    .header-box { 
-      display: flex; justify-content: space-between; align-items: center; 
-      margin-bottom: 30px; border-bottom: 1px solid rgba(0, 242, 255, 0.1); 
-      padding-bottom: 15px; 
+    .media-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px; padding: 20px;
+      text-align: center; transition: 0.3s;
+      backdrop-filter: blur(10px);
     }
-    .header-box h2 { 
-      font-size: 18px; color: var(--m-cyan); letter-spacing: 4px; 
-      margin: 0; font-weight: 300; text-shadow: var(--glow);
-    }
-    .back-link { 
-      color: rgba(255,255,255,0.3); text-decoration: none; font-size: 10px; 
-      letter-spacing: 2px; transition: 0.3s; 
-    }
-    .back-link:hover { color: var(--m-cyan); }
+    .media-card:hover { border-color: var(--m-cyan); transform: translateY(-5px); background: rgba(0, 242, 255, 0.05); }
 
-    /* --- 表格美化 --- */
-    .table-wrapper { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; min-width: 400px; }
-    th { 
-      font-size: 10px; color: rgba(255,255,255,0.2); 
-      text-transform: uppercase; letter-spacing: 3px; 
-      padding: 15px 8px; text-align: left; 
+    .media-card img { width: 45px; height: 45px; margin-bottom: 15px; filter: drop-shadow(0 0 5px rgba(255,255,255,0.2)); }
+    .media-name { font-size: 15px; letter-spacing: 2px; margin-bottom: 8px; display: block; }
+    .media-tag { font-size: 9px; color: var(--m-cyan); opacity: 0.6; border: 1px solid rgba(0,242,255,0.2); padding: 2px 6px; border-radius: 2px; }
+
+    /* --- 下载入口强调区 --- */
+    .download-section {
+      position: relative; z-index: 2; width: 100%; max-width: 450px;
+      margin-top: 30px; background: rgba(0, 242, 255, 0.02);
+      border: 1px dashed rgba(0, 242, 255, 0.2); border-radius: 8px; padding: 25px;
     }
-    td { 
-      font-size: 13px; padding: 18px 8px; 
-      border-bottom: 1px solid rgba(255, 255, 255, 0.03); 
-      color: rgba(255,255,255,0.7); 
-      font-weight: 300;
-    }
-    .sys-tag { 
-      font-size: 9px; border: 1px solid rgba(0, 242, 255, 0.2); 
-      color: var(--m-cyan); padding: 2px 8px; border-radius: 2px;
-      letter-spacing: 1px;
-    }
+    .dl-title { font-size: 14px; color: var(--m-cyan); margin-bottom: 15px; text-align: center; letter-spacing: 2px; }
     
-    /* --- 霓虹下载按钮 --- */
-    .btn-download {
-      background: transparent; color: #fff;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 8px 16px; font-size: 10px; cursor: pointer;
-      transition: 0.4s cubic-bezier(0.2, 1, 0.3, 1); 
-      letter-spacing: 2px;
+    .dl-btn {
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 15px 20px; border-radius: 4px; color: #fff; text-decoration: none;
+      margin-bottom: 10px; transition: 0.3s;
     }
-    .btn-download:hover { 
-      background: var(--m-cyan); color: #000; 
-      border-color: var(--m-cyan);
-      box-shadow: var(--glow); 
-      transform: translateY(-2px);
-    }
+    .dl-btn:hover { background: var(--m-cyan); color: #000; }
+    .dl-btn span { font-size: 12px; letter-spacing: 2px; }
+    .dl-btn i { font-size: 10px; opacity: 0.5; }
 
-    .footer-tip { 
-      margin-top: 40px; text-align: center; font-size: 10px; 
-      color: rgba(255,255,255,0.15); letter-spacing: 2px; 
+    .footer-nav { margin-top: 40px; z-index: 2; }
+    .btn-back {
+      padding: 12px 40px; border: 1px solid rgba(0, 242, 255, 0.3);
+      color: var(--m-cyan); text-decoration: none; font-size: 11px; letter-spacing: 4px;
     }
-
-    /* --- 身份验证弹窗：对标主页动态效果 --- */
-    #verifyModal { 
-      position: fixed; inset: 0; z-index: 999; 
-      display: none; align-items: center; justify-content: center; 
-      background: rgba(0,0,0,0.96); backdrop-filter: blur(20px);
-    }
-    .modal-content { 
-      background: transparent; padding: 40px; 
-      width: 300px; text-align: center; position: relative;
-    }
-    .modal-title { 
-      font-size: 10px; color: rgba(255,255,255,0.3); 
-      letter-spacing: 5px; margin-bottom: 25px; 
-    }
-    #verifyInput { 
-      width: 100%; background: transparent; border: none;
-      border-bottom: 1px solid #222; color: #fff; padding: 15px; 
-      margin-bottom: 35px; text-align: center; outline: none; 
-      font-size: 18px; letter-spacing: 4px;
-    }
-    .modal-btns { display: flex; flex-direction: column; gap: 15px; align-items: center; }
-    .btn-confirm { 
-      width: 100%; background: #fff; color: #000; border: none; 
-      padding: 14px; cursor: pointer; font-size: 12px; font-weight: bold; 
-      border-radius: 2px; transition: 0.3s;
-    }
-    .btn-confirm:hover { background: var(--m-cyan); box-shadow: var(--glow); }
-    .btn-cancel { color: #444; background: none; border: none; font-size: 11px; cursor: pointer; letter-spacing: 2px; }
   </style>
 </head>
 <body>
   <canvas id="bg-canvas"></canvas>
 
-  <div class="download-container">
-    <div class="header-box">
-      <h2>魔法工具库</h2>
-      <a href="index.html" class="back-link">PROTOCOL_EXIT // 返回</a>
-    </div>
+  <header>
+    <h1>工具介绍与情报</h1>
+    <div class="subtitle">MEDIA_INTELLIGENCE // 跨维指南</div>
+  </header>
 
-    <div class="table-wrapper">
-      <table>
-        <thead>
-          <tr>
-            <th>组件名称</th>
-            <th>适用系统</th>
-            <th>获取权限</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td>Clash for Win</td><td><span class="sys-tag">Windows</span></td><td><button onclick="askVerify('https://github.com/clash-for-windows-backup/clash-for-windows-backup/releases')" class="btn-download">FETCH</button></td></tr>
-          <tr><td>v2rayN</td><td><span class="sys-tag">Windows</span></td><td><button onclick="askVerify('https://github.com/2rayN/v2rayN/releases')" class="btn-download">FETCH</button></td></tr>
-          <tr><td>Clash Android</td><td><span class="sys-tag">Android</span></td><td><button onclick="askVerify('https://github.com/MetaCubeX/ClashMetaForAndroid/releases')" class="btn-download">FETCH</button></td></tr>
-          <tr><td>v2rayNG</td><td><span class="sys-tag">Android</span></td><td><button onclick="askVerify('https://github.com/2rayN/v2rayNG/releases')" class="btn-download">FETCH</button></td></tr>
-          <tr><td>Shadowrocket</td><td><span class="sys-tag">iOS</span></td><td><button onclick="askVerify('https://apps.apple.com/app/shadowrocket/id932747118')" class="btn-download">FETCH</button></td></tr>
-          <tr><td>Quantumult X</td><td><span class="sys-tag">iOS</span></td><td><button onclick="askVerify('https://apps.apple.com/app/quantumult-x/id1443988620')" class="btn-download">FETCH</button></td></tr>
-          <tr><td>Clash Mac</td><td><span class="sys-tag">MacOS</span></td><td><button onclick="askVerify('https://github.com/clash-for-windows-backup/clash-for-windows-backup/releases')" class="btn-download">FETCH</button></td></tr>
-        </tbody>
-      </table>
+  <div class="media-grid">
+    <div class="media-card">
+      <div class="media-name">YouTube</div>
+      <div class="media-tag">全球视界</div>
+      <p style="font-size: 10px; color: #666; margin-top: 10px;">解锁 4K 无限制高清视频，探索全球创意。</p>
     </div>
-    <div class="footer-tip">SYSTEM_STATUS: 魔法器械库由镜像阵地实时同步 ✨</div>
+    <div class="media-card">
+      <div class="media-name">ChatGPT</div>
+      <div class="media-tag">智械核心</div>
+      <p style="font-size: 10px; color: #666; margin-top: 10px;">最强 AI 助手，无阻碍进行深度思维共鸣。</p>
+    </div>
+    <div class="media-card">
+      <div class="media-name">Netflix</div>
+      <div class="media-tag">流媒体阵地</div>
+      <p style="font-size: 10px; color: #666; margin-top: 10px;">顶级影视大作，全语种字幕实时同步沉浸。</p>
+    </div>
+    <div class="media-card">
+      <div class="media-name">TikTok</div>
+      <div class="media-tag">异域风情</div>
+      <p style="font-size: 10px; color: #666; margin-top: 10px;">感受海外短视频浪潮，同步全球流行趋势。</p>
+    </div>
   </div>
 
-  <div id="verifyModal">
-    <div class="modal-content">
-      <div class="modal-title">WAITING_FOR_KEY</div>
-      <input type="text" id="verifyInput" placeholder="请输入识别口令">
-      <div class="modal-btns">
-        <button id="btn-text" onclick="confirmDownload()" class="btn-confirm">识别权限</button>
-        <button onclick="closeModal()" class="btn-cancel">CANCEL // 取消</button>
-      </div>
-    </div>
+  <div class="download-section">
+    <div class="dl-title">核心魔法器械下载</div>
+    <a href="#" class="dl-btn">
+      <span>Windows 核心端</span>
+      <i>v4.5.2 // 稳定版</i>
+    </a>
+    <a href="#" class="dl-btn">
+      <span>Android 核心端</span>
+      <i>v3.2.1 // 魔法版</i>
+    </a>
+    <a href="#" class="dl-btn">
+      <span>iOS 核心端</span>
+      <i>需海外 ID 召唤</i>
+    </a>
+  </div>
+
+  <div class="footer-nav">
+    <a href="index.html" class="btn-back">PROTOCOL_EXIT // 返回</a>
   </div>
 
   <script>
-    /************************************************************
-     * ⚠️ [ 下载验证口令修改处 ] 
-     ************************************************************/
-    const DOWNLOAD_CODE = "资源feng"; 
-    /************************************************************/
-
-    let currentTargetUrl = ""; 
-    const modal = document.getElementById('verifyModal');
-    const input = document.getElementById('verifyInput');
-    const btnText = document.getElementById('btn-text');
-
-    function askVerify(url) { 
-      currentTargetUrl = url; 
-      modal.style.display = 'flex';
-      input.focus(); 
-    }
-
-    function closeModal() { 
-      modal.style.display = 'none';
-      input.value = ''; 
-      btnText.innerText = "识别权限";
-    }
-
-    function confirmDownload() {
-      if (input.value.trim() === DOWNLOAD_CODE) { 
-        btnText.innerText = "ACCESS_GRANTED";
-        setTimeout(() => {
-          window.open(currentTargetUrl, '_blank'); 
-          closeModal();
-        }, 800);
-      } 
-      else { 
-        alert('权限校验失败'); 
-        input.value = ''; 
-      }
-    }
-
-    // 绘制背景粒子逻辑 (与主页粒子风格同步)
     const canvas = document.getElementById("bg-canvas"), ctx = canvas.getContext("2d");
     let w, h;
     function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
     resize(); window.onresize = resize;
-    const dots = Array.from({length: 40}, () => ({ 
-      x: Math.random()*w, y: Math.random()*h, 
-      r: Math.random()*1.2, 
-      s: Math.random()*0.2 + 0.1 
-    }));
+    const dots = Array.from({length: 30}, () => ({ x: Math.random()*w, y: Math.random()*h, r: Math.random()*1, s: Math.random()*0.1 + 0.05 }));
     function draw() {
       ctx.clearRect(0, 0, w, h);
       dots.forEach(d => {
         d.y -= d.s; if(d.y < 0) d.y = h;
         ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI*2);
-        ctx.fillStyle = "rgba(0, 242, 255, 0.2)"; 
-        ctx.fill();
+        ctx.fillStyle = "rgba(0, 242, 255, 0.2)"; ctx.fill();
       });
       requestAnimationFrame(draw);
     }
