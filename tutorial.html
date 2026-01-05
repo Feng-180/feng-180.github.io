@@ -6,77 +6,101 @@
   <title>禁书目录：魔法使用教程</title>
   <style>
     :root {
-      --s-red: #ff3c3c; --a-gold: #ffaa00; --b-blue: #00f2ff;
-      --wind-cyan: #b3ffff;
-      --magic-glow: radial-gradient(circle at center, #1a0b2e 0%, #030008 85%);
+      --m-cyan: #00f2ff;
+      --m-red: #ff3c3c;
+      --m-deep: #05020a;
+      --m-gold: #ffaa00;
+      --glow: 0 0 15px rgba(0, 242, 255, 0.4);
     }
     * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
     
     body {
-      margin: 0; background: #030008; color: #f0f0f0;
-      font-family: "Optima", "Georgia", "STSong", serif;
-      background-image: var(--magic-glow);
+      margin: 0; background: var(--m-deep); color: #fff;
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+      overflow-x: hidden; min-height: 100vh;
       display: flex; flex-direction: column; align-items: center;
-      min-height: 100vh; padding: 40px 20px;
+      background: radial-gradient(circle at center, #0f0821 0%, #030008 100%);
+      padding: 40px 15px;
     }
 
-    #bg-canvas { position: fixed; inset: 0; z-index: 0; opacity: 0.3; pointer-events: none; }
+    #bg-canvas { position: fixed; inset: 0; z-index: 0; opacity: 0.5; pointer-events: none; }
 
     .tutorial-container { position: relative; z-index: 2; width: 100%; max-width: 500px; }
 
-    .section-card {
-      background: rgba(10, 8, 18, 0.7);
-      border: 1px solid rgba(179, 255, 255, 0.1);
-      padding: 30px; border-radius: 4px; margin-bottom: 25px;
-      backdrop-filter: blur(15px);
+    h1 { 
+      font-size: 24px; letter-spacing: 10px; color: #fff; 
+      margin-bottom: 50px; text-align: center; font-weight: 300;
+      text-shadow: 0 0 20px rgba(255,255,255,0.3);
     }
+
+    /* --- 魔法卷轴卡牌样式 --- */
+    .section-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 30px; border-radius: 4px; margin-bottom: 30px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      transition: 0.3s;
+    }
+    .section-card:hover { border-color: rgba(0, 242, 255, 0.2); }
 
     .step-tag {
-      font-size: 10px; color: var(--a-gold); letter-spacing: 2px;
-      border: 1px solid var(--a-gold); display: inline-block;
-      padding: 2px 8px; margin-bottom: 15px;
+      font-size: 9px; color: var(--m-gold); letter-spacing: 2px;
+      border: 1px solid var(--m-gold); display: inline-block;
+      padding: 2px 10px; margin-bottom: 20px; opacity: 0.8;
     }
 
-    /* --- 第一步：收款码修复区 --- */
+    /* --- STEP 01 特殊强化：红色流光 --- */
     .pay-highlight {
-      border: 1px solid var(--s-red) !important;
-      box-shadow: 0 0 20px rgba(255, 60, 60, 0.15);
-      text-align: center;
-    }
-    .pay-title { font-size: 20px; color: var(--s-red); letter-spacing: 4px; margin-bottom: 15px; }
-    
-    /* 修复：确保图片容器比例正确 */
-    .qr-frame {
-      width: 200px; height: 200px; margin: 20px auto;
-      border: 1px solid rgba(255, 255, 255, 0.1); 
-      padding: 5px; background: #fff;
-      box-shadow: 0 0 30px rgba(255, 255, 255, 0.05);
-      display: flex; align-items: center; justify-content: center;
+      border: 1px solid rgba(255, 60, 60, 0.3) !important;
+      position: relative;
       overflow: hidden;
     }
-    /* 关键：使用 object-fit 确保图片填满且不失真 */
-    .qr-frame img { 
-        width: 100%; height: 100%; 
-        object-fit: cover; 
-        display: block; 
+    .pay-highlight::before {
+      content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--m-red), transparent);
+      animation: scan-line 3s linear infinite;
     }
+    @keyframes scan-line { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
 
-    .pay-tip { font-size: 13px; color: #888; line-height: 1.6; margin-top: 15px; }
-    .step-title { font-size: 18px; color: var(--wind-cyan); letter-spacing: 2px; margin-bottom: 10px; }
-    .step-desc { font-size: 14px; color: #666; line-height: 1.8; }
-    .back-home-link { color: var(--b-blue); text-decoration: none; border-bottom: 1px solid var(--b-blue); font-weight: bold; }
+    .pay-title { font-size: 20px; color: var(--m-red); letter-spacing: 4px; margin-bottom: 20px; text-shadow: 0 0 15px rgba(255,60,60,0.3); text-align: center;}
+    
+    .qr-frame {
+      width: 190px; height: 190px; margin: 25px auto;
+      border: 1px solid rgba(255, 255, 255, 0.1); 
+      padding: 8px; background: #fff;
+      box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+    }
+    .qr-frame img { width: 100%; height: 100%; object-fit: contain; display: block; }
 
-    .nav-footer { margin-top: 20px; text-align: center; }
+    .pay-tip { 
+      font-size: 13px; color: rgba(255,255,255,0.4); line-height: 1.8; 
+      margin-top: 20px; text-align: center; letter-spacing: 1px;
+    }
+    .pay-tip b { color: #fff; text-shadow: 0 0 10px var(--m-cyan); }
+
+    /* --- 普通步骤文字样式 --- */
+    .step-title { font-size: 19px; color: var(--m-cyan); letter-spacing: 3px; margin-bottom: 12px; font-weight: 300; }
+    .step-desc { font-size: 14px; color: rgba(255,255,255,0.5); line-height: 2; letter-spacing: 1px; }
+    .back-home-link { color: var(--m-cyan); text-decoration: none; border-bottom: 1px solid rgba(0,242,255,0.3); transition: 0.3s; padding-bottom: 2px; }
+    .back-home-link:hover { color: #fff; border-bottom-color: #fff; }
+
+    /* --- 底部按钮 --- */
+    .nav-footer { margin-top: 30px; text-align: center; }
     .btn-back {
-      display: inline-block; padding: 12px 40px;
-      background: rgba(179, 255, 255, 0.05);
-      border: 1px solid var(--wind-cyan);
-      color: var(--wind-cyan); text-decoration: none;
-      font-size: 12px; letter-spacing: 4px; transition: 0.3s;
+      display: inline-block; padding: 14px 50px;
+      background: transparent;
+      border: 1px solid rgba(0, 242, 255, 0.3);
+      color: var(--m-cyan); text-decoration: none;
+      font-size: 11px; letter-spacing: 5px; transition: 0.4s;
+      border-radius: 2px;
     }
-    .btn-back:hover { background: var(--wind-cyan); color: #000; }
-
-    h1 { font-size: 22px; letter-spacing: 8px; color: #fff; margin-bottom: 40px; text-align: center; }
+    .btn-back:hover { 
+      background: var(--m-cyan); color: #000; 
+      box-shadow: var(--glow);
+      transform: translateY(-3px);
+    }
   </style>
 </head>
 <body>
@@ -86,62 +110,69 @@
     <h1>使用教程手册</h1>
 
     <div class="section-card pay-highlight">
-      <div class="step-tag">STEP 01</div>
+      <div class="step-tag">PROTOCOL_01</div>
       <div class="pay-title">获取魔法通行证</div>
       <div class="qr-frame">
-        <img src="skm.jpg" alt="加载中...">
+        <img src="skm.jpg" alt="赞助阵法加载中...">
       </div>
       <div class="pay-tip">
         由于维度维护成本较高<br>
-        扫描上方“赞助阵法”后方可获取魔法<br>
-        <b>请务必添加QQ: 2902939692 获取最新口令</b>
+        识别上方“赞助阵法”后方可唤醒魔法<br>
+        <b>请务必添加 QQ: 2902939692 获取最新口令</b>
       </div>
     </div>
 
     <div class="section-card">
-      <div class="step-tag">STEP 02</div>
+      <div class="step-tag">PROTOCOL_02</div>
       <div class="step-title">进入魔法阵地</div>
       <div class="step-desc">
-        回到<a href="index.html" class="back-home-link">主页</a>，点击<b>【加入魔法阵地】</b>。<br>
-        进入群聊维度，这是你接收实时通告与获取最新术式的地方。
+        回到 <a href="index.html" class="back-home-link">主界面</a>，定位至 <b>【魔法阵地】</b>。<br>
+        同步群组坐标，这是接收实时通告与获取最新术式的核心维度。
       </div>
     </div>
 
     <div class="section-card">
-      <div class="step-tag">STEP 03</div>
-      <div class="step-title">构筑魔法工具</div>
+      <div class="step-tag">PROTOCOL_03</div>
+      <div class="step-title">构筑核心工具</div>
       <div class="step-desc">
-        回到<a href="index.html" class="back-home-link">主页</a>点击<b>【下载魔法工具】</b>。<br>
-        输入魔法口令，根据设备安装对应的维度转换器。
+        回到 <a href="index.html" class="back-home-link">主界面</a> 启动 <b>【下载工具】</b>。<br>
+        输入权限口令，根据您的设备环境下载对应的维度转换器。
       </div>
     </div>
 
     <div class="section-card">
-      <div class="step-tag">STEP 04</div>
+      <div class="step-tag">PROTOCOL_04</div>
       <div class="step-title">同步魔法术式</div>
       <div class="step-desc">
-        回到<a href="index.html" class="back-home-link">主页</a>点击<b>【获取魔法术式】</b>。<br>
-        输入魔法口令，即可一键复制或导入全球魔法节点。
+        回到 <a href="index.html" class="back-home-link">主界面</a> 启动 <b>【同步术式】</b>。<br>
+        输入权限口令，即可一键解构并同步全球高速魔法节点。
       </div>
     </div>
 
     <div class="nav-footer">
-      <a href="index.html" class="btn-back">返回主界面</a>
+      <a href="index.html" class="btn-back">PROTOCOL_EXIT // 返回</a>
     </div>
   </div>
 
   <script>
+    // 渲染主页同款青色粒子流
     const canvas = document.getElementById("bg-canvas"), ctx = canvas.getContext("2d");
     let w, h;
     function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
     resize(); window.onresize = resize;
-    const dots = Array.from({length: 30}, () => ({ x: Math.random()*w, y: Math.random()*h, r: Math.random()*1, s: Math.random()*0.1+0.05 }));
+    const dots = Array.from({length: 40}, () => ({ 
+      x: Math.random()*w, 
+      y: Math.random()*h, 
+      r: Math.random()*1.2, 
+      s: Math.random()*0.15 + 0.05 
+    }));
     function draw() {
-      ctx.fillStyle = "rgba(3, 0, 8, 0.4)"; ctx.fillRect(0, 0, w, h);
+      ctx.clearRect(0, 0, w, h);
       dots.forEach(d => {
         d.y -= d.s; if(d.y < 0) d.y = h;
         ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI*2);
-        ctx.fillStyle = "rgba(179, 255, 255, 0.05)"; ctx.fill();
+        ctx.fillStyle = "rgba(0, 242, 255, 0.15)"; 
+        ctx.fill();
       });
       requestAnimationFrame(draw);
     }
