@@ -9,7 +9,7 @@
       --m-cyan: #00f2ff;
       --m-deep: #05020a;
       --glow: 0 0 25px rgba(0, 242, 255, 0.4);
-      --card-w: 150px; /* 适当调大了一点宽度，让卡牌更霸气 */
+      --card-w: 160px; /* 宽度稍微调大 */
     }
     * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
     
@@ -23,8 +23,8 @@
 
     #bg-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.6; }
 
-    /* --- 200% 进化：3D 传送门系统 --- */
-    .header { position: relative; z-index: 5; padding-top: 60px; margin-bottom: 30px; perspective: 1000px; }
+    /* --- 3D 传送门系统 --- */
+    .header { position: relative; z-index: 5; padding-top: 60px; margin-bottom: 20px; perspective: 1000px; }
     
     .portal-system {
       position: relative; width: 320px; height: 320px;
@@ -35,95 +35,95 @@
     .magic-ring {
       position: absolute; border: 1px solid rgba(0, 242, 255, 0.15); border-radius: 50%;
       box-shadow: inset 0 0 20px rgba(0, 242, 255, 0.05);
+      pointer-events: none;
     }
     .r1 { width: 320px; height: 320px; border-style: double; border-width: 3px; animation: rotate 40s linear infinite; opacity: 0.3; }
     .r2 { width: 280px; height: 280px; border-style: dashed; animation: rotate 20s linear infinite reverse; opacity: 0.5; }
     .r3 { width: 240px; height: 240px; border-width: 1px; animation: rotate 10s linear infinite; border-color: rgba(0, 242, 255, 0.4); }
 
-    /* --- 关键修正区 --- */
+    /* --- 图片比例修正区 --- */
     .card-wrap {
       position: relative; z-index: 10;
       width: var(--card-w);
-      /* 去掉了 height 的硬性计算，由图片高度自然撑开 */
       transform-style: preserve-3d;
       animation: float 5s ease-in-out infinite;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
     }
     
     .logo-img { 
       width: 100%; 
-      height: auto; /* 核心：高度自动 */
-      object-fit: contain; /* 核心：确保内容不被裁剪 */
-      border-radius: 4px; 
-      /* 删掉了 border 限制，让图片自带的边框（如有）完美呈现 */
-      filter: drop-shadow(0 0 15px rgba(0, 242, 255, 0.5));
+      max-height: 200px; /* 限制最大高度防止纵向拉伸 */
+      height: auto; 
+      object-fit: contain; /* 关键：保持原图比例 */
+      border-radius: 8px; 
+      filter: drop-shadow(0 0 15px rgba(0, 242, 255, 0.6));
       display: block;
+      transition: 0.5s;
     }
 
     .card-backlight {
       position: absolute; 
-      width: 80%; height: 80%; /* 呼吸光居中 */
-      background: var(--m-cyan); filter: blur(35px);
-      border-radius: 50%; opacity: 0.15; z-index: -1;
+      width: 120px; height: 120px;
+      background: var(--m-cyan); filter: blur(40px);
+      border-radius: 50%; opacity: 0.2; z-index: -1;
+      left: 50%; top: 50%; transform: translate(-50%, -50%);
       animation: breathe-ultra 3s ease-in-out infinite;
     }
 
     /* --- 播放器 --- */
-    .player-trigger { margin: 10px 0 30px; cursor: pointer; z-index: 10; transition: 0.3s; }
-    .player-trigger:hover { opacity: 0.8; transform: scale(1.05); }
-    .audio-bars { display: flex; align-items: flex-end; gap: 3px; height: 14px; justify-content: center; margin-bottom: 10px;}
-    .bar { width: 2px; height: 3px; background: var(--m-cyan); opacity: 0.2; transition: 0.2s; }
+    .player-trigger { margin: 20px 0 30px; cursor: pointer; z-index: 10; transition: 0.3s; padding: 10px; }
+    .player-trigger:active { transform: scale(0.95); }
+    .audio-bars { display: flex; align-items: flex-end; gap: 3px; height: 16px; justify-content: center; margin-bottom: 8px;}
+    .bar { width: 2px; height: 4px; background: var(--m-cyan); opacity: 0.2; transition: 0.3s; }
     .bar.playing { animation: pulse 0.7s infinite alternate; opacity: 0.8; box-shadow: 0 0 10px var(--m-cyan); }
-    .player-status { font-size: 10px; color: rgba(255,255,255,0.2); letter-spacing: 5px; text-indent: 5px; }
+    .player-status { font-size: 10px; color: rgba(255,255,255,0.3); letter-spacing: 4px; text-indent: 4px; }
 
     /* --- 菜单 --- */
-    .menu { position: relative; z-index: 10; width: 100%; max-width: 360px; }
+    .menu { position: relative; z-index: 10; width: 100%; max-width: 360px; padding: 0 20px; }
     .menu-item { 
       display: block; text-decoration: none; padding: 22px 0; 
       color: rgba(255, 255, 255, 0.4); transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative; border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+      position: relative; border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      -webkit-tap-highlight-color: transparent;
     }
     .menu-item::before {
-      content: ""; position: absolute; left: 50%; top: 50%; width: 0; height: 80%;
-      background: rgba(0, 242, 255, 0.03); transform: translate(-50%, -50%);
-      transition: 0.5s; z-index: -1; pointer-events: none;
+      content: ""; position: absolute; left: 50%; top: 50%; width: 0; height: 90%;
+      background: linear-gradient(90deg, transparent, rgba(0, 242, 255, 0.05), transparent);
+      transform: translate(-50%, -50%); transition: 0.5s; z-index: -1;
     }
     .menu-item:hover { color: #fff; }
     .menu-item:hover::before { width: 100%; }
-    .menu-item:hover .m-title { letter-spacing: 12px; text-shadow: var(--glow); color: var(--m-cyan); }
+    .menu-item:hover .m-title { letter-spacing: 10px; text-shadow: var(--glow); color: var(--m-cyan); }
     
-    .m-title { display: block; font-size: 20px; letter-spacing: 6px; font-weight: 300; transition: 0.5s; }
-    .m-desc { display: block; font-size: 9px; color: #333; margin-top: 8px; letter-spacing: 2px; text-transform: uppercase; }
+    .m-title { display: block; font-size: 19px; letter-spacing: 5px; font-weight: 300; transition: 0.5s; }
+    .m-desc { display: block; font-size: 8px; color: #444; margin-top: 8px; letter-spacing: 2px; }
 
     /* --- 底部 --- */
     .footer { margin-top: auto; padding: 40px 0; text-align: center; z-index: 5; }
-    .counter-label { font-size: 9px; color: rgba(255,255,255,0.15); letter-spacing: 4px; margin-bottom: 8px; }
-    .stat-val { font-family: "Courier New", monospace; font-size: 16px; color: var(--m-cyan); opacity: 0.4; letter-spacing: 4px; }
+    .counter-label { font-size: 9px; color: rgba(255,255,255,0.2); letter-spacing: 3px; margin-bottom: 8px; }
+    .stat-val { font-family: "Courier New", monospace; font-size: 15px; color: var(--m-cyan); opacity: 0.5; letter-spacing: 3px; }
 
-    /* --- 弹窗 --- */
-    #modal { position: fixed; inset: 0; z-index: 100; display: none; align-items: center; justify-content: center; background: rgba(3, 0, 8, 0.9); backdrop-filter: blur(25px); }
-    .modal-card { width: 300px; padding: 40px 20px; }
+    /* --- 弹窗优化 --- */
+    #modal { position: fixed; inset: 0; z-index: 100; display: none; align-items: center; justify-content: center; background: rgba(3, 0, 8, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+    .modal-card { width: 85%; max-width: 320px; padding: 40px 30px; border: 1px solid rgba(0, 242, 255, 0.1); background: rgba(255,255,255,0.02); border-radius: 4px; text-align: center; }
     .m-input { 
-      width: 100%; background: transparent; border: none; border-bottom: 1px solid #222; 
-      color: #fff; padding: 15px; text-align: center; outline: none; font-size: 18px; 
-      margin-bottom: 40px; letter-spacing: 4px; transition: 0.3s;
+      width: 100%; background: transparent; border: none; border-bottom: 1px solid #333; 
+      color: #fff; padding: 12px; text-align: center; outline: none; font-size: 18px; 
+      margin-bottom: 35px; letter-spacing: 6px; transition: 0.3s;
     }
     .m-input:focus { border-bottom-color: var(--m-cyan); }
     .m-btn { 
-      background: #fff; color: #000; border: none; padding: 14px 0; width: 100%; 
+      background: #fff; color: #000; border: none; padding: 15px 0; width: 100%; 
       cursor: pointer; font-weight: bold; font-size: 12px; letter-spacing: 4px;
       transition: 0.3s;
     }
-    .m-btn:hover { background: var(--m-cyan); box-shadow: var(--glow); }
+    .m-btn:hover { background: var(--m-cyan); transform: translateY(-2px); }
 
-    /* --- 动画库 --- */
+    /* --- 动画 --- */
     @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    @keyframes breathe-ultra { 0%, 100% { opacity: 0.1; transform: scale(0.9) translate(-50%, -50%); } 50% { opacity: 0.25; transform: scale(1.1) translate(-50%, -50%); } }
-    /* 这里的动画去掉了 rotateX 避免边缘切断 */
-    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
-    @keyframes pulse { from { height: 3px; } to { height: 14px; } }
+    @keyframes breathe-ultra { 0%, 100% { opacity: 0.15; transform: translate(-50%, -50%) scale(0.95); } 50% { opacity: 0.3; transform: translate(-50%, -50%) scale(1.15); } }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+    @keyframes pulse { from { height: 4px; } to { height: 16px; } }
   </style>
 </head>
 <body>
@@ -136,8 +136,8 @@
       <div class="magic-ring r2"></div>
       <div class="magic-ring r3"></div>
       <div class="card-wrap">
-        <div class="card-backlight" style="left:50%; top:50%;"></div>
-        <img src="logo.png" class="logo-img">
+        <div class="card-backlight"></div>
+        <img src="logo.png" class="logo-img" alt="Logo">
       </div>
     </div>
     
@@ -174,12 +174,12 @@
     <div class="stat-val" id="counter-val">0000350859</div>
   </footer>
 
-  <div id="modal">
-    <div class="modal-card">
-      <div style="font-size: 10px; color: #444; letter-spacing: 5px; margin-bottom: 20px;">SECURITY_CHECK</div>
+  <div id="modal" onclick="if(event.target==this) closeModal()">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <div style="font-size: 10px; color: #666; letter-spacing: 5px; margin-bottom: 20px;">SECURITY_CHECK</div>
       <input type="text" id="m-input" placeholder="输入口令" autocomplete="off">
       <button onclick="checkCode()" class="m-btn">识别权限</button>
-      <div onclick="closeModal()" style="margin-top: 30px; font-size: 10px; color: #333; cursor: pointer; letter-spacing: 2px;">PROTOCOL_CANCEL</div>
+      <div onclick="closeModal()" style="margin-top: 30px; font-size: 10px; color: #444; cursor: pointer; letter-spacing: 2px;">PROTOCOL_CANCEL</div>
     </div>
   </div>
 
@@ -187,6 +187,7 @@
     const TODAY_CODE = "666资源风"; 
     const canvas = document.getElementById("bg-canvas"), ctx = canvas.getContext("2d");
     let w, h, dots = [];
+
     function init() {
       w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight;
       dots = Array.from({length: 50}, () => ({
@@ -196,24 +197,42 @@
         o: Math.random() * 0.5
       }));
     }
+
     function render() {
       ctx.clearRect(0, 0, w, h);
       dots.forEach(d => {
-        d.y -= d.s; d.x += Math.sin(d.y * 0.01) * 0.2;
+        d.y -= d.s; 
+        d.x += Math.sin(d.y * 0.01) * 0.15;
         if(d.y < 0) d.y = h;
         ctx.fillStyle = `rgba(0, 242, 255, ${d.o})`;
         ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI*2); ctx.fill();
       });
       requestAnimationFrame(render);
     }
-    window.onresize = init; init(); render();
+    
+    window.addEventListener('resize', init);
+    init(); render();
 
-    let target = "";
-    function showModal(t) { target = t; document.getElementById('modal').style.display = 'flex'; }
-    function closeModal() { document.getElementById('modal').style.display = 'none'; }
+    let currentTarget = "";
+    function showModal(t) { 
+        currentTarget = t; 
+        document.getElementById('modal').style.display = 'flex'; 
+        document.getElementById('m-input').focus();
+    }
+    function closeModal() { 
+        document.getElementById('modal').style.display = 'none'; 
+        document.getElementById('m-input').value = "";
+    }
+
+    // 绑定回车键
+    document.getElementById('m-input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') checkCode();
+    });
+
     function checkCode() {
-      if(document.getElementById('m-input').value.trim() === TODAY_CODE) {
-        window.location.href = target + ".html";
+      const input = document.getElementById('m-input').value.trim();
+      if(input === TODAY_CODE) {
+        window.location.href = currentTarget + ".html";
       } else {
         alert('权限拒绝：口令共鸣失败');
       }
@@ -223,16 +242,21 @@
     const bars = document.querySelectorAll('.bar');
     function toggleMusic() {
       if(audio.paused) { 
-        audio.play(); bars.forEach(b => b.classList.add('playing')); 
+        audio.play().catch(e => console.log("需用户交互触发")); 
+        bars.forEach(b => b.classList.add('playing')); 
         document.getElementById('p-status').innerText = "SIGNAL_ACTIVE"; 
       } else { 
-        audio.pause(); bars.forEach(b => b.classList.remove('playing')); 
+        audio.pause(); 
+        bars.forEach(b => b.classList.remove('playing')); 
         document.getElementById('p-status').innerText = "SIGNAL_OFFLINE"; 
       }
     }
 
     let count = 350859; 
-    setInterval(() => { count += Math.floor(Math.random() * 2); document.getElementById('counter-val').innerText = count.toString().padStart(10, '0'); }, 4000);
+    setInterval(() => { 
+        count += Math.floor(Math.random() * 2); 
+        document.getElementById('counter-val').innerText = count.toString().padStart(10, '0'); 
+    }, 4000);
   </script>
 </body>
 </html>
