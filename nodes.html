@@ -24,7 +24,6 @@
 
         #bg-canvas { position: fixed; inset: 0; z-index: 0; opacity: 0.5; pointer-events: none; }
 
-        /* 加载动画层 */
         #loading-overlay {
             position: fixed; inset: 0; z-index: 100;
             background: var(--m-deep);
@@ -51,7 +50,6 @@
         .back-link { color: rgba(255, 255, 255, 0.2); text-decoration: none; font-size: 10px; letter-spacing: 3px; margin-bottom: 30px; display: block; }
         h2 { font-size: 22px; color: #fff; letter-spacing: 6px; margin: 0 0 15px 0; font-weight: 300; text-shadow: var(--glow); }
         
-        /* 监控面板样式 */
         .monitor-panel {
             background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(0, 242, 255, 0.1);
             border-radius: 4px; padding: 15px; margin-bottom: 25px; text-align: left;
@@ -135,7 +133,6 @@
     </div>
 
     <script>
-        // --- 1. 安全防护逻辑 ---
         (function() {
             document.oncontextmenu = () => false; 
             document.onkeydown = (e) => {
@@ -145,12 +142,11 @@
             };
         })();
 
-        // --- 2. 核心路径配置 ---
-        const RAW_BASE = "https://raw.githubusercontent.com/feng-180/feng-180.github.io/main/";
-        const TXT_URL = RAW_BASE + "sub_all.txt";
-        const YAML_URL = RAW_BASE + "clash.yaml";
+        // --- 核心优化：使用 jsDelivr 加速节点，彻底解决国内访问延迟 ---
+        const MIRROR_BASE = "https://fastly.jsdelivr.net/gh/feng-180/feng-180.github.io@main/";
+        const TXT_URL = MIRROR_BASE + "sub_all.txt";
+        const YAML_URL = MIRROR_BASE + "clash.yaml";
 
-        // --- 3. 页面交互逻辑 ---
         const regions = [
             { n: "HK_BGP_PRO_01", r: "12ms" },
             { n: "SG_DIRECT_01", r: "35ms" },
@@ -161,7 +157,7 @@
         const consoleLines = [
             "> INITIALIZING DEFENSE...",
             "> DECODING NODE_ARRAY...",
-            "> [OK] MAGIC_INFRASTRUCTURE READY",
+            "> [OK] MIRROR_ACCELERATOR ACTIVE",
             "> DONE. WELCOME, MAGE."
         ];
 
@@ -199,21 +195,17 @@
             });
         }
 
-        // --- 4. 终极导入逻辑 ---
-
-        // 小火箭导入：优化了备注名编码，更稳定
         function importShadowrocket() {
+            // 使用稳健的 URL 编码方案
             const encodedUrl = btoa(TXT_URL).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
             window.location.href = "shadowrocket://add/sub://" + encodedUrl + "?remark=" + encodeURIComponent("资源风の魔法术式");
         }
 
-        // Clash导入：直连模式，彻底解决 HandshakeException 报错
         function importClash() {
-            // 直接指向你的原始 clash.yaml，不再走不稳定的转换后端
+            // 直连经过 jsDelivr 加速的 YAML 文件，跳过第三方转换后端，解决 HandshakeException
             window.location.href = "clash://install-config?url=" + encodeURIComponent(YAML_URL) + "&name=" + encodeURIComponent("资源风官方配置");
         }
 
-        // 复制链接保底方案
         function copyLink() {
             const btn = document.getElementById('copyBtn');
             const originalText = btn.innerHTML;
@@ -227,7 +219,6 @@
             setTimeout(() => { btn.innerHTML = originalText; }, 2000);
         }
 
-        // --- 5. 背景特效 ---
         const canvas = document.getElementById("bg-canvas"), ctx = canvas.getContext("2d");
         let w, h;
         function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
