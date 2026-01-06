@@ -24,7 +24,6 @@
 
         #bg-canvas { position: fixed; inset: 0; z-index: 0; opacity: 0.5; pointer-events: none; }
 
-        /* --- 加载层 --- */
         #loading-overlay {
             position: fixed; inset: 0; z-index: 100;
             background: var(--m-deep);
@@ -51,7 +50,6 @@
         .back-link { color: rgba(255, 255, 255, 0.2); text-decoration: none; font-size: 10px; letter-spacing: 3px; margin-bottom: 30px; display: block; }
         h2 { font-size: 22px; color: #fff; letter-spacing: 6px; margin: 0 0 15px 0; font-weight: 300; text-shadow: var(--glow); }
         
-        /* --- 监控面板 --- */
         .monitor-panel {
             background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(0, 242, 255, 0.1);
             border-radius: 4px; padding: 15px; margin-bottom: 25px; text-align: left;
@@ -135,7 +133,6 @@
     </div>
 
     <script>
-        // --- 1. 安全防御装甲 ---
         (function() {
             document.oncontextmenu = () => false; 
             document.onkeydown = (e) => {
@@ -143,19 +140,12 @@
                     return false;
                 }
             };
-            setInterval(() => {
-                const start = Date.now();
-                debugger; 
-                if (Date.now() - start > 100) window.location.href = "about:blank";
-            }, 1000);
         })();
 
-        // --- 2. 资源混淆逻辑 ---
         const _p1 = "https://fastly.jsdelivr.net/gh/";
         const _p2 = "feng-180/feng-180.github.io@main/";
-        function _g(t) { return _p1 + _p2 + (t === 'c' ? "clash.yaml" : "sub_all.txt"); }
+        function _g(t) { return _p1 + _p2 + "sub_all.txt"; }
 
-        // --- 3. 页面交互逻辑 ---
         const regions = [
             { n: "HK_BGP_PRO_01", r: "12ms" },
             { n: "SG_DIRECT_01", r: "35ms" },
@@ -167,8 +157,6 @@
             "> INITIALIZING DEFENSE...",
             "> DECODING NODE_ARRAY...",
             "> [OK] HK_BGP_PRO ACTIVE",
-            "> [OK] US_CN2_GIA ACTIVE",
-            "> [OK] SG_DIRECT ACTIVE",
             "> DONE. WELCOME, MAGE."
         ];
 
@@ -208,15 +196,14 @@
 
         function importShadowrocket() {
             const u = _g('s');
-            // 优化：确保 remark 支持中文显示
             const encodedUrl = btoa(u).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
             window.location.href = "shadowrocket://add/sub://" + encodedUrl + "?remark=" + encodeURIComponent("资源风の魔法术式");
         }
 
         function importClash() {
-            // 🚀 重要修改：集成订阅转换器，防止 proxies missing 报错
             const sourceUrl = _g('s');
-            const converter = "https://sub.id9.cc/sub?target=clash&insert=false&config=https%3A%2F%2Fraw.githubusercontent.com%2FACL4SSR%2FACL4SSR%2Fmaster%2FClash%2Fconfig%2FACL4SSR_Online.ini&url=";
+            // 更换为更稳定的转换后端
+            const converter = "https://api.v1.mk/sub?target=clash&url=";
             const clashUrl = converter + encodeURIComponent(sourceUrl);
             window.location.href = "clash://install-config?url=" + encodeURIComponent(clashUrl) + "&name=" + encodeURIComponent("资源风魔法站");
         }
