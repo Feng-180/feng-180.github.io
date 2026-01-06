@@ -1,90 +1,156 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>魔法术式同步 - 禁书目录</title>
-    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-    <style>
-        :root { --m-cyan: #00f2ff; --m-gold: #ffaa00; --m-deep: #05020a; --glow: 0 0 20px rgba(0, 242, 255, 0.4); }
-        * { box-sizing: border-box; -webkit-font-smoothing: antialiased; user-select: none; }
-        body { background: var(--m-deep); color: #f0f0f0; font-family: "PingFang SC", sans-serif; margin: 0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; padding: 20px; background: radial-gradient(circle at center, #0f0821 0%, #030008 100%); }
-        #bg-canvas { position: fixed; inset: 0; z-index: 0; opacity: 0.5; pointer-events: none; }
-        #loading-overlay { position: fixed; inset: 0; z-index: 100; background: var(--m-deep); display: flex; flex-direction: column; align-items: center; justify-content: center; transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
-        .console-box { width: 80%; max-width: 300px; font-family: "Courier New", monospace; font-size: 11px; color: var(--m-cyan); line-height: 1.8; }
-        .line { opacity: 0; transform: translateY(5px); animation: lineIn 0.3s forwards; }
-        .glass-card { position: relative; z-index: 2; display: none; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(0, 242, 255, 0.1); padding: 40px 30px; width: 100%; max-width: 420px; backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); text-align: center; border-radius: 4px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5); animation: cardFadeIn 1s forwards; }
-        .back-link { color: rgba(255, 255, 255, 0.2); text-decoration: none; font-size: 10px; letter-spacing: 3px; margin-bottom: 30px; display: block; }
-        h2 { font-size: 22px; color: #fff; letter-spacing: 6px; margin: 0 0 15px 0; font-weight: 300; text-shadow: var(--glow); }
-        .monitor-panel { background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(0, 242, 255, 0.1); border-radius: 4px; padding: 15px; margin-bottom: 25px; text-align: left; }
-        .monitor-header { display: flex; justify-content: space-between; align-items: center; font-size: 9px; color: #444; margin-bottom: 12px; letter-spacing: 2px; }
-        .pulse-dot { width: 6px; height: 6px; background: var(--m-cyan); border-radius: 50%; box-shadow: 0 0 10px var(--m-cyan); animation: pulse-ring 1.5s infinite; }
-        .node-item { display: flex; justify-content: space-between; font-family: "Courier New", monospace; font-size: 11px; margin-bottom: 8px; color: rgba(255,255,255,0.6); }
-        .action-group { display: flex; flex-direction: column; gap: 15px; }
-        .btn-magic { width: 100%; padding: 18px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); color: #fff; cursor: pointer; transition: 0.3s; text-align: center; border-radius: 4px; }
-        .btn-magic:hover { border-color: var(--m-cyan); background: rgba(0, 242, 255, 0.05); box-shadow: var(--glow); }
-        .btn-magic span { display: block; letter-spacing: 3px; font-size: 14px; }
-        .btn-magic .sub-text { font-size: 8px; color: rgba(255,255,255,0.2); margin-top: 6px; }
-        .btn-ios { border-left: 3px solid var(--m-cyan); }
-        .btn-android { border-left: 3px solid var(--m-gold); }
-        @keyframes pulse-ring { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(2); opacity: 0; } }
-        @keyframes lineIn { to { opacity: 1; transform: translateY(0); } }
-        @keyframes cardFadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>最新订阅 - 魔法禁书录</title>
+  <style>
+    :root {
+      --m-cyan: #00f2ff;
+      --m-deep: #05020a;
+      --glow: 0 0 15px rgba(0, 242, 255, 0.4);
+      --glass: rgba(255, 255, 255, 0.03);
+    }
+    
+    * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+    
+    body {
+      margin: 0; background: var(--m-deep); color: #fff;
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center;
+      background: radial-gradient(circle at center, #130a2b 0%, #030008 100%);
+      padding: 20px;
+    }
+
+    /* 顶部标题装饰 */
+    .nav-header {
+      width: 100%; max-width: 600px;
+      margin-top: 30px; margin-bottom: 40px;
+      border-left: 4px solid var(--m-cyan);
+      padding-left: 15px;
+    }
+    .nav-header h1 { font-size: 20px; letter-spacing: 4px; margin: 0; text-shadow: var(--glow); }
+    .nav-header p { font-size: 10px; color: rgba(0, 242, 255, 0.5); margin-top: 5px; text-transform: uppercase; }
+
+    /* 章节标题样式 */
+    h2 {
+      width: 100%; max-width: 600px;
+      font-size: 16px; color: var(--m-cyan);
+      margin: 30px 0 15px; letter-spacing: 2px;
+      display: flex; align-items: center;
+    }
+    h2::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(0,242,255,0.3), transparent); margin-left: 15px; }
+
+    /* 订阅卡片容器 */
+    .card {
+      width: 100%; max-width: 600px;
+      background: var(--glass);
+      border: 1px solid rgba(0, 242, 255, 0.1);
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      backdrop-filter: blur(10px);
+      transition: 0.3s;
+    }
+    .card:hover { border-color: rgba(0, 242, 255, 0.4); box-shadow: var(--glow); }
+
+    .card-title { font-size: 14px; color: #fff; margin-bottom: 10px; display: flex; justify-content: space-between; }
+    .update-tag { font-size: 10px; color: rgba(255,255,255,0.3); font-family: monospace; }
+
+    /* 链接展示区域 */
+    .link-area {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 12px;
+      border-radius: 4px;
+      word-break: break-all;
+      font-size: 13px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .link-area a { color: var(--m-cyan); text-decoration: none; opacity: 0.8; transition: 0.3s; }
+    .link-area a:hover { opacity: 1; text-shadow: var(--glow); }
+
+    /* 原始节点信息黑框（底部） */
+    .node-terminal {
+      width: 100%; max-width: 600px;
+      background: #000;
+      color: #00ffaa; /* 类似终端的绿色或保持青色 */
+      padding: 15px;
+      border-radius: 4px;
+      font-family: "Courier New", monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      border: 1px solid #222;
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+
+    /* 返回按钮 */
+    .back-btn {
+      margin-top: 50px; margin-bottom: 30px;
+      padding: 10px 30px;
+      border: 1px solid var(--m-cyan);
+      color: var(--m-cyan);
+      text-decoration: none;
+      font-size: 12px; letter-spacing: 2px;
+      border-radius: 20px;
+      transition: 0.3s;
+    }
+    .back-btn:hover { background: var(--m-cyan); color: #000; box-shadow: var(--glow); }
+  </style>
 </head>
 <body>
-    <canvas id="bg-canvas"></canvas>
-    <div id="loading-overlay"><div class="console-box" id="console"></div></div>
-    <div class="glass-card" id="main-card">
-        <a href="portal.html" class="back-link">TERMINAL_EXIT // 返回</a>
-        <h2>同步魔法术式</h2>
-        <div class="monitor-panel">
-            <div class="monitor-header"><span>GLOBAL_NODE_CLUSTER</span><span class="pulse-dot"></span></div>
-            <div id="node-list"></div>
-        </div>
-        <div class="action-group">
-            <div onclick="importShadowrocket()" class="btn-magic btn-ios"><span>一键同步到 Shadowrocket</span><div class="sub-text">IOS_STATION // 加速通道</div></div>
-            <div onclick="importClash()" class="btn-magic btn-android"><span>一键同步到 Clash</span><div class="sub-text">ANDROID_PC // 镜像通道</div></div>
-        </div>
+
+  <div class="nav-header">
+    <h1>最新订阅链接</h1>
+    <p>NODE_SUBSCRIPTION // DATA_STREAM_STATION</p>
+  </div>
+
+  <h2>3. 核心订阅源</h2>
+
+  <div class="card">
+    <div class="card-title">Pawdroid / Free-servers <span class="update-tag">REFRESH: 6H</span></div>
+    <div class="link-area">
+      <a href="https://raw.githubusercontent.com/Pawdroid/Free-servers/main/sub" target="_blank">https://raw.githubusercontent.com/Pawdroid/Free-servers/main/sub</a>
     </div>
-    <script>
-        const MIRROR = "https://fastly.jsdelivr.net/gh/feng-180/feng-180.github.io@main/";
-        const TXT_URL = MIRROR + "sub_all.txt";
-        const YAML_URL = MIRROR + "clash.yaml";
+  </div>
 
-        function startLoading() {
-            const lines = ["> INITIALIZING...", "> MIRROR_ACCELERATOR: ON", "> SYNCING NODES...", "> DONE."];
-            const box = document.getElementById('console');
-            lines.forEach((t, i) => setTimeout(() => {
-                const d = document.createElement('div'); d.className = 'line'; d.innerText = t; box.appendChild(d);
-                if(i === lines.length-1) setTimeout(() => { 
-                    document.getElementById('loading-overlay').style.display='none';
-                    document.getElementById('main-card').style.display='block';
-                    initNodes();
-                }, 600);
-            }, i * 250));
-        }
+  <div class="card">
+    <div class="card-title">free18 / v2ray <span class="update-tag">REFRESH: DAILY</span></div>
+    <div class="link-area">
+      <a href="https://raw.githubusercontent.com/free18/v2ray/main/subscribe" target="_blank">https://raw.githubusercontent.com/free18/v2ray/main/subscribe</a>
+    </div>
+  </div>
 
-        function initNodes() {
-            const list = document.getElementById('node-list');
-            ["HK_PRO_01", "SG_PREMIUM_02", "JP_SB_03"].forEach(n => {
-                const item = document.createElement('div'); item.className = 'node-item';
-                item.innerHTML = `<span>[${n}]</span><span style="color:var(--m-cyan)">ONLINE</span>`;
-                list.appendChild(item);
-            });
-        }
+  <div class="card">
+    <div class="card-title">Flikify / Free-Node <span class="update-tag">REFRESH: 1H</span></div>
+    <div class="link-area">
+      <a href="https://raw.githubusercontent.com/Flikify/Free-Node/main/nodes.txt" target="_blank">https://raw.githubusercontent.com/Flikify/Free-Node/main/nodes.txt</a>
+    </div>
+  </div>
 
-        function importShadowrocket() {
-            const b64 = btoa(TXT_URL).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-            window.location.href = "shadowrocket://add/sub://" + b64 + "?remark=" + encodeURIComponent("资源风魔法术式");
-        }
+  <div class="card">
+    <div class="card-title">mermeroo / SUB LINKS <span class="update-tag">REFRESH: ACTIVE</span></div>
+    <div class="link-area">
+      <a href="https://raw.githubusercontent.com/mermeroo/V2RAY-CLASH-BASE64-Subscription.Links/main/SUB%20LINKS" target="_blank">https://raw.githubusercontent.com/mermeroo/V2RAY-CLASH-BASE64-Subscription.Links/main/SUB%20LINKS</a>
+    </div>
+  </div>
 
-        function importClash() {
-            window.location.href = "clash://install-config?url=" + encodeURIComponent(YAML_URL) + "&name=" + encodeURIComponent("资源风官方配置");
-        }
+  <div class="card">
+    <div class="card-title">NiREvil / vless <span class="update-tag">REFRESH: REALTIME</span></div>
+    <div class="link-area">
+      <a href="https://raw.githubusercontent.com/NiREvil/vless/main/sub.txt" target="_blank">https://raw.githubusercontent.com/NiREvil/vless/main/sub.txt</a>
+    </div>
+  </div>
 
-        // 背景动画逻辑 (略，保持原样)
-        window.onload = startLoading;
-    </script>
+  <h2>4. 原始节点终端</h2>
+  <div class="node-terminal"># 等待数据同步...
+vless://2f60be6f-be0c-48b4-9772-b56f42b51b...
+vless://582c84b9-25e9-48ae-826b-e1bdafca3...
+ss://YWVzLTIxNi1nY2060EpDc1Bzc2ZnUzh0aVJ3a...
+trojan://BxceQa0e@58.152.25.86:443?allowIn...</div>
+
+  <a href="index.html" class="back-btn">返回魔法首页</a>
+
 </body>
 </html>
