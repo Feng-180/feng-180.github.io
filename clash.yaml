@@ -1,7 +1,29 @@
-proxies: []
+port: 7890
+socks-port: 7891
+allow-lan: true
+mode: Rule
+log-level: info
+external-controller: 127.0.0.1:9090
+
+# 1. 这里放你的节点（手动把你的节点转换成这种格式）
+proxies:
+  - name: "HK_BGP_PRO_01"
+    type: vmess
+    server: 你的服务器地址
+    port: 443
+    uuid: 你的UUID
+    alterId: 0
+    cipher: auto
+    tls: true
+
+# 2. 这里的 proxies 必须包含上面定义过的 name
 proxy-groups:
-- name: 🚀 魔法枢纽
-  type: select
-  proxies: []
+  - name: 🚀 魔法枢纽
+    type: select
+    proxies:
+      - HK_BGP_PRO_01
+      - DIRECT
+
 rules:
-- MATCH,🚀 魔法枢纽
+  - GEOIP,CN,DIRECT
+  - MATCH,🚀 魔法枢纽
