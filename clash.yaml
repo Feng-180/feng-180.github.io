@@ -4,12 +4,12 @@ allow-lan: true
 mode: Rule
 log-level: info
 
-# 这里引入远程聚合源，这样你的 Clash 永远有最新节点
+# 自动从远程获取上百个节点
 proxy-providers:
-  magic-source:
+  magic:
     type: http
-    path: ./magic.yaml
     url: "https://raw.githubusercontent.com/freefq/free/master/v2"
+    path: ./magic.yaml
     interval: 3600
     health-check:
       enable: true
@@ -18,12 +18,11 @@ proxy-providers:
 
 proxy-groups:
   - name: 🚀 魔法枢纽
-    type: url-test   # 自动测速模式：哪条快秒切哪条
+    type: url-test   # 自动选路：谁快选谁
     url: 'http://www.gstatic.com/generate_204'
     interval: 300
-    tolerance: 50
     use:
-      - magic-source
+      - magic
 
 rules:
   - GEOIP,CN,DIRECT
