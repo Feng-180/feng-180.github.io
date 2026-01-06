@@ -5,23 +5,18 @@ mode: Rule
 log-level: info
 external-controller: 127.0.0.1:9090
 
-# 1. 这里放你的节点（手动把你的节点转换成这种格式）
 proxies:
-  - name: "HK_BGP_PRO_01"
-    type: vmess
-    server: 你的服务器地址
-    port: 443
-    uuid: 你的UUID
-    alterId: 0
-    cipher: auto
-    tls: true
+  - {name: "资源风_HK_BGP", type: ss, server: 152.70.252.176, port: 2087, cipher: aes-256-gcm, password: gJtKtwKF4KKR}
+  - {name: "资源风_JP_SOFTBANK", type: ss, server: 129.153.151.240, port: 2087, cipher: aes-256-gcm, password: gJtKtwKF4KKR}
+  - {name: "资源风_US_CN2", type: ss, server: 150.230.198.118, port: 2087, cipher: aes-256-gcm, password: gJtKtwKF4KKR}
 
-# 2. 这里的 proxies 必须包含上面定义过的 name
 proxy-groups:
   - name: 🚀 魔法枢纽
     type: select
     proxies:
-      - HK_BGP_PRO_01
+      - 资源风_HK_BGP
+      - 资源风_JP_SOFTBANK
+      - 资源风_US_CN2
       - DIRECT
 
 rules:
