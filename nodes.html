@@ -3,237 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>魔法术式同步 - 禁书目录</title>
-    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <title>魔法术式同步 - 资源风</title>
     <style>
-        :root {
-            --m-cyan: #00f2ff;
-            --m-gold: #ffaa00;
-            --m-deep: #05020a;
-            --glow: 0 0 20px rgba(0, 242, 255, 0.4);
-        }
-        * { box-sizing: border-box; -webkit-font-smoothing: antialiased; user-select: none; }
-        
-        body { 
-            background: var(--m-deep);
-            color: #f0f0f0; font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
-            margin: 0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            overflow: hidden; padding: 20px;
-            background: radial-gradient(circle at center, #0f0821 0%, #030008 100%);
-        }
-
-        #bg-canvas { position: fixed; inset: 0; z-index: 0; opacity: 0.5; pointer-events: none; }
-
-        #loading-overlay {
-            position: fixed; inset: 0; z-index: 100;
-            background: var(--m-deep);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .console-box {
-            width: 80%; max-width: 300px; font-family: "Courier New", monospace;
-            font-size: 11px; color: var(--m-cyan); line-height: 1.8;
-        }
-        .line { opacity: 0; transform: translateY(5px); animation: lineIn 0.3s forwards; }
-
-        .glass-card { 
-            position: relative; z-index: 2; display: none;
-            background: rgba(255, 255, 255, 0.03); 
-            border: 1px solid rgba(0, 242, 255, 0.1); 
-            padding: 40px 30px; width: 100%; max-width: 420px;
-            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            text-align: center; border-radius: 4px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-            animation: cardFadeIn 1s forwards;
-        }
-
-        .back-link { color: rgba(255, 255, 255, 0.2); text-decoration: none; font-size: 10px; letter-spacing: 3px; margin-bottom: 30px; display: block; }
-        h2 { font-size: 22px; color: #fff; letter-spacing: 6px; margin: 0 0 15px 0; font-weight: 300; text-shadow: var(--glow); }
-        
-        .monitor-panel {
-            background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(0, 242, 255, 0.1);
-            border-radius: 4px; padding: 15px; margin-bottom: 25px; text-align: left;
-        }
-        .monitor-header {
-            display: flex; justify-content: space-between; align-items: center;
-            font-size: 9px; color: #444; margin-bottom: 12px; letter-spacing: 2px;
-        }
-        .pulse-dot { width: 6px; height: 6px; background: var(--m-cyan); border-radius: 50%; box-shadow: 0 0 10px var(--m-cyan); animation: pulse-ring 1.5s infinite; }
-        .node-item { display: flex; justify-content: space-between; font-family: "Courier New", monospace; font-size: 11px; margin-bottom: 8px; color: rgba(255,255,255,0.6); }
-        .node-name { color: #888; }
-        .node-ms { color: var(--m-cyan); }
-        .node-load { color: var(--m-gold); }
-
-        .visitor-stat {
-            margin-top: 15px; padding-top: 10px; 
-            border-top: 1px dashed rgba(0, 242, 255, 0.1); 
-            font-size: 10px; color: #555; 
-            display: flex; justify-content: space-between;
-            letter-spacing: 1px;
-        }
-
-        .action-group { display: flex; flex-direction: column; gap: 15px; }
-        .btn-magic {
-            width: 100%; padding: 18px; background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.05); color: #fff; cursor: pointer; transition: 0.3s;
-            text-align: center; border-radius: 4px;
-        }
-        .btn-magic:hover { border-color: var(--m-cyan); background: rgba(0, 242, 255, 0.05); box-shadow: var(--glow); }
-        .btn-magic span { display: block; letter-spacing: 3px; font-size: 14px; }
-        .btn-magic .sub-text { font-size: 8px; color: rgba(255,255,255,0.2); margin-top: 6px; letter-spacing: 1px; }
-        .btn-ios { border-left: 3px solid var(--m-cyan); }
-        .btn-android { border-left: 3px solid var(--m-gold); }
-        .btn-copy { border: 1px dashed rgba(255, 255, 255, 0.1); margin-top: 10px; }
-
-        @keyframes pulse-ring { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(2); opacity: 0; } }
-        @keyframes lineIn { to { opacity: 1; transform: translateY(0); } }
-        @keyframes cardFadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        :root { --m-cyan: #00f2ff; --m-deep: #05020a; }
+        body { background: var(--m-deep); color: #fff; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+        .glass-card { background: rgba(255, 255, 255, 0.05); padding: 40px; border-radius: 15px; backdrop-filter: blur(10px); border: 1px solid rgba(0, 242, 255, 0.2); text-align: center; width: 90%; max-width: 400px; }
+        .btn { width: 100%; padding: 15px; margin: 10px 0; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; color: #fff; transition: 0.3s; }
+        .btn-ios { background: linear-gradient(45deg, #00f2ff, #007bff); }
+        .btn-clash { background: linear-gradient(45deg, #ffaa00, #ff4400); }
+        h2 { letter-spacing: 5px; margin-bottom: 30px; font-weight: 300; }
     </style>
 </head>
 <body>
-    <canvas id="bg-canvas"></canvas>
-
-    <div id="loading-overlay">
-        <div class="console-box" id="console"></div>
-    </div>
-
-    <div class="glass-card" id="main-card">
-        <a href="portal.html" class="back-link">TERMINAL_EXIT // 返回</a>
+    <div class="glass-card">
         <h2>同步魔法术式</h2>
-        
-        <div class="monitor-panel">
-            <div class="monitor-header">
-                <span>GLOBAL_NODE_CLUSTER</span>
-                <span class="pulse-dot"></span>
-            </div>
-            <div id="node-list" class="node-list"></div>
-            
-            <div class="visitor-stat">
-                <span>VISITOR_LATENCY_PV</span>
-                <span id="busuanzi_container_page_pv" style="display:none;">
-                    [ <span id="busuanzi_value_page_pv" style="color: var(--m-cyan);">---</span> ]
-                </span>
-            </div>
-        </div>
-
-        <div class="action-group">
-            <div onclick="importShadowrocket()" class="btn-magic btn-ios">
-                <span>一键同步到 Shadowrocket</span>
-                <div class="sub-text">IOS_STATION // 小火箭专用</div>
-            </div>
-            <div onclick="importClash()" class="btn-magic btn-android">
-                <span>一键同步到 Clash</span>
-                <div class="sub-text">ANDROID_PC // 订阅导入</div>
-            </div>
-            <div onclick="copyLink()" id="copyBtn" class="btn-magic btn-copy">
-                <span>复制手动订阅链接</span>
-                <div class="sub-text">MANUAL_COPY_LINK</div>
-            </div>
-        </div>
+        <button onclick="importRocket()" class="btn btn-ios">一键同步 Shadowrocket</button>
+        <button onclick="importClash()" class="btn btn-clash">一键同步 Clash</button>
     </div>
 
     <script>
-        (function() {
-            document.oncontextmenu = () => false; 
-            document.onkeydown = (e) => {
-                if (e.keyCode === 123 || (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) || (e.ctrlKey && e.keyCode === 85)) {
-                    return false;
-                }
-            };
-        })();
+        // 【核心点】使用 jsDelivr 加速镜像，国内不翻墙也能秒开配置
+        const MIRROR = "https://fastly.jsdelivr.net/gh/feng-180/feng-180.github.io@main/";
+        const TXT_URL = MIRROR + "sub_all.txt";
+        const YAML_URL = MIRROR + "clash.yaml";
 
-        // --- 核心优化：使用 jsDelivr 加速节点，彻底解决国内访问延迟 ---
-        const MIRROR_BASE = "https://fastly.jsdelivr.net/gh/feng-180/feng-180.github.io@main/";
-        const TXT_URL = MIRROR_BASE + "sub_all.txt";
-        const YAML_URL = MIRROR_BASE + "clash.yaml";
-
-        const regions = [
-            { n: "HK_BGP_PRO_01", r: "12ms" },
-            { n: "SG_DIRECT_01", r: "35ms" },
-            { n: "JP_SOFTBANK_01", r: "42ms" },
-            { n: "US_CN2_GIA_01", r: "118ms" }
-        ];
-
-        const consoleLines = [
-            "> INITIALIZING DEFENSE...",
-            "> DECODING NODE_ARRAY...",
-            "> [OK] MIRROR_ACCELERATOR ACTIVE",
-            "> DONE. WELCOME, MAGE."
-        ];
-
-        function startLoading() {
-            const consoleBox = document.getElementById('console');
-            consoleLines.forEach((text, i) => {
-                setTimeout(() => {
-                    const div = document.createElement('div');
-                    div.className = 'line';
-                    div.innerText = text;
-                    consoleBox.appendChild(div);
-                    if(i === consoleLines.length - 1) setTimeout(showCard, 600);
-                }, i * 250);
-            });
-        }
-
-        function showCard() {
-            document.getElementById('loading-overlay').style.opacity = '0';
-            setTimeout(() => {
-                document.getElementById('loading-overlay').style.display = 'none';
-                document.getElementById('main-card').style.display = 'block';
-                initNodeMonitor();
-            }, 800);
-        }
-
-        function initNodeMonitor() {
-            const list = document.getElementById('node-list');
-            regions.forEach((node, i) => {
-                setTimeout(() => {
-                    const item = document.createElement('div');
-                    item.className = 'node-item';
-                    item.innerHTML = `<span class="node-name">[${node.n}]</span><span class="node-load">${(Math.random()*20+10).toFixed(1)}%</span><span class="node-ms">${node.r}</span>`;
-                    list.appendChild(item);
-                }, i * 300);
-            });
-        }
-
-        function importShadowrocket() {
-            // 使用稳健的 URL 编码方案
-            const encodedUrl = btoa(TXT_URL).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
-            window.location.href = "shadowrocket://add/sub://" + encodedUrl + "?remark=" + encodeURIComponent("资源风の魔法术式");
+        function importRocket() {
+            const b64 = btoa(TXT_URL).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+            window.location.href = "shadowrocket://add/sub://" + b64 + "?remark=" + encodeURIComponent("资源风_极速同步");
         }
 
         function importClash() {
-            // 直连经过 jsDelivr 加速的 YAML 文件，跳过第三方转换后端，解决 HandshakeException
+            // 直连加速后的 YAML 链接
             window.location.href = "clash://install-config?url=" + encodeURIComponent(YAML_URL) + "&name=" + encodeURIComponent("资源风官方配置");
         }
-
-        function copyLink() {
-            const btn = document.getElementById('copyBtn');
-            const originalText = btn.innerHTML;
-            const temp = document.createElement("textarea");
-            temp.value = TXT_URL;
-            document.body.appendChild(temp);
-            temp.select();
-            document.execCommand("copy");
-            document.body.removeChild(temp);
-            btn.innerHTML = "<span>✅ 术式已刻入剪贴板</span><div class='sub-text'>SUCCESSFUL</div>";
-            setTimeout(() => { btn.innerHTML = originalText; }, 2000);
-        }
-
-        const canvas = document.getElementById("bg-canvas"), ctx = canvas.getContext("2d");
-        let w, h;
-        function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
-        resize(); window.onresize = resize;
-        const dots = Array.from({length: 30}, () => ({ x: Math.random()*w, y: Math.random()*h, r: Math.random()*1, s: Math.random()*0.1 + 0.05 }));
-        function draw() {
-            ctx.clearRect(0, 0, w, h);
-            dots.forEach(d => {
-                d.y -= d.s; if(d.y < 0) d.y = h;
-                ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI*2);
-                ctx.fillStyle = "rgba(0, 242, 255, 0.2)"; ctx.fill();
-            });
-            requestAnimationFrame(draw);
-        }
-        draw(); window.onload = startLoading;
     </script>
 </body>
 </html>
