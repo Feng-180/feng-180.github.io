@@ -41,23 +41,34 @@
     .r2 { width: 280px; height: 280px; border-style: dashed; animation: rotate 20s linear infinite reverse; opacity: 0.5; }
     .r3 { width: 220px; height: 220px; border-width: 1px; animation: rotate 10s linear infinite; border-color: rgba(0, 242, 255, 0.4); }
 
+    /* --- 修改部分：增强半透明与毛玻璃效果 --- */
     .card-wrap {
       position: relative; z-index: 10;
       width: var(--card-w);
       transform-style: preserve-3d;
       animation: float 5s ease-in-out infinite;
       display: flex; align-items: center; justify-content: center;
-      background: rgba(0, 242, 255, 0.03);
-      padding: 10px;
+      background: rgba(255, 255, 255, 0.05); /* 降低背景白色的不透明度 */
+      padding: 15px;
       border-radius: 15px;
-      border: 1px solid rgba(0, 242, 255, 0.2);
-      backdrop-filter: blur(5px);
+      border: 1px solid rgba(0, 242, 255, 0.15);
+      backdrop-filter: blur(8px); /* 增加毛玻璃模糊 */
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
     }
     
     .logo-img { 
       width: 100%; height: auto; max-height: 180px;
-      object-fit: contain; filter: drop-shadow(0 0 10px rgba(0, 242, 255, 0.3));
+      object-fit: contain; 
+      opacity: 0.85; /* 图片半透明融合 */
+      filter: drop-shadow(0 0 10px rgba(0, 242, 255, 0.2));
       display: block; border-radius: 8px;
+      transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .logo-img:hover {
+      opacity: 1; /* 悬停恢复亮度 */
+      filter: drop-shadow(0 0 15px rgba(0, 242, 255, 0.5));
+      transform: scale(1.02);
     }
 
     .card-backlight {
@@ -122,13 +133,13 @@
 
   <header class="header">
     <div style="text-align: center; margin-bottom: 20px;">
-  <h1 style="font-size: 24px; letter-spacing: 8px; font-weight: 300; text-shadow: var(--glow); margin: 0; color: #fff;">
-    资源风 <span style="color: var(--m-cyan); opacity: 0.8;">の</span> 魔法站
-  </h1>
-  <div style="font-size: 9px; color: rgba(0, 242, 255, 0.4); letter-spacing: 4px; margin-top: 5px;">
-    MAGIC_ARCHIVE_TERMINAL
-  </div>
-</div>
+      <h1 style="font-size: 24px; letter-spacing: 8px; font-weight: 300; text-shadow: var(--glow); margin: 0; color: #fff;">
+        资源风 <span style="color: var(--m-cyan); opacity: 0.8;">の</span> 魔法站
+      </h1>
+      <div style="font-size: 9px; color: rgba(0, 242, 255, 0.4); letter-spacing: 4px; margin-top: 5px;">
+        MAGIC_ARCHIVE_TERMINAL
+      </div>
+    </div>
 
     <div class="portal-system">
       <div class="magic-ring r1"></div>
@@ -166,7 +177,7 @@
       <span class="m-title">最新订阅</span>
       <span class="m-desc">NODE_UPDATE // 实时节点更新</span>
     </div>
-    </nav>
+  </nav>
 
   <footer class="footer">
     <div class="stat-val" id="counter-val">0000350859</div>
@@ -216,7 +227,6 @@
     function checkCode() {
       const input = document.getElementById('m-input').value.trim();
       if(input === TODAY_CODE) {
-        // 跳转到 nodes.html
         window.location.href = currentTarget + ".html";
       } else {
         alert('权限拒绝：口令共鸣失败！\n\n最新口令请联系站长获取授权。');
