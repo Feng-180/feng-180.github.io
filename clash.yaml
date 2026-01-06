@@ -4,11 +4,10 @@ allow-lan: true
 mode: Rule
 log-level: info
 
-# 自动从远程获取上百个节点
 proxy-providers:
   magic:
     type: http
-    url: "https://raw.githubusercontent.com/freefq/free/master/v2"
+    url: "https://raw.githubusercontent.com/freefq/free/master/v2" # 自动抓取源
     path: ./magic.yaml
     interval: 3600
     health-check:
@@ -17,8 +16,8 @@ proxy-providers:
       interval: 300
 
 proxy-groups:
-  - name: 🚀 魔法枢纽
-    type: url-test   # 自动选路：谁快选谁
+  - name: 🚀 自动选择最快
+    type: url-test   # <--- 这就是你想要的自动筛选代码！
     url: 'http://www.gstatic.com/generate_204'
     interval: 300
     use:
@@ -26,4 +25,4 @@ proxy-groups:
 
 rules:
   - GEOIP,CN,DIRECT
-  - MATCH,🚀 魔法枢纽
+  - MATCH,🚀 自动选择最快
