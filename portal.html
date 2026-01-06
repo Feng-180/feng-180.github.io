@@ -163,14 +163,10 @@
       <span class="m-desc">SYNC_STATION // 群组坐标</span>
     </a>
     <div onclick="showModal('nodes')" class="menu-item" style="cursor:pointer">
-      <span class="m-title">同步术式</span>
-      <span class="m-desc">NODE_UPDATE // 实时订阅</span>
+      <span class="m-title">最新订阅</span>
+      <span class="m-desc">NODE_UPDATE // 实时节点更新</span>
     </div>
-    <a href="download.html" class="menu-item">
-      <span class="m-title">工具介绍</span>
-      <span class="m-desc">TOOLS_DECODE // 核心器械</span>
-    </a>
-  </nav>
+    </nav>
 
   <footer class="footer">
     <div class="stat-val" id="counter-val">0000350859</div>
@@ -185,13 +181,8 @@
   </div>
 
   <script>
-    /* ============================================================
-   🔮 [ 核心权限口令设置 ] 🔮
-   位置提示：此处修改进入“同步术式”的验证密码
-============================================================
-*/
-const TODAY_CODE = "资源风888"; // <-- 在这里修改你的口令
-// ========================================================= 
+    const TODAY_CODE = "资源风888"; 
+    
     const canvas = document.getElementById("bg-canvas"), ctx = canvas.getContext("2d");
     let w, h, dots = [];
 
@@ -225,6 +216,7 @@ const TODAY_CODE = "资源风888"; // <-- 在这里修改你的口令
     function checkCode() {
       const input = document.getElementById('m-input').value.trim();
       if(input === TODAY_CODE) {
+        // 跳转到 nodes.html
         window.location.href = currentTarget + ".html";
       } else {
         alert('权限拒绝：口令共鸣失败！\n\n最新口令请联系站长获取授权。');
