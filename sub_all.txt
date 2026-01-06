@@ -1,4 +1,4 @@
-# TOKEN: 幻820资源
+# TOKEN: 资源风官方源
 https://raw.githubusercontent.com/freefq/free/master/v2
 https://raw.githubusercontent.com/v2ray-free/free-nodes/master/sub/v2ray
 https://sub.share-centre.xyz/v2ray
