@@ -6,18 +6,19 @@ log-level: info
 external-controller: 127.0.0.1:9090
 
 proxies:
-  - {name: "资源风_HK_BGP", type: ss, server: 152.70.252.176, port: 2087, cipher: aes-256-gcm, password: gJtKtwKF4KKR}
-  - {name: "资源风_JP_SOFTBANK", type: ss, server: 129.153.151.240, port: 2087, cipher: aes-256-gcm, password: gJtKtwKF4KKR}
-  - {name: "资源风_US_CN2", type: ss, server: 150.230.198.118, port: 2087, cipher: aes-256-gcm, password: gJtKtwKF4KKR}
+  - {name: "极速_HK_专线", type: ss, server: 152.70.252.176, port: 2087, cipher: aes-256-gcm, password: gJtKtwKF4KKR}
+  - {name: "极速_JP_专线", type: ss, server: 129.153.151.240, port: 2087, cipher: aes-256-gcm, password: gJtKtwKF4KKR}
+  - {name: "极速_SG_专线", type: ss, server: 140.238.25.12, port: 2087, cipher: aes-256-gcm, password: gJtKtwKF4KKR}
 
 proxy-groups:
   - name: 🚀 魔法枢纽
-    type: select
+    type: url-test   # <--- 自动选路模式
+    url: 'http://www.gstatic.com/generate_204'
+    interval: 300
     proxies:
-      - 资源风_HK_BGP
-      - 资源风_JP_SOFTBANK
-      - 资源风_US_CN2
-      - DIRECT
+      - 极速_HK_专线
+      - 极速_JP_专线
+      - 极速_SG_专线
 
 rules:
   - GEOIP,CN,DIRECT
