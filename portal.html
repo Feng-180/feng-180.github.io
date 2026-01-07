@@ -9,7 +9,7 @@
     /* --- 核心变量系统 --- */
     :root {
       --cyan: #00f2ff;
-      --pink: #ff003c; /* 融入粉色撞色，提升视觉张力 */
+      --pink: #ff003c; 
       --void: #05020a;
       --glass: rgba(255, 255, 255, 0.02);
       --border: rgba(0, 242, 255, 0.15);
@@ -24,7 +24,6 @@
       font-family: var(--font-main);
       overflow-x: hidden; min-height: 100vh;
       display: flex; flex-direction: column; align-items: center;
-      /* 纯CSS实现的赛博网格背景，替代大图，提升加载速度 */
       background-image: 
         linear-gradient(rgba(0, 242, 255, 0.03) 1px, transparent 1px),
         linear-gradient(90deg, rgba(0, 242, 255, 0.03) 1px, transparent 1px),
@@ -32,7 +31,6 @@
       background-size: 40px 40px, 40px 40px, 100% 100%;
     }
 
-    /* 扫描线特效：增加复古终端感 */
     body::after {
       content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 999;
       background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
@@ -53,7 +51,6 @@
       position: relative;
     }
     
-    /* 故障文字效果 */
     .main-title::before, .main-title::after {
       content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.8;
     }
@@ -67,21 +64,16 @@
       padding: 2px 8px; border-radius: 4px; background: rgba(0,242,255,0.05);
     }
 
-    /* --- 魔法阵 v2.0：分层动态旋转 --- */
+    /* --- 魔法阵 v2.0 --- */
     .magic-container {
       position: relative; width: 280px; height: 280px; margin: 20px auto;
       display: flex; align-items: center; justify-content: center;
-      perspective: 1000px;
     }
-    .magic-layer {
-      position: absolute; inset: 0; width: 100%; height: 100%;
-      fill: none; stroke-width: 1;
-    }
-    .layer-1 { stroke: var(--cyan); opacity: 0.6; animation: rotate-cw 20s linear infinite; } /* 外圈 */
-    .layer-2 { stroke: var(--pink); opacity: 0.4; animation: rotate-ccw 15s linear infinite; transform-origin: center; scale: 0.75; } /* 内圈 */
-    .layer-3 { stroke: #fff; opacity: 0.8; animation: pulse 3s ease-in-out infinite; } /* 核心 */
+    .magic-layer { position: absolute; inset: 0; width: 100%; height: 100%; fill: none; stroke-width: 1; }
+    .layer-1 { stroke: var(--cyan); opacity: 0.6; animation: rotate-cw 20s linear infinite; }
+    .layer-2 { stroke: var(--pink); opacity: 0.4; animation: rotate-ccw 15s linear infinite; transform-origin: center; scale: 0.75; }
+    .layer-3 { stroke: #fff; opacity: 0.8; animation: pulse 3s ease-in-out infinite; }
 
-    /* 核心能量球 */
     .core-orb {
       position: absolute; width: 60px; height: 60px; border-radius: 50%;
       background: radial-gradient(circle, #fff 0%, var(--cyan) 40%, transparent 70%);
@@ -102,90 +94,46 @@
     .player-trigger:hover { background: rgba(0,242,255,0.1); box-shadow: 0 0 15px rgba(0,242,255,0.2); }
     .chanting { font-size: 10px; font-family: var(--font-code); color: var(--cyan); letter-spacing: 1px; }
     
-    .v-bar { width: 3px; height: 10px; background: var(--pink); margin: 0 1px; border-radius: 2px; transition: 0.2s; }
+    .v-bar { width: 3px; height: 10px; background: var(--pink); margin: 0 1px; border-radius: 2px; }
     .playing .v-bar { animation: v-flow 0.5s infinite alternate; background: var(--cyan); }
-    .playing .v-bar:nth-child(2) { animation-delay: 0.1s; }
-    .playing .v-bar:nth-child(3) { animation-delay: 0.2s; }
 
-    /* --- 菜单卡片 v2.0：全息玻璃态 --- */
-    .menu { 
-      position: relative; z-index: 10; width: 90%; max-width: 400px; 
-      display: flex; flex-direction: column; gap: 16px; 
-    }
+    /* --- 菜单卡片 --- */
+    .menu { position: relative; z-index: 10; width: 90%; max-width: 400px; display: flex; flex-direction: column; gap: 16px; }
     
     .menu-item { 
       position: relative; display: flex; align-items: center; justify-content: space-between;
       text-decoration: none; padding: 20px 24px; 
       background: rgba(10, 10, 15, 0.4);
       border: 1px solid rgba(255, 255, 255, 0.05);
-      border-left: 2px solid var(--cyan); /* 左侧高亮线 */
+      border-left: 2px solid var(--cyan);
       backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
       transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       overflow: hidden;
-      clip-path: polygon(0 0, 100% 0, 100% 85%, 95% 100%, 0 100%); /* 科技感切角 */
+      clip-path: polygon(0 0, 100% 0, 100% 85%, 95% 100%, 0 100%);
+      cursor: pointer;
     }
 
-    /* 悬停光效 */
-    .menu-item::before {
-      content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-      transform: skewX(-25deg); transition: 0.5s;
-    }
-    
-    .menu-item:hover { 
-      transform: translateX(10px); 
-      background: rgba(0, 242, 255, 0.08); 
-      border-left-color: var(--pink); /* 悬停变粉 */
-      box-shadow: 0 5px 20px rgba(0,0,0,0.5);
-    }
-    .menu-item:hover::before { left: 150%; transition: 0.7s; }
+    .menu-item:hover { transform: translateX(10px); background: rgba(0, 242, 255, 0.08); border-left-color: var(--pink); box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
 
     .item-info { display: flex; flex-direction: column; }
     .m-title { font-size: 16px; letter-spacing: 2px; color: #eee; font-weight: 500; }
     .m-desc { font-size: 10px; color: #888; margin-top: 4px; font-family: var(--font-code); text-transform: uppercase; }
     
-    /* 箭头图标 */
-    .arrow-icon { width: 14px; height: 14px; border-top: 2px solid var(--cyan); border-right: 2px solid var(--cyan); transform: rotate(45deg); opacity: 0.5; transition: 0.3s; }
+    .arrow-icon { width: 14px; height: 14px; border-top: 2px solid var(--cyan); border-right: 2px solid var(--cyan); transform: rotate(45deg); opacity: 0.5; }
     .menu-item:hover .arrow-icon { border-color: var(--pink); opacity: 1; transform: rotate(45deg) translate(2px, -2px); }
 
     /* --- 页脚与弹窗 --- */
     .footer { padding: 40px 0 20px; text-align: center; z-index: 5; opacity: 0.5; }
     .stat-val { font-family: var(--font-code); font-size: 12px; color: var(--pink); text-shadow: 0 0 5px var(--pink); }
 
-    /* 终端风格弹窗 */
-    #modal { 
-      position: fixed; inset: 0; z-index: 1000; display: none; 
-      align-items: center; justify-content: center; 
-      background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
-    }
-    .modal-card { 
-      width: 85%; max-width: 340px; padding: 2px; /* For border gradient */
-      background: linear-gradient(135deg, var(--cyan), var(--pink)); 
-      border-radius: 4px; box-shadow: 0 0 30px rgba(0,242,255,0.2);
-      transform: scale(0.9); opacity: 0; transition: 0.3s;
-    }
-    .modal-inner {
-      background: #080808; padding: 30px; width: 100%; height: 100%;
-      display: flex; flex-direction: column; align-items: center;
-    }
+    #modal { position: fixed; inset: 0; z-index: 1000; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); }
+    .modal-card { width: 85%; max-width: 340px; padding: 2px; background: linear-gradient(135deg, var(--cyan), var(--pink)); border-radius: 4px; transform: scale(0.9); opacity: 0; transition: 0.3s; }
+    .modal-inner { background: #080808; padding: 30px; width: 100%; display: flex; flex-direction: column; align-items: center; }
     #modal.active .modal-card { transform: scale(1); opacity: 1; }
 
-    .m-input { 
-      width: 100%; background: rgba(255,255,255,0.05); border: 1px solid #333; 
-      color: var(--cyan); padding: 12px; text-align: center; outline: none; 
-      font-family: var(--font-code); font-size: 16px; margin: 20px 0; letter-spacing: 2px; 
-      transition: 0.3s;
-    }
-    .m-input:focus { border-color: var(--pink); box-shadow: 0 0 10px rgba(255,0,60,0.3); }
-    
-    .m-btn { 
-      background: var(--cyan); color: #000; border: none; padding: 12px 0; width: 100%; 
-      font-weight: bold; cursor: pointer; clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px);
-      transition: 0.3s;
-    }
-    .m-btn:hover { background: var(--pink); color: #fff; }
+    .m-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid #333; color: var(--cyan); padding: 12px; text-align: center; outline: none; font-family: var(--font-code); font-size: 16px; margin: 20px 0; letter-spacing: 2px; }
+    .m-btn { background: var(--cyan); color: #000; border: none; padding: 12px 0; width: 100%; font-weight: bold; cursor: pointer; clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px); }
 
-    /* --- 动画关键帧 --- */
     @keyframes rotate-cw { 100% { transform: rotate(360deg); } }
     @keyframes rotate-ccw { 100% { transform: rotate(-360deg); } }
     @keyframes pulse { 0%, 100% { opacity: 0.8; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.95); } }
@@ -193,17 +141,8 @@
     @keyframes v-flow { 0% { height: 4px; } 100% { height: 16px; } }
     @keyframes scanlines { 0% { background-position: 0 0; } 100% { background-position: 0 100%; } }
     
-    /* 故障闪烁 */
-    @keyframes glitch-anim-1 {
-      0% { clip: rect(30px, 9999px, 10px, 0); } 20% { clip: rect(85px, 9999px, 100px, 0); }
-      40% { clip: rect(5px, 9999px, 60px, 0); } 60% { clip: rect(60px, 9999px, 20px, 0); }
-      80% { clip: rect(20px, 9999px, 90px, 0); } 100% { clip: rect(40px, 9999px, 10px, 0); }
-    }
-    @keyframes glitch-anim-2 {
-      0% { clip: rect(60px, 9999px, 5px, 0); } 20% { clip: rect(10px, 9999px, 80px, 0); }
-      40% { clip: rect(90px, 9999px, 30px, 0); } 60% { clip: rect(30px, 9999px, 100px, 0); }
-      80% { clip: rect(5px, 9999px, 40px, 0); } 100% { clip: rect(80px, 9999px, 5px, 0); }
-    }
+    @keyframes glitch-anim-1 { 0% { clip: rect(30px, 9999px, 10px, 0); } 100% { clip: rect(40px, 9999px, 10px, 0); } }
+    @keyframes glitch-anim-2 { 0% { clip: rect(60px, 9999px, 5px, 0); } 100% { clip: rect(80px, 9999px, 5px, 0); } }
   </style>
 </head>
 <body>
@@ -212,36 +151,20 @@
 
   <header class="header">
     <div class="title-group">
-      <div class="title-wrapper">
-        <h1 class="main-title" data-text="资源风の魔法站">资源风の魔法站</h1>
-      </div>
+      <div class="title-wrapper"><h1 class="main-title" data-text="资源风の魔法站">资源风の魔法站</h1></div>
       <br>
       <div class="id-tag">SYSTEM STATUS: ONLINE</div>
     </div>
 
     <div class="magic-container">
       <div class="core-orb"></div>
-      
-      <svg class="magic-layer layer-1" viewBox="0 0 200 200">
-        <circle cx="100" cy="100" r="98" stroke-dasharray="1,4"/>
-        <circle cx="100" cy="100" r="90" stroke-width="0.5"/>
-        <path d="M100 10 L100 20 M100 180 L100 190 M10 100 L20 100 M180 100 L190 100" stroke-width="2"/>
-      </svg>
-      
-      <svg class="magic-layer layer-2" viewBox="0 0 200 200">
-        <path d="M100 20 L169 140 L31 140 Z" />
-        <path d="M100 180 L31 60 L169 60 Z" />
-      </svg>
-      
-      <svg class="magic-layer layer-3" viewBox="0 0 200 200">
-        <circle cx="100" cy="100" r="30" stroke-width="1" stroke-dasharray="5,5"/>
-      </svg>
+      <svg class="magic-layer layer-1" viewBox="0 0 200 200"><circle cx="100" cy="100" r="98" stroke-dasharray="1,4"/><path d="M100 10 L100 20 M100 180 L100 190 M10 100 L20 100 M180 100 L190 100" stroke-width="2"/></svg>
+      <svg class="magic-layer layer-2" viewBox="0 0 200 200"><path d="M100 20 L169 140 L31 140 Z" /><path d="M100 180 L31 60 L169 60 Z" /></svg>
+      <svg class="magic-layer layer-3" viewBox="0 0 200 200"><circle cx="100" cy="100" r="30" stroke-width="1" stroke-dasharray="5,5"/></svg>
     </div>
     
     <div class="player-trigger" id="p-trigger" onclick="toggleMusic()">
-      <div class="audio-visual">
-        <div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div>
-      </div>
+      <div class="audio-visual"><div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div></div>
       <span class="chanting" id="chant-txt">INITIATE AUDIO</span>
     </div>
     <audio id="audio-player" src="bgm.mp3" loop></audio>
@@ -255,14 +178,16 @@
       </div>
       <div class="arrow-icon"></div>
     </a>
-    <a href="mqqapi://card/show_pslcard?uin=2902939692" class="menu-item">
+    
+    <div onclick="invokeMagicGroup()" class="menu-item">
       <div class="item-info">
         <span class="m-title">魔法阵地</span>
         <span class="m-desc">COORDINATES // SYNC</span>
       </div>
       <div class="arrow-icon"></div>
-    </a>
-    <div onclick="showModal()" class="menu-item" style="cursor:pointer">
+    </div>
+
+    <div onclick="showModal()" class="menu-item">
       <div class="item-info">
         <span class="m-title">最新订阅</span>
         <span class="m-desc">NODES // DATABASE SEARCH</span>
@@ -289,193 +214,88 @@
   <script>
     const TODAY_CODE = "资源风888"; 
     
-    // --- 粒子系统升级：网络节点 ---
+    // --- 粒子系统 ---
     const canvas = document.getElementById("bg-canvas"), ctx = canvas.getContext("2d");
     let w, h, dots = [];
-    
     function initCanvas() {
-      w = canvas.width = window.innerWidth; 
-      h = canvas.height = window.innerHeight;
-      createDots();
-    }
-
-    function createDots() {
+      w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight;
       dots = [];
-      // 减少数量，增加质量
       const count = window.innerWidth < 600 ? 30 : 60;
       for(let i=0; i<count; i++) {
-        dots.push({
-          x: Math.random() * w, 
-          y: Math.random() * h,
-          r: Math.random() * 2 + 0.5, 
-          vx: (Math.random() - 0.5) * 0.5,
-          vy: (Math.random() - 0.5) * 0.5,
-          color: Math.random() > 0.8 ? '#ff003c' : '#00f2ff' // 20% 概率生成粉色粒子
-        });
+        dots.push({ x: Math.random()*w, y: Math.random()*h, r: Math.random()*2+0.5, vx: (Math.random()-0.5)*0.5, vy: (Math.random()-0.5)*0.5, color: Math.random()>0.8?'#ff003c':'#00f2ff' });
       }
     }
-
     function render() {
       ctx.clearRect(0, 0, w, h);
-      
-      // 绘制连线 (距离近的粒子)
       for(let i=0; i<dots.length; i++) {
-        let d = dots[i];
-        d.x += d.vx; d.y += d.vy;
-        if(d.x < 0 || d.x > w) d.vx *= -1;
-        if(d.y < 0 || d.y > h) d.vy *= -1;
-        
-        ctx.beginPath();
-        ctx.arc(d.x, d.y, d.r, 0, Math.PI*2);
-        ctx.fillStyle = d.color;
-        ctx.shadowBlur = 10; ctx.shadowColor = d.color;
-        ctx.fill();
-
-        // 连线逻辑
+        let d = dots[i]; d.x += d.vx; d.y += d.vy;
+        if(d.x<0 || d.x>w) d.vx*=-1; if(d.y<0 || d.y>h) d.vy*=-1;
+        ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI*2); ctx.fillStyle = d.color; ctx.fill();
         for(let j=i+1; j<dots.length; j++) {
-          let d2 = dots[j];
-          let dist = Math.hypot(d.x - d2.x, d.y - d2.y);
-          if(dist < 100) {
-            ctx.beginPath();
-            ctx.strokeStyle = `rgba(0, 242, 255, ${1 - dist/100})`;
-            ctx.lineWidth = 0.5;
-            ctx.moveTo(d.x, d.y);
-            ctx.lineTo(d2.x, d2.y);
-            ctx.stroke();
-          }
+          let d2 = dots[j]; let dist = Math.hypot(d.x-d2.x, d.y-d2.y);
+          if(dist < 100) { ctx.beginPath(); ctx.strokeStyle = `rgba(0, 242, 255, ${1-dist/100})`; ctx.lineWidth = 0.5; ctx.moveTo(d.x, d.y); ctx.lineTo(d2.x, d2.y); ctx.stroke(); }
         }
       }
       requestAnimationFrame(render);
     }
-    
-    window.addEventListener('resize', initCanvas);
-    initCanvas(); render();
+    window.addEventListener('resize', initCanvas); initCanvas(); render();
 
-    // --- 交互逻辑 ---
+    // --- 修复：魔法阵地跳转逻辑 ---
+    function invokeMagicGroup() {
+        const groupNum = "691105381"; 
+        const protocols = [
+            `mqqapi://card/show_pslcard?src_type=internal&version=1&uin=${groupNum}&card_type=group&source=qrcode`,
+            `mqqapi://card/show_pslcard?uin=${groupNum}&card_type=group`,
+            `tencent://groupwpa/?subcmd=all&param=7B2267726F757055696E223A${groupNum}2C22657874506172616D223A22227D`
+        ];
+
+        // 自动复制
+        const textArea = document.createElement("textarea");
+        textArea.value = groupNum;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+
+        // 尝试跳转
+        window.location.href = protocols[0];
+
+        setTimeout(() => {
+            if (!document.hidden) {
+                const jump = confirm("「坐标同步提示」\n\n1. 正在尝试拉起QQ...\n2. 群号已自动同步至剪贴板\n\n如果无法自动跳转，请在QQ手动搜索加入：\n691105381");
+                if(jump) window.location.href = protocols[1];
+            }
+        }, 1000);
+    }
+
+    // --- 其他交互 ---
     const modal = document.getElementById('modal');
-    function showModal() { 
-      modal.style.display = 'flex'; 
-      // 强制重绘以触发 transition
-      requestAnimationFrame(() => modal.classList.add('active'));
-      document.getElementById('m-input').focus(); 
-    }
-    function closeModal() { 
-      modal.classList.remove('active');
-      setTimeout(() => modal.style.display = 'none', 300);
-    }
+    function showModal() { modal.style.display = 'flex'; requestAnimationFrame(() => modal.classList.add('active')); document.getElementById('m-input').focus(); }
+    function closeModal() { modal.classList.remove('active'); setTimeout(() => modal.style.display = 'none', 300); }
     function checkCode() {
-      const btn = document.querySelector('.m-btn');
-      const input = document.getElementById('m-input');
+      const btn = document.querySelector('.m-btn'), input = document.getElementById('m-input');
       if(input.value.trim() === TODAY_CODE) { 
-        btn.innerText = "ACCESS GRANTED";
-        btn.style.background = "#0f0";
+        btn.innerText = "ACCESS GRANTED"; btn.style.background = "#0f0";
         setTimeout(() => window.location.href = "nodes.html", 500);
       } else { 
-        input.style.borderColor = "red";
-        input.classList.add('shake');
-        btn.innerText = "DENIED";
-        setTimeout(() => { 
-          input.style.borderColor = "#333"; 
-          btn.innerText = "执行解禁";
-        }, 1000);
+        input.style.borderColor = "red"; btn.innerText = "DENIED";
+        setTimeout(() => { input.style.borderColor = "#333"; btn.innerText = "执行解禁"; }, 1000);
       }
     }
 
-    // 文字解密动画效果
-    class TextScramble {
-      constructor(el) {
-        this.el = el;
-        this.chars = '!<>-_\\/[]{}—=+*^?#________';
-        this.update = this.update.bind(this);
-      }
-      setText(newText) {
-        const oldText = this.el.innerText;
-        const length = Math.max(oldText.length, newText.length);
-        const promise = new Promise((resolve) => this.resolve = resolve);
-        this.queue = [];
-        for (let i = 0; i < length; i++) {
-          const from = oldText[i] || '';
-          const to = newText[i] || '';
-          const start = Math.floor(Math.random() * 40);
-          const end = start + Math.floor(Math.random() * 40);
-          this.queue.push({ from, to, start, end });
-        }
-        cancelAnimationFrame(this.frameRequest);
-        this.frame = 0;
-        this.update();
-        return promise;
-      }
-      update() {
-        let output = '';
-        let complete = 0;
-        for (let i = 0, n = this.queue.length; i < n; i++) {
-          let { from, to, start, end, char } = this.queue[i];
-          if (this.frame >= end) {
-            complete++;
-            output += to;
-          } else if (this.frame >= start) {
-            if (!char || Math.random() < 0.28) {
-              char = this.randomChar();
-              this.queue[i].char = char;
-            }
-            output += `<span class="dud">${char}</span>`;
-          } else {
-            output += from;
-          }
-        }
-        this.el.innerHTML = output;
-        if (complete === this.queue.length) {
-          this.resolve();
-        } else {
-          this.frameRequest = requestAnimationFrame(this.update);
-          this.frame++;
-        }
-      }
-      randomChar() {
-        return this.chars[Math.floor(Math.random() * this.chars.length)];
-      }
-    }
-
-    // 初始化解密动画
     const el = document.querySelector('.id-tag');
-    const fx = new TextScramble(el);
+    const phrases = ['SYSTEM STATUS: ONLINE', 'DETECTING MAGIC...', 'CONNECTING TO VOID', 'WELCOME, TRAVELER'];
     let counter = 0;
-    const phrases = [
-      'SYSTEM STATUS: ONLINE',
-      'DETECTING MAGIC...',
-      'CONNECTING TO VOID',
-      'WELCOME, TRAVELER'
-    ];
-    const next = () => {
-      fx.setText(phrases[counter]).then(() => {
-        setTimeout(next, 3000);
-      });
-      counter = (counter + 1) % phrases.length;
-    };
-    next();
+    setInterval(() => { el.innerText = phrases[counter]; counter = (counter + 1) % phrases.length; }, 3000);
 
-    // 音乐播放器逻辑
-    const audio = document.getElementById('audio-player');
-    const trigger = document.getElementById('p-trigger');
+    const audio = document.getElementById('audio-player'), trigger = document.getElementById('p-trigger');
     function toggleMusic() {
-      if(audio.paused) { 
-        audio.play(); 
-        trigger.classList.add('playing'); 
-        document.getElementById('chant-txt').innerText = "PLAYING: BGM_01";
-      } else { 
-        audio.pause(); 
-        trigger.classList.remove('playing');
-        document.getElementById('chant-txt').innerText = "PAUSED";
-      }
+      if(audio.paused) { audio.play(); trigger.classList.add('playing'); document.getElementById('chant-txt').innerText = "PLAYING: BGM_01"; }
+      else { audio.pause(); trigger.classList.remove('playing'); document.getElementById('chant-txt').innerText = "PAUSED"; }
     }
     
-    // 计数器
     let count = 350859; 
-    setInterval(() => { 
-      count += Math.floor(Math.random()*3); // 随机增加，更真实
-      document.getElementById('counter-val').innerText = count.toString().padStart(10, '0'); 
-    }, 3000);
-
+    setInterval(() => { count += Math.floor(Math.random()*3); document.getElementById('counter-val').innerText = count.toString().padStart(10, '0'); }, 3000);
   </script>
 </body>
 </html>
