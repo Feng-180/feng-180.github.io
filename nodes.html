@@ -2,155 +2,329 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>最新订阅 - 魔法禁书录</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#05020a">
+  <title>订阅数据流 | DATABASE</title>
   <style>
     :root {
-      --m-cyan: #00f2ff;
-      --m-deep: #05020a;
-      --glow: 0 0 15px rgba(0, 242, 255, 0.4);
-      --glass: rgba(255, 255, 255, 0.03);
+      --cyan: #00f2ff;
+      --pink: #ff003c;
+      --void: #05020a;
+      --glass: rgba(10, 15, 20, 0.6);
+      --font-code: "Consolas", "Monaco", "Courier New", monospace;
+      --font-main: "PingFang SC", system-ui, sans-serif;
     }
     
-    * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     
     body {
-      margin: 0; background: var(--m-deep); color: #fff;
-      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+      margin: 0; background: var(--void); color: #fff;
+      font-family: var(--font-main);
       min-height: 100vh;
       display: flex; flex-direction: column; align-items: center;
-      background: radial-gradient(circle at center, #130a2b 0%, #030008 100%);
-      padding: 20px;
+      overflow-x: hidden;
+      /* 统一的赛博网格背景 */
+      background-image: 
+        linear-gradient(rgba(0, 242, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 242, 255, 0.03) 1px, transparent 1px),
+        radial-gradient(circle at top center, #1a0f2e 0%, #05020a 80%);
+      background-size: 40px 40px, 40px 40px, 100% 100%;
+      padding-bottom: 60px;
     }
 
-    /* 顶部标题装饰 */
-    .nav-header {
-      width: 100%; max-width: 600px;
-      margin-top: 30px; margin-bottom: 40px;
-      border-left: 4px solid var(--m-cyan);
-      padding-left: 15px;
-    }
-    .nav-header h1 { font-size: 20px; letter-spacing: 4px; margin: 0; text-shadow: var(--glow); }
-    .nav-header p { font-size: 10px; color: rgba(0, 242, 255, 0.5); margin-top: 5px; text-transform: uppercase; }
+    #bg-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
 
-    /* 章节标题样式 */
-    h2 {
-      width: 100%; max-width: 600px;
-      font-size: 16px; color: var(--m-cyan);
-      margin: 30px 0 15px; letter-spacing: 2px;
-      display: flex; align-items: center;
+    /* --- 头部 --- */
+    .header-group {
+      width: 90%; max-width: 650px; margin-top: 50px; margin-bottom: 30px;
+      position: relative; z-index: 2;
+      border-left: 4px solid var(--pink); /* 粉色强调 */
+      padding-left: 20px;
+      display: flex; flex-direction: column;
     }
-    h2::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(0,242,255,0.3), transparent); margin-left: 15px; }
+    
+    .page-title {
+      font-size: 24px; letter-spacing: 4px; margin: 0; color: #fff;
+      text-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
+      position: relative; display: inline-block;
+    }
+    .sub-tag {
+      font-family: var(--font-code); font-size: 10px; color: var(--cyan);
+      opacity: 0.7; margin-top: 8px; letter-spacing: 2px;
+    }
 
-    /* 订阅卡片容器 */
+    /* --- 分隔标题 --- */
+    .section-title {
+      width: 90%; max-width: 650px; z-index: 2;
+      font-size: 14px; color: var(--cyan); margin: 30px 0 15px;
+      display: flex; align-items: center; letter-spacing: 1px;
+    }
+    .section-title::before {
+      content: ''; width: 8px; height: 8px; background: var(--cyan);
+      margin-right: 10px; transform: rotate(45deg);
+    }
+    .section-title::after {
+      content: ""; flex: 1; height: 1px; 
+      background: linear-gradient(90deg, rgba(0,242,255,0.3), transparent); margin-left: 15px; 
+    }
+
+    /* --- 订阅卡片 v2.0 --- */
+    .card-grid {
+      width: 90%; max-width: 650px; z-index: 2;
+      display: grid; gap: 15px;
+    }
+
     .card {
-      width: 100%; max-width: 600px;
       background: var(--glass);
-      border: 1px solid rgba(0, 242, 255, 0.1);
-      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-left: 2px solid var(--cyan);
       padding: 20px;
-      margin-bottom: 20px;
-      backdrop-filter: blur(10px);
+      position: relative; overflow: hidden;
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      transition: 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+      cursor: pointer; /* 暗示可点击 */
+    }
+
+    /* 悬停效果：边框变粉，稍微上浮 */
+    .card:hover {
+      transform: translateY(-3px);
+      border-left-color: var(--pink);
+      background: rgba(255, 255, 255, 0.05);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    }
+
+    /* 右上角装饰角标 */
+    .card::after {
+      content: ''; position: absolute; top: 0; right: 0;
+      width: 0; height: 0;
+      border-style: solid; border-width: 0 30px 30px 0;
+      border-color: transparent rgba(255,255,255,0.05) transparent transparent;
       transition: 0.3s;
     }
-    .card:hover { border-color: rgba(0, 242, 255, 0.4); box-shadow: var(--glow); }
+    .card:hover::after { border-color: transparent var(--pink) transparent transparent; }
 
-    .card-title { font-size: 14px; color: #fff; margin-bottom: 10px; display: flex; justify-content: space-between; }
-    .update-tag { font-size: 10px; color: rgba(255,255,255,0.3); font-family: monospace; }
-
-    /* 链接展示区域 */
-    .link-area {
-      background: rgba(0, 0, 0, 0.3);
-      padding: 12px;
-      border-radius: 4px;
-      word-break: break-all;
-      font-size: 13px;
-      border: 1px solid rgba(255,255,255,0.05);
+    .card-header {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;
     }
-    .link-area a { color: var(--m-cyan); text-decoration: none; opacity: 0.8; transition: 0.3s; }
-    .link-area a:hover { opacity: 1; text-shadow: var(--glow); }
-
-    /* 原始节点信息黑框（底部） */
-    .node-terminal {
-      width: 100%; max-width: 600px;
-      background: #000;
-      color: #00ffaa; /* 类似终端的绿色或保持青色 */
-      padding: 15px;
-      border-radius: 4px;
-      font-family: "Courier New", monospace;
-      font-size: 12px;
-      line-height: 1.6;
-      border: 1px solid #222;
-      overflow-x: auto;
-      white-space: pre-wrap;
+    .c-name { font-size: 15px; font-weight: bold; color: #fff; letter-spacing: 1px; }
+    .c-status { 
+      font-size: 9px; padding: 2px 6px; border-radius: 2px;
+      background: rgba(0, 242, 255, 0.1); color: var(--cyan);
+      border: 1px solid rgba(0, 242, 255, 0.2); font-family: var(--font-code);
     }
+    
+    /* 链接区域优化 */
+    .link-display {
+      font-family: var(--font-code); font-size: 11px; color: rgba(255,255,255,0.5);
+      background: rgba(0,0,0,0.3); padding: 10px; border-radius: 4px;
+      word-break: break-all; border: 1px dashed rgba(255,255,255,0.1);
+      position: relative; transition: 0.3s;
+    }
+    .card:hover .link-display { color: var(--cyan); border-color: rgba(0,242,255,0.3); }
 
-    /* 返回按钮 */
+    /* 复制按钮提示 */
+    .copy-hint {
+      position: absolute; right: 10px; bottom: 10px;
+      font-size: 10px; color: var(--pink); opacity: 0;
+      transform: translateX(10px); transition: 0.3s; font-weight: bold;
+    }
+    .card:hover .copy-hint { opacity: 1; transform: translateX(0); }
+
+    /* --- 原始终端 --- */
+    .terminal-window {
+      width: 90%; max-width: 650px; z-index: 2; margin-top: 10px;
+      background: #080808; border: 1px solid #333; border-radius: 6px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      overflow: hidden;
+    }
+    .term-header {
+      background: #1a1a1a; padding: 8px 15px; display: flex; gap: 6px;
+      border-bottom: 1px solid #333;
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .dot.r { background: #ff5f56; } .dot.y { background: #ffbd2e; } .dot.g { background: #27c93f; }
+    
+    .term-body {
+      padding: 15px; color: #0f0; font-family: var(--font-code); font-size: 12px;
+      line-height: 1.5; white-space: pre-wrap; height: 200px; overflow-y: auto;
+      scrollbar-width: thin; scrollbar-color: #333 #000;
+    }
+    .term-body::-webkit-scrollbar { width: 6px; }
+    .term-body::-webkit-scrollbar-thumb { background: #333; }
+
+    /* --- 底部导航 --- */
     .back-btn {
-      margin-top: 50px; margin-bottom: 30px;
-      padding: 10px 30px;
-      border: 1px solid var(--m-cyan);
-      color: var(--m-cyan);
-      text-decoration: none;
-      font-size: 12px; letter-spacing: 2px;
-      border-radius: 20px;
+      margin-top: 40px; z-index: 5;
+      padding: 12px 40px;
+      background: transparent;
+      border: 1px solid var(--cyan);
+      color: var(--cyan);
+      text-decoration: none; font-size: 14px; letter-spacing: 2px;
+      clip-path: polygon(10px 0, 100% 0, 100% 70%, calc(100% - 10px) 100%, 0 100%, 0 30%);
       transition: 0.3s;
     }
-    .back-btn:hover { background: var(--m-cyan); color: #000; box-shadow: var(--glow); }
+    .back-btn:hover { background: var(--cyan); color: #000; box-shadow: 0 0 20px rgba(0,242,255,0.4); }
+
+    /* --- Toast 提示 --- */
+    #toast {
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100%);
+      background: var(--pink); color: #fff; padding: 10px 25px;
+      border-radius: 30px; font-size: 12px; letter-spacing: 1px;
+      box-shadow: 0 5px 20px rgba(255, 0, 60, 0.4); z-index: 1000;
+      opacity: 0; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
   </style>
 </head>
 <body>
 
-  <div class="nav-header">
-    <h1>最新订阅链接</h1>
-    <p>NODE_SUBSCRIPTION // DATA_STREAM_STATION</p>
+  <canvas id="bg-canvas"></canvas>
+  
+  <div id="toast">📋 LINK COPIED TO CLIPBOARD</div>
+
+  <div class="header-group">
+    <h1 class="page-title">数据节点订阅</h1>
+    <div class="sub-tag">ENCRYPTED CONNECTION // SECURE</div>
   </div>
 
-  <h2>3. 核心订阅源</h2>
+  <div class="section-title">核心订阅源 (点击复制)</div>
 
-  <div class="card">
-    <div class="card-title">Pawdroid / Free-servers <span class="update-tag">REFRESH: 6H</span></div>
-    <div class="link-area">
-      <a href="https://raw.githubusercontent.com/Pawdroid/Free-servers/main/sub" target="_blank">https://raw.githubusercontent.com/Pawdroid/Free-servers/main/sub</a>
+  <div class="card-grid">
+    <div class="card" onclick="copyText('https://raw.githubusercontent.com/Pawdroid/Free-servers/main/sub')">
+      <div class="card-header">
+        <span class="c-name">Pawdroid / Free-servers</span>
+        <span class="c-status">6H UPDATE</span>
+      </div>
+      <div class="link-display">https://raw.githubusercontent.com/Pawdroid/Free-servers/main/sub</div>
+      <div class="copy-hint">CLICK TO COPY</div>
+    </div>
+
+    <div class="card" onclick="copyText('https://raw.githubusercontent.com/free18/v2ray/main/subscribe')">
+      <div class="card-header">
+        <span class="c-name">free18 / v2ray</span>
+        <span class="c-status" style="border-color:var(--pink); color:var(--pink)">DAILY</span>
+      </div>
+      <div class="link-display">https://raw.githubusercontent.com/free18/v2ray/main/subscribe</div>
+      <div class="copy-hint">CLICK TO COPY</div>
+    </div>
+
+    <div class="card" onclick="copyText('https://raw.githubusercontent.com/Flikify/Free-Node/main/nodes.txt')">
+      <div class="card-header">
+        <span class="c-name">Flikify / Free-Node</span>
+        <span class="c-status">1H UPDATE</span>
+      </div>
+      <div class="link-display">https://raw.githubusercontent.com/Flikify/Free-Node/main/nodes.txt</div>
+      <div class="copy-hint">CLICK TO COPY</div>
+    </div>
+
+    <div class="card" onclick="copyText('https://raw.githubusercontent.com/mermeroo/V2RAY-CLASH-BASE64-Subscription.Links/main/SUB%20LINKS')">
+      <div class="card-header">
+        <span class="c-name">mermeroo / SubLinks</span>
+        <span class="c-status">ACTIVE</span>
+      </div>
+      <div class="link-display">.../V2RAY-CLASH-BASE64-Subscription.Links/main/SUB LINKS</div>
+      <div class="copy-hint">CLICK TO COPY</div>
+    </div>
+    
+    <div class="card" onclick="copyText('https://raw.githubusercontent.com/NiREvil/vless/main/sub.txt')">
+      <div class="card-header">
+        <span class="c-name">NiREvil / vless</span>
+        <span class="c-status" style="color:#0f0; border-color:#0f0">REALTIME</span>
+      </div>
+      <div class="link-display">https://raw.githubusercontent.com/NiREvil/vless/main/sub.txt</div>
+      <div class="copy-hint">CLICK TO COPY</div>
     </div>
   </div>
 
-  <div class="card">
-    <div class="card-title">free18 / v2ray <span class="update-tag">REFRESH: DAILY</span></div>
-    <div class="link-area">
-      <a href="https://raw.githubusercontent.com/free18/v2ray/main/subscribe" target="_blank">https://raw.githubusercontent.com/free18/v2ray/main/subscribe</a>
+  <div class="section-title">原始节点终端</div>
+
+  <div class="terminal-window">
+    <div class="term-header">
+      <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+      <div style="font-size:10px; color:#666; margin-left:10px;">bash — 80x24</div>
     </div>
+    <div class="term-body" id="typewriter">
+      </div>
   </div>
 
-  <div class="card">
-    <div class="card-title">Flikify / Free-Node <span class="update-tag">REFRESH: 1H</span></div>
-    <div class="link-area">
-      <a href="https://raw.githubusercontent.com/Flikify/Free-Node/main/nodes.txt" target="_blank">https://raw.githubusercontent.com/Flikify/Free-Node/main/nodes.txt</a>
-    </div>
-  </div>
+  <a href="index.html" class="back-btn">返回主控台</a>
 
-  <div class="card">
-    <div class="card-title">mermeroo / SUB LINKS <span class="update-tag">REFRESH: ACTIVE</span></div>
-    <div class="link-area">
-      <a href="https://raw.githubusercontent.com/mermeroo/V2RAY-CLASH-BASE64-Subscription.Links/main/SUB%20LINKS" target="_blank">https://raw.githubusercontent.com/mermeroo/V2RAY-CLASH-BASE64-Subscription.Links/main/SUB%20LINKS</a>
-    </div>
-  </div>
+  <script>
+    // --- 1. 背景粒子 (复用主页逻辑但更轻量) ---
+    const canvas = document.getElementById("bg-canvas"), ctx = canvas.getContext("2d");
+    let w, h, dots = [];
+    function initCanvas() {
+      w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight;
+      dots = [];
+      const count = window.innerWidth < 600 ? 20 : 40;
+      for(let i=0; i<count; i++) {
+        dots.push({
+          x: Math.random()*w, y: Math.random()*h,
+          vx: (Math.random()-0.5)*0.3, vy: (Math.random()-0.5)*0.3,
+          r: Math.random()*1.5
+        });
+      }
+    }
+    function render() {
+      ctx.clearRect(0,0,w,h);
+      ctx.fillStyle = "rgba(0, 242, 255, 0.4)";
+      dots.forEach(d => {
+        d.x += d.vx; d.y += d.vy;
+        if(d.x<0 || d.x>w) d.vx*=-1; if(d.y<0 || d.y>h) d.vy*=-1;
+        ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI*2); ctx.fill();
+      });
+      requestAnimationFrame(render);
+    }
+    window.addEventListener('resize', initCanvas);
+    initCanvas(); render();
 
-  <div class="card">
-    <div class="card-title">NiREvil / vless <span class="update-tag">REFRESH: REALTIME</span></div>
-    <div class="link-area">
-      <a href="https://raw.githubusercontent.com/NiREvil/vless/main/sub.txt" target="_blank">https://raw.githubusercontent.com/NiREvil/vless/main/sub.txt</a>
-    </div>
-  </div>
+    // --- 2. 复制功能 + 粉色 Toast 提示 ---
+    function copyText(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        const toast = document.getElementById('toast');
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2000);
+      }).catch(err => {
+        alert('复制失败，请手动复制');
+      });
+    }
 
-  <h2>4. 原始节点终端</h2>
-  <div class="node-terminal"># 等待数据同步...
-vless://2f60be6f-be0c-48b4-9772-b56f42b51b...
-vless://582c84b9-25e9-48ae-826b-e1bdafca3...
-ss://YWVzLTIxNi1nY2060EpDc1Bzc2ZnUzh0aVJ3a...
-trojan://BxceQa0e@58.152.25.86:443?allowIn...</div>
+    // --- 3. 终端打字机效果 ---
+    const rawData = [
+      "# Initializing connection...",
+      "# Fetching nodes from pool...",
+      "vless://2f60be6f-be0c-48b4-9772-b56f42b51b@jp.server:443",
+      "ss://YWVzLTIxNi1nY2060EpDc1Bzc2ZnUzh0aVJ3a@us.proxy:8080",
+      "trojan://BxceQa0e@58.152.25.86:443?allowInsecure=1",
+      "vmess://eyJ2IjoyLCJwcyI6IlJlbGF5X05vZGUiLCJ..."
+    ];
+    const termBody = document.getElementById('typewriter');
+    let lineIndex = 0;
+    
+    function typeLine() {
+      if (lineIndex < rawData.length) {
+        const p = document.createElement('div');
+        p.textContent = `> ${rawData[lineIndex]}`;
+        // 随机给几行加上粉色高亮
+        if(Math.random() > 0.7) p.style.color = "var(--pink)";
+        termBody.appendChild(p);
+        termBody.scrollTop = termBody.scrollHeight;
+        lineIndex++;
+        setTimeout(typeLine, Math.random() * 500 + 200);
+      } else {
+        const blink = document.createElement('div');
+        blink.innerHTML = "> <span style='animation:blink 1s infinite'>_</span>";
+        termBody.appendChild(blink);
+      }
+    }
+    // 添加闪烁动画
+    const style = document.createElement('style');
+    style.innerHTML = `@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }`;
+    document.head.appendChild(style);
+    
+    setTimeout(typeLine, 1000);
 
-  <a href="index.html" class="back-btn">返回魔法首页</a>
-
+  </script>
 </body>
 </html>
