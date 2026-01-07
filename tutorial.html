@@ -2,157 +2,266 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>禁书目录：魔法使用教程</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#05020a">
+  <title>使用教程手册 | MANUAL</title>
   <style>
     :root {
-      --m-cyan: #00f2ff;
-      --m-red: #ff3c3c;
-      --m-deep: #05020a;
-      --m-gold: #ffaa00;
-      --glow: 0 0 15px rgba(0, 242, 255, 0.4);
+      --cyan: #00f2ff;
+      --pink: #ff003c; /* 核心交互色 */
+      --gold: #ffd700;
+      --void: #05020a;
+      --glass: rgba(15, 20, 25, 0.7);
+      --font-code: "Consolas", "Monaco", monospace;
+      --font-main: "PingFang SC", system-ui, sans-serif;
     }
-    * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+    
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     
     body {
-      margin: 0; background: var(--m-deep); color: #fff;
-      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
-      overflow-x: hidden; min-height: 100vh;
+      margin: 0; background: var(--void); color: #fff;
+      font-family: var(--font-main);
+      min-height: 100vh;
       display: flex; flex-direction: column; align-items: center;
-      background: radial-gradient(circle at center, #0f0821 0%, #030008 100%);
-      padding: 40px 15px;
+      /* 统一赛博背景 */
+      background-image: 
+        linear-gradient(rgba(0, 242, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 242, 255, 0.03) 1px, transparent 1px),
+        radial-gradient(circle at center, #1a0f2e 0%, #05020a 100%);
+      background-size: 40px 40px, 40px 40px, 100% 100%;
+      padding: 40px 20px;
     }
 
-    #bg-canvas { position: fixed; inset: 0; z-index: 0; opacity: 0.5; pointer-events: none; }
+    #bg-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
 
-    .tutorial-container { position: relative; z-index: 2; width: 100%; max-width: 500px; }
-
-    h1 { 
-      font-size: 24px; letter-spacing: 10px; color: #fff; 
-      margin-bottom: 50px; text-align: center; font-weight: 300;
-      text-shadow: 0 0 20px rgba(255,255,255,0.3);
+    /* --- 头部 --- */
+    .header-group {
+      text-align: center; margin-bottom: 40px; position: relative; z-index: 2;
+    }
+    .main-title {
+      font-size: 26px; letter-spacing: 6px; color: #fff; margin: 0;
+      text-shadow: 0 0 15px rgba(255, 0, 60, 0.5); /* 粉色光晕 */
+      position: relative; display: inline-block;
+    }
+    .sub-tag {
+      font-family: var(--font-code); font-size: 10px; color: var(--pink);
+      background: rgba(255, 0, 60, 0.1); border: 1px solid rgba(255, 0, 60, 0.3);
+      padding: 4px 10px; border-radius: 4px; margin-top: 15px; display: inline-block;
     }
 
-    .section-card {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      padding: 30px; border-radius: 4px; margin-bottom: 30px;
-      backdrop-filter: blur(20px);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    /* --- 通用卡片容器 --- */
+    .tutorial-container { position: relative; z-index: 2; width: 100%; max-width: 550px; }
+
+    .card {
+      background: var(--glass);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 30px; margin-bottom: 25px;
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      position: relative; overflow: hidden;
+      transition: 0.3s;
+      /* 科技感切角 */
+      clip-path: polygon(0 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%);
     }
 
-    .step-tag {
-      font-size: 9px; color: var(--m-gold); letter-spacing: 2px;
-      border: 1px solid var(--m-gold); display: inline-block;
-      padding: 2px 10px; margin-bottom: 20px; opacity: 0.8;
+    /* --- 步骤标签 --- */
+    .step-badge {
+      position: absolute; top: 0; left: 0;
+      background: rgba(255,255,255,0.05); color: #888;
+      font-family: var(--font-code); font-size: 10px;
+      padding: 6px 12px; border-bottom-right-radius: 8px;
+      border-right: 1px solid rgba(255,255,255,0.1);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
     }
-
-    /* --- STEP 01: 支付 --- */
-    .pay-highlight { border: 1px solid rgba(255, 60, 60, 0.3) !important; position: relative; overflow: hidden; }
-    .pay-title { font-size: 20px; color: var(--m-red); letter-spacing: 4px; margin-bottom: 20px; text-align: center;}
     
-    .qr-frame {
-      width: 190px; height: 190px; margin: 25px auto;
-      border: 1px solid rgba(255, 255, 255, 0.1); 
-      padding: 8px; background: #fff; border-radius: 4px;
+    /* --- 重点卡片：支付/联系 (Protocol 01) --- */
+    .card.highlight {
+      border: 1px solid rgba(255, 0, 60, 0.4);
+      background: linear-gradient(160deg, rgba(255,0,60,0.05) 0%, rgba(5,2,10,0.8) 100%);
+      box-shadow: 0 0 30px rgba(255, 0, 60, 0.1);
     }
-    .qr-frame img { width: 100%; height: 100%; object-fit: contain; display: block; }
+    .card.highlight .step-badge { color: var(--pink); background: rgba(255, 0, 60, 0.1); }
+    
+    .pay-title { 
+      font-size: 18px; color: #fff; text-align: center; margin: 15px 0 25px; 
+      letter-spacing: 2px; font-weight: bold;
+    }
 
+    /* 二维码扫描框 */
+    .qr-scanner {
+      width: 200px; height: 200px; margin: 0 auto 30px;
+      position: relative; padding: 10px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(0,0,0,0.5);
+    }
+    /* 四角装饰 */
+    .qr-scanner::before, .qr-scanner::after {
+      content: ''; position: absolute; width: 20px; height: 20px;
+      border-color: var(--pink); border-style: solid; transition: 0.3s;
+    }
+    .qr-scanner::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+    .qr-scanner::after { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+    
+    .qr-img { width: 100%; height: 100%; object-fit: contain; display: block; opacity: 0.9; }
+
+    /* 扫描线动画 */
+    .scan-line {
+      position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+      background: var(--pink);
+      box-shadow: 0 0 10px var(--pink);
+      animation: scan 3s ease-in-out infinite; opacity: 0.8;
+    }
+
+    /* 强交互按钮 */
     .contact-btn {
-      display: block; width: 100%; padding: 16px;
-      background: var(--m-red); color: #fff;
-      text-align: center; text-decoration: none;
-      font-weight: bold; font-size: 14px; letter-spacing: 2px;
-      border-radius: 4px; margin: 20px 0;
-      box-shadow: 0 4px 15px rgba(255, 60, 60, 0.3);
-      cursor: pointer; border: none; outline: none;
+      display: block; width: 100%; padding: 18px;
+      background: var(--pink); color: #fff;
+      text-align: center; border: none; outline: none;
+      font-weight: bold; font-size: 14px; letter-spacing: 3px;
+      clip-path: polygon(15px 0, 100% 0, 100% 100%, 0 100%, 0 15px);
+      cursor: pointer; transition: 0.2s;
+      text-transform: uppercase;
+      box-shadow: 0 5px 20px rgba(255, 0, 60, 0.3);
+      margin-bottom: 20px;
     }
-    .contact-btn:active { transform: scale(0.98); opacity: 0.9; }
+    .contact-btn:active { transform: scale(0.98); background: #d00030; }
+    
+    .pay-tip { 
+      font-size: 12px; color: #888; text-align: center; line-height: 1.8; 
+      border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 20px;
+    }
+    .pay-tip b { color: var(--pink); font-family: var(--font-code); font-size: 14px; }
+    .important-tip { color: var(--gold); display: block; margin-bottom: 8px; font-weight: bold; }
 
-    .pay-tip { font-size: 13px; color: rgba(255,255,255,0.4); text-align: center; line-height: 1.8; }
-    .pay-tip b { color: var(--m-cyan); }
-    /* 新增的黄色高亮提示 */
-    .software-tip { color: var(--m-gold); font-weight: bold; margin-bottom: 10px; display: block; }
+    /* --- 普通步骤卡片 --- */
+    .step-content { display: flex; flex-direction: column; gap: 10px; padding-top: 15px; }
+    .step-head { font-size: 16px; color: var(--cyan); letter-spacing: 2px; font-weight: bold; }
+    .step-text { font-size: 13px; color: #aaa; line-height: 1.8; text-align: justify; }
+    .link-hl { color: var(--cyan); text-decoration: none; border-bottom: 1px solid rgba(0,242,255,0.3); transition: 0.3s; }
+    .link-hl:hover { color: #fff; border-color: #fff; }
 
-    .step-title { font-size: 19px; color: var(--m-cyan); letter-spacing: 3px; margin-bottom: 12px; font-weight: 300; }
-    .step-desc { font-size: 14px; color: rgba(255,255,255,0.5); line-height: 2; letter-spacing: 1px; }
-    .back-home-link { color: var(--m-cyan); text-decoration: none; border-bottom: 1px solid rgba(0,242,255,0.3); }
-
-    .nav-footer { margin-top: 30px; text-align: center; }
+    /* --- 底部返回 --- */
+    .nav-footer { margin-top: 20px; text-align: center; z-index: 5; }
     .btn-back {
       display: inline-block; padding: 12px 40px;
-      border: 1px solid rgba(0, 242, 255, 0.3);
-      color: var(--m-cyan); text-decoration: none; font-size: 11px; letter-spacing: 4px;
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #888; text-decoration: none; font-size: 11px; letter-spacing: 2px;
+      transition: 0.3s;
     }
+    .btn-back:hover { border-color: var(--cyan); color: var(--cyan); background: rgba(0,242,255,0.05); }
+
+    /* --- Toast 提示 --- */
+    #toast {
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100%);
+      background: #fff; color: #000; padding: 12px 30px;
+      border-radius: 4px; font-weight: bold; font-size: 12px; letter-spacing: 1px;
+      box-shadow: 0 5px 30px rgba(0,0,0,0.5); z-index: 1000;
+      opacity: 0; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+    @keyframes scan { 0% { top: 0; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
+
   </style>
 </head>
 <body>
   <canvas id="bg-canvas"></canvas>
 
-  <div class="tutorial-container">
-    <h1>使用教程手册</h1>
+  <div id="toast">✅ QQ COPIED // REDIRECTING...</div>
 
-    <div class="section-card pay-highlight">
-      <div class="step-tag">PROTOCOL_01</div>
-      <div class="pay-title">获取魔法通行证</div>
-      <div class="qr-frame">
-        <img src="skm.jpg" alt="赞助阵法">
+  <div class="header-group">
+    <h1 class="main-title">魔法使用手册</h1>
+    <br>
+    <div class="sub-tag">SYSTEM: PROTOCOL_GUIDE_V2</div>
+  </div>
+
+  <div class="tutorial-container">
+    
+    <div class="card highlight">
+      <div class="step-badge">PROTOCOL_01 // ACCESS</div>
+      <div class="pay-title">获取权限通行证</div>
+      
+      <div class="qr-scanner">
+        <div class="scan-line"></div>
+        <img src="skm.jpg" alt="Magic QR" class="qr-img">
       </div>
       
       <button onclick="invokeQQ()" class="contact-btn">
-        完成支付 // 召唤站长获取口令
+        已支付 &raquo; 点击唤醒站长
       </button>
 
       <div class="pay-tip">
-        <span class="software-tip">✨ 支付后请添加站长好友获取魔法软件 ✨</span>
-        识别上方“赞助阵法”后方可唤醒魔法<br>
-        支付后点击按钮自动复制QQ并跳转<br>
-        或手动添加 QQ: <b>2902939692</b>
+        <span class="important-tip">✨ 警告：未支付请勿点击 ✨</span>
+        识别上方“阵法”完成契约<br>
+        系统将自动复制 QQ: <b>2902939692</b> 并跳转<br>
+        如唤醒失败，请手动检索添加
       </div>
     </div>
 
-    <div class="section-card">
-      <div class="step-tag">PROTOCOL_02</div>
-      <div class="step-title">进入魔法阵地</div>
-      <div class="step-desc">
-        回到 <a href="index.html" class="back-home-link">主界面</a>，启动 <b>【魔法阵地】</b>。<br>
-        同步群组坐标，这是接收实时通告与获取最新术式的核心维度。
+    <div class="card">
+      <div class="step-badge">PROTOCOL_02 // SYNC</div>
+      <div class="step-content">
+        <div class="step-head">同步魔法阵地</div>
+        <div class="step-text">
+          返回 <a href="index.html" class="link-hl">主控台</a>，启动 <b>【魔法阵地】</b> 模块。<br>
+          加入核心群组，这是接收实时通告与获取最新术式（更新日志）的唯一渠道。
+        </div>
       </div>
     </div>
 
-    <div class="section-card">
-      <div class="step-tag">PROTOCOL_03</div>
-      <div class="step-title">同步魔法术式</div>
-      <div class="step-desc">
-        回到 <a href="index.html" class="back-home-link">主界面</a> 启动 <b>【最新订阅】</b>。<br>
-        输入站长发放的权限口令，即可一键解构并同步全球高速魔法节点。
+    <div class="card">
+      <div class="step-badge">PROTOCOL_03 // DOWNLOAD</div>
+      <div class="step-content">
+        <div class="step-head">解构魔法术式</div>
+        <div class="step-text">
+          返回 <a href="index.html" class="link-hl">主控台</a>，启动 <b>【最新订阅】</b>。<br>
+          输入站长发放的 <code>ACCESS CODE</code>，系统将自动解密全球高速节点列表。
+        </div>
       </div>
     </div>
 
     <div class="nav-footer">
-      <a href="index.html" class="btn-back">PROTOCOL_EXIT // 返回</a>
+      <a href="index.html" class="btn-back">EXIT TERMINAL // 返回</a>
     </div>
   </div>
 
   <script>
+    // --- 粒子系统 (复用轻量版) ---
     const canvas = document.getElementById("bg-canvas"), ctx = canvas.getContext("2d");
-    let w, h;
-    function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
-    resize(); window.onresize = resize;
-    const dots = Array.from({length: 40}, () => ({ x: Math.random()*w, y: Math.random()*h, r: Math.random()*1.2, s: Math.random()*0.15 + 0.05 }));
-    function draw() {
-      ctx.clearRect(0, 0, w, h);
-      dots.forEach(d => {
-        d.y -= d.s; if(d.y < 0) d.y = h;
-        ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI*2);
-        ctx.fillStyle = "rgba(0, 242, 255, 0.15)"; ctx.fill();
-      });
-      requestAnimationFrame(draw);
+    let w, h, dots = [];
+    
+    function initCanvas() {
+      w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight;
+      dots = [];
+      // 粒子稍微少一点，减少干扰
+      const count = window.innerWidth < 600 ? 25 : 50;
+      for(let i=0; i<count; i++) {
+        dots.push({
+          x: Math.random()*w, y: Math.random()*h,
+          r: Math.random()*1.5,
+          vy: Math.random() * -0.5 - 0.1 // 向上飘动，模拟代码流
+        });
+      }
     }
-    draw();
 
+    function render() {
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = "rgba(0, 242, 255, 0.3)";
+      dots.forEach(d => {
+        d.y += d.vy;
+        if(d.y < 0) { d.y = h; d.x = Math.random() * w; }
+        ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI*2); ctx.fill();
+      });
+      requestAnimationFrame(render);
+    }
+    
+    window.addEventListener('resize', initCanvas);
+    initCanvas(); render();
+
+    // --- 交互逻辑 ---
     function invokeQQ() {
         const qq = "2902939692";
+        
+        // 1. 复制到剪贴板
         const textArea = document.createElement("textarea");
         textArea.value = qq;
         document.body.appendChild(textArea);
@@ -160,11 +269,22 @@
         try { document.execCommand('copy'); } catch (err) {}
         document.body.removeChild(textArea);
 
-        window.location.href = "mqqapi://card/show_pslcard?src_type=internal&version=1&uin=" + qq + "&card_type=person&source=qrcode";
-        
+        // 2. 显示 Toast
+        const toast = document.getElementById('toast');
+        toast.classList.add('show');
+
+        // 3. 延迟跳转
         setTimeout(() => {
-            alert("「召唤术式启动」\n\n1. 已尝试为您拉起QQ私聊\n2. 站长QQ已同步至剪贴板\n\n若未成功跳转，请在QQ搜索：2902939692");
-        }, 600);
+            toast.classList.remove('show');
+            // 尝试唤起QQ
+            window.location.href = "mqqapi://card/show_pslcard?src_type=internal&version=1&uin=" + qq + "&card_type=person&source=qrcode";
+        }, 1200);
+        
+        // 4. 后备 Alert (防止小白不知道发生了什么)
+        setTimeout(() => {
+             // 简单的控制台风格日志，不再弹丑陋的 alert，除非必要
+             console.log("Jumping to QQ Protocol...");
+        }, 2000);
     }
   </script>
 </body>
