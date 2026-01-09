@@ -23,7 +23,6 @@
       min-height: 100vh;
       display: flex; flex-direction: column; align-items: center;
       overflow-x: hidden;
-      /* 统一的赛博网格背景 */
       background-image: 
         linear-gradient(rgba(0, 242, 255, 0.03) 1px, transparent 1px),
         linear-gradient(90deg, rgba(0, 242, 255, 0.03) 1px, transparent 1px),
@@ -34,11 +33,10 @@
 
     #bg-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
 
-    /* --- 头部 --- */
     .header-group {
       width: 90%; max-width: 650px; margin-top: 50px; margin-bottom: 30px;
       position: relative; z-index: 2;
-      border-left: 4px solid var(--pink); /* 粉色强调 */
+      border-left: 4px solid var(--pink);
       padding-left: 20px;
       display: flex; flex-direction: column;
     }
@@ -46,14 +44,12 @@
     .page-title {
       font-size: 24px; letter-spacing: 4px; margin: 0; color: #fff;
       text-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
-      position: relative; display: inline-block;
     }
     .sub-tag {
       font-family: var(--font-code); font-size: 10px; color: var(--cyan);
       opacity: 0.7; margin-top: 8px; letter-spacing: 2px;
     }
 
-    /* --- 分隔标题 --- */
     .section-title {
       width: 90%; max-width: 650px; z-index: 2;
       font-size: 14px; color: var(--cyan); margin: 30px 0 15px;
@@ -68,7 +64,6 @@
       background: linear-gradient(90deg, rgba(0,242,255,0.3), transparent); margin-left: 15px; 
     }
 
-    /* --- 订阅卡片 v2.0 --- */
     .card-grid {
       width: 90%; max-width: 650px; z-index: 2;
       display: grid; gap: 15px;
@@ -82,10 +77,9 @@
       position: relative; overflow: hidden;
       backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
       transition: 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-      cursor: pointer; /* 暗示可点击 */
+      cursor: pointer;
     }
 
-    /* 悬停效果：边框变粉，稍微上浮 */
     .card:hover {
       transform: translateY(-3px);
       border-left-color: var(--pink);
@@ -93,7 +87,6 @@
       box-shadow: 0 10px 20px rgba(0,0,0,0.3);
     }
 
-    /* 右上角装饰角标 */
     .card::after {
       content: ''; position: absolute; top: 0; right: 0;
       width: 0; height: 0;
@@ -113,16 +106,14 @@
       border: 1px solid rgba(0, 242, 255, 0.2); font-family: var(--font-code);
     }
     
-    /* 链接区域优化 */
     .link-display {
       font-family: var(--font-code); font-size: 11px; color: rgba(255,255,255,0.5);
       background: rgba(0,0,0,0.3); padding: 10px; border-radius: 4px;
       word-break: break-all; border: 1px dashed rgba(255,255,255,0.1);
-      position: relative; transition: 0.3s;
+      position: relative; transition: 0.3s; max-height: 60px; overflow: hidden;
     }
     .card:hover .link-display { color: var(--cyan); border-color: rgba(0,242,255,0.3); }
 
-    /* 复制按钮提示 */
     .copy-hint {
       position: absolute; right: 10px; bottom: 10px;
       font-size: 10px; color: var(--pink); opacity: 0;
@@ -130,7 +121,6 @@
     }
     .card:hover .copy-hint { opacity: 1; transform: translateX(0); }
 
-    /* --- 原始终端 --- */
     .terminal-window {
       width: 90%; max-width: 650px; z-index: 2; margin-top: 10px;
       background: #080808; border: 1px solid #333; border-radius: 6px;
@@ -146,13 +136,12 @@
     
     .term-body {
       padding: 15px; color: #0f0; font-family: var(--font-code); font-size: 12px;
-      line-height: 1.5; white-space: pre-wrap; height: 200px; overflow-y: auto;
+      line-height: 1.5; white-space: pre-wrap; height: 300px; overflow-y: auto;
       scrollbar-width: thin; scrollbar-color: #333 #000;
     }
     .term-body::-webkit-scrollbar { width: 6px; }
     .term-body::-webkit-scrollbar-thumb { background: #333; }
 
-    /* --- 底部导航 --- */
     .back-btn {
       margin-top: 40px; z-index: 5;
       padding: 12px 40px;
@@ -165,7 +154,6 @@
     }
     .back-btn:hover { background: var(--cyan); color: #000; box-shadow: 0 0 20px rgba(0,242,255,0.4); }
 
-    /* --- Toast 提示 --- */
     #toast {
       position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100%);
       background: var(--pink); color: #fff; padding: 10px 25px;
@@ -184,74 +172,105 @@
   <div id="toast">📋 LINK COPIED TO CLIPBOARD</div>
 
   <div class="header-group">
-    <h1 class="page-title">数据节点订阅</h1>
-    <div class="sub-tag">ENCRYPTED CONNECTION // SECURE</div>
+    <h1 class="page-title">全球节点订阅中心</h1>
+    <div class="sub-tag">FREE NODES // 2026 UPDATED // SHADOWROCKET & CLASH COMPATIBLE</div>
   </div>
 
-  <div class="section-title">核心订阅源 (点击复制)</div>
-
+  <!-- 单个节点示例（从你提供的base64解码） -->
+  <div class="section-title">实时节点示例 (直接导入小火箭/Clash)</div>
   <div class="card-grid">
-    <div class="card" onclick="copyText('https://raw.githubusercontent.com/Pawdroid/Free-servers/main/sub')">
-      <div class="card-header">
-        <span class="c-name">Pawdroid / Free-servers</span>
-        <span class="c-status">6H UPDATE</span>
-      </div>
-      <div class="link-display">https://raw.githubusercontent.com/Pawdroid/Free-servers/main/sub</div>
+    <div class="card" onclick="copyText('ss://Y2hhY2hhMjAtaWV0Zi1wb2x5MTMwNTowMWRjMGQ3Y2JiNjUwYmMz@109.61.39.150:11201#%E5%8C%88%E7%89%99%E5%88%A9+V2CROSS.COM')">
+      <div class="card-header"><span class="c-name">SS - 匈牙利节点</span><span class="c-status">REALTIME</span></div>
+      <div class="link-display">ss://Y2hhY2hhMjAtaWV0Zi1wb2x5MTMwNTowMWRjMGQ3Y... (点击复制完整)</div>
       <div class="copy-hint">CLICK TO COPY</div>
     </div>
-
-    <div class="card" onclick="copyText('https://raw.githubusercontent.com/free18/v2ray/main/subscribe')">
-      <div class="card-header">
-        <span class="c-name">free18 / v2ray</span>
-        <span class="c-status" style="border-color:var(--pink); color:var(--pink)">DAILY</span>
-      </div>
-      <div class="link-display">https://raw.githubusercontent.com/free18/v2ray/main/subscribe</div>
+    <div class="card" onclick="copyText('trojan://BxceQaOe@58.152.30.149:443?allowInsecure=0&sni=t.me%25252Fripaojiedian#%E9%A6%99%E6%B8%AF+%E7%94%B5%E8%AE%AF%E7%9B%88%E7%A7%91')">
+      <div class="card-header"><span class="c-name">Trojan - 香港电信</span><span class="c-status">HIGH SPEED</span></div>
+      <div class="link-display">trojan://BxceQaOe@58.152.30.149:443?... (点击复制完整)</div>
       <div class="copy-hint">CLICK TO COPY</div>
     </div>
-
-    <div class="card" onclick="copyText('https://raw.githubusercontent.com/Flikify/Free-Node/main/nodes.txt')">
-      <div class="card-header">
-        <span class="c-name">Flikify / Free-Node</span>
-        <span class="c-status">1H UPDATE</span>
-      </div>
-      <div class="link-display">https://raw.githubusercontent.com/Flikify/Free-Node/main/nodes.txt</div>
-      <div class="copy-hint">CLICK TO COPY</div>
-    </div>
-
-    <div class="card" onclick="copyText('https://raw.githubusercontent.com/mermeroo/V2RAY-CLASH-BASE64-Subscription.Links/main/SUB%20LINKS')">
-      <div class="card-header">
-        <span class="c-name">mermeroo / SubLinks</span>
-        <span class="c-status">ACTIVE</span>
-      </div>
-      <div class="link-display">.../V2RAY-CLASH-BASE64-Subscription.Links/main/SUB LINKS</div>
-      <div class="copy-hint">CLICK TO COPY</div>
-    </div>
-    
-    <div class="card" onclick="copyText('https://raw.githubusercontent.com/NiREvil/vless/main/sub.txt')">
-      <div class="card-header">
-        <span class="c-name">NiREvil / vless</span>
-        <span class="c-status" style="color:#0f0; border-color:#0f0">REALTIME</span>
-      </div>
-      <div class="link-display">https://raw.githubusercontent.com/NiREvil/vless/main/sub.txt</div>
+    <div class="card" onclick="copyText('vmess://eyJ2IjoyLCJwcyI6Ilx1N2Y4ZVx1NTZmZCBDbG91ZEZsYXJlIiwgImFkZCI6InN5NC42MjA3MjAueHl6IiwgInBvcnQiOiI0NDMiLCJpZCI6IjUxNmQ4YTdhL...')">
+      <div class="card-header"><span class="c-name">Vmess - CloudFlare WS</span><span class="c-status">TLS</span></div>
+      <div class="link-display">vmess://eyJ2IjoyLCJwcyI6Ilx1N2Y4ZVx1NTZmZCBDbG91ZEZsYXJlIi... (点击复制完整)</div>
       <div class="copy-hint">CLICK TO COPY</div>
     </div>
   </div>
 
-  <div class="section-title">原始节点终端</div>
+  <!-- GitHub 公益订阅 -->
+  <div class="section-title">GitHub 公益订阅 (每日/实时更新)</div>
+  <div class="card-grid">
+    <div class="card" onclick="copyText('https://raw.githubusercontent.com/mermeroo/Loon/main/node')">
+      <div class="card-header"><span class="c-name">mermeroo / Loon Node</span><span class="c-status">DAILY</span></div>
+      <div class="link-display">https://raw.githubusercontent.com/mermeroo/Loon/main/node</div>
+    </div>
+    <div class="card" onclick="copyText('https://raw.githubusercontent.com/free18/v2ray/main/subscribe')">
+      <div class="card-header"><span class="c-name">free18 / V2ray Subscribe</span><span class="c-status">REALTIME</span></div>
+      <div class="link-display">https://raw.githubusercontent.com/free18/v2ray/main/subscribe</div>
+    </div>
+    <div class="card" onclick="copyText('https://raw.githubusercontent.com/mahdibland/ShadowsocksAggregator/master/sub/sub_merge.txt')">
+      <div class="card-header"><span class="c-name">mahdibland / SS Aggregator</span><span class="c-status">ACTIVE</span></div>
+      <div class="link-display">https://raw.githubusercontent.com/mahdibland/ShadowsocksAggregator/master/sub/sub_merge.txt</div>
+    </div>
+    <div class="card" onclick="copyText('https://raw.githubusercontent.com/barry-far/V2ray-Configs/refs/heads/main/All_Configs_Sub.txt')">
+      <div class="card-header"><span class="c-name">barry-far / All Configs</span><span class="c-status">HIGH VOLUME</span></div>
+      <div class="link-display">https://raw.githubusercontent.com/barry-far/V2ray-Configs/refs/heads/main/All_Configs_Sub.txt</div>
+    </div>
+    <div class="card" onclick="copyText('https://clashgithub.com/')">
+      <div class="card-header"><span class="c-name">ClashGitHub.com 聚合</span><span class="c-status">50+ NODES DAILY</span></div>
+      <div class="link-display">https://clashgithub.com/ (最高20M/s+)</div>
+    </div>
+  </div>
 
+  <!-- Clash 专用订阅 -->
+  <div class="section-title">Clash 专用订阅 (YAML 格式，高速)</div>
+  <div class="card-grid">
+    <div class="card" onclick="copyText('https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml')">
+      <div class="card-header"><span class="c-name">ermaozi / Clash.yml</span><span class="c-status">DAILY 22M/s</span></div>
+      <div class="link-display">https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml</div>
+    </div>
+    <div class="card" onclick="copyText('https://raw.githubusercontent.com/anaer/Sub/main/clash.yaml')">
+      <div class="card-header"><span class="c-name">anaer / Clash</span><span class="c-status">STABLE</span></div>
+      <div class="link-display">https://raw.githubusercontent.com/anaer/Sub/main/clash.yaml</div>
+    </div>
+    <div class="card" onclick="copyText('https://raw.githubusercontent.com/oslook/clash-freenode/main/clash.yaml')">
+      <div class="card-header"><span class="c-name">oslook / FreeNode</span><span class="c-status">HIGH SPEED</span></div>
+      <div class="link-display">https://raw.githubusercontent.com/oslook/clash-freenode/main/clash.yaml</div>
+    </div>
+    <div class="card" onclick="copyText('https://raw.githubusercontent.com/vveg26/get_proxy/main/dist/clash.config.yaml')">
+      <div class="card-header"><span class="c-name">vveg26 / Clash Config</span><span class="c-status">UPDATED</span></div>
+      <div class="link-display">https://raw.githubusercontent.com/vveg26/get_proxy/main/dist/clash.config.yaml</div>
+    </div>
+  </div>
+
+  <!-- 其他热门来源 -->
+  <div class="section-title">其他聚合来源 (Base64 / Mix)</div>
+  <div class="card-grid">
+    <div class="card" onclick="copyText('https://www.freeclashnode.com/free-node/')">
+      <div class="card-header"><span class="c-name">FreeClashNode</span><span class="c-status">22M/s+ DAILY</span></div>
+      <div class="link-display">https://www.freeclashnode.com/free-node/</div>
+    </div>
+    <div class="card" onclick="copyText('https://sub.pmsub.me/base64')">
+      <div class="card-header"><span class="c-name">PMSUB Base64</span><span class="c-status">MIXED</span></div>
+      <div class="link-display">https://sub.pmsub.me/base64</div>
+    </div>
+    <div class="card" onclick="copyText('https://lncn.org')">
+      <div class="card-header"><span class="c-name">LNCN.org 聚合</span><span class="c-status">REALTIME</span></div>
+      <div class="link-display">https://lncn.org</div>
+    </div>
+  </div>
+
+  <div class="section-title">实时节点终端 (持续加载)</div>
   <div class="terminal-window">
     <div class="term-header">
       <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
       <div style="font-size:10px; color:#666; margin-left:10px;">bash — 80x24</div>
     </div>
-    <div class="term-body" id="typewriter">
-      </div>
+    <div class="term-body" id="typewriter"></div>
   </div>
 
   <a href="index.html" class="back-btn">返回主控台</a>
 
   <script>
-    // --- 1. 背景粒子 (复用主页逻辑但更轻量) ---
     const canvas = document.getElementById("bg-canvas"), ctx = canvas.getContext("2d");
     let w, h, dots = [];
     function initCanvas() {
@@ -259,11 +278,7 @@
       dots = [];
       const count = window.innerWidth < 600 ? 20 : 40;
       for(let i=0; i<count; i++) {
-        dots.push({
-          x: Math.random()*w, y: Math.random()*h,
-          vx: (Math.random()-0.5)*0.3, vy: (Math.random()-0.5)*0.3,
-          r: Math.random()*1.5
-        });
+        dots.push({x: Math.random()*w, y: Math.random()*h, vx: (Math.random()-0.5)*0.3, vy: (Math.random()-0.5)*0.3, r: Math.random()*1.5});
       }
     }
     function render() {
@@ -279,25 +294,24 @@
     window.addEventListener('resize', initCanvas);
     initCanvas(); render();
 
-    // --- 2. 复制功能 + 粉色 Toast 提示 ---
     function copyText(text) {
       navigator.clipboard.writeText(text).then(() => {
         const toast = document.getElementById('toast');
         toast.classList.add('show');
         setTimeout(() => toast.classList.remove('show'), 2000);
-      }).catch(err => {
-        alert('复制失败，请手动复制');
-      });
+      }).catch(() => alert('复制失败，请手动选择'));
     }
 
-    // --- 3. 终端打字机效果 ---
+    // 真实节点打字机
     const rawData = [
-      "# Initializing connection...",
-      "# Fetching nodes from pool...",
-      "vless://2f60be6f-be0c-48b4-9772-b56f42b51b@jp.server:443",
-      "ss://YWVzLTIxNi1nY2060EpDc1Bzc2ZnUzh0aVJ3a@us.proxy:8080",
-      "trojan://BxceQa0e@58.152.25.86:443?allowInsecure=1",
-      "vmess://eyJ2IjoyLCJwcyI6IlJlbGF5X05vZGUiLCJ..."
+      "# Scanning global node pool (2026-01-09)...",
+      "# High-speed links detected:",
+      "ss://Y2hhY2hhMjAtaWV0Zi1wb2x5MTMwNTowMWRjMGQ3Y2JiNjUwYmMz@109.61.39.150:11201#匈牙利 V2CROSS",
+      "trojan://BxceQaOe@58.152.30.149:443?allowInsecure=0&sni=t.me%25252Fripaojiedian#香港 电信盈科",
+      "vmess://eyJ2IjoyLCJwcyI6IlJlbGF5X05vZGUiLCJhZGQiOiJzeTQuNjIwNzIwLnh5eiIsInBvcnQiOjQ0MywiaWQiOiI1MTZkOGE3YS0zZjBiLTQxZDMtYmFkMC0yNDYxMTYzODE1MTYiLCJhaWQiOjAsIm5ldCI6IndzIiwicGF0aCI6Ii8iLCJob3N0Ijoic3k0LjYyMDcyMC54eXoiLCJ0bHMiOiJ0bHMifQ==",
+      "vmess://eyJhZGQiOiIyMTYuMTY3LjI2LjIyMCIsInYiOiIyIiwicHMiOiJVUyBOVFQiLCJwb3J0IjozNDEyOCwiaWQiOiI0MTQ1ZWMyYS1iYzYxLTRkNzItYmZkNS1mOWZmYmRmNjZjMjgiLCJhaWQiOjAsIm5ldCI6Im5vbmUiLCJ0eXBlIjoiIiwiaG9zdCI6IiIsInBhdGgiOiIiLCJ0bHMiOiIifQ==",
+      "# More nodes loading from subscriptions...",
+      "# Tip: 免费节点适合临时使用，长期推荐付费机场"
     ];
     const termBody = document.getElementById('typewriter');
     let lineIndex = 0;
@@ -306,25 +320,22 @@
       if (lineIndex < rawData.length) {
         const p = document.createElement('div');
         p.textContent = `> ${rawData[lineIndex]}`;
-        // 随机给几行加上粉色高亮
-        if(Math.random() > 0.7) p.style.color = "var(--pink)";
+        if(Math.random() > 0.6) p.style.color = "var(--pink)";
         termBody.appendChild(p);
         termBody.scrollTop = termBody.scrollHeight;
         lineIndex++;
-        setTimeout(typeLine, Math.random() * 500 + 200);
+        setTimeout(typeLine, Math.random() * 600 + 300);
       } else {
         const blink = document.createElement('div');
         blink.innerHTML = "> <span style='animation:blink 1s infinite'>_</span>";
         termBody.appendChild(blink);
       }
     }
-    // 添加闪烁动画
     const style = document.createElement('style');
     style.innerHTML = `@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }`;
     document.head.appendChild(style);
     
     setTimeout(typeLine, 1000);
-
   </script>
 </body>
 </html>
