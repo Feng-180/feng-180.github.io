@@ -3,74 +3,235 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>时间电台 - 专注每一刻</title>
+    <title>Time FM | 专注当下</title>
+    <meta name="description" content="A simple clock for focus.">
     <style>
-        :root { --bg: #ffffff; --text: #1d1d1f; }
-        body { 
-            margin: 0; background: var(--bg); color: var(--text);
-            font-family: -apple-system, "SF Pro Text", "Helvetica Neue", sans-serif;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            height: 100vh; overflow: hidden;
+        /* --- 🎨 极简美学设计 --- */
+        :root {
+            --bg: #000000;
+            --text: #f5f5f7;
+            --sub-text: #86868b;
+            --accent: #00f2ff; /* 赛博蓝 */
+            --transition: cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
-        #clock { font-size: 4.5rem; font-weight: 200; letter-spacing: -2px; margin-bottom: 10px; }
-        .motto { font-size: 0.85rem; color: #86868b; letter-spacing: 2px; font-weight: 300; }
-        
-        /* 秘密入口：伪装成底部的极细装饰线 */
-        .footer-line {
-            position: fixed; bottom: 40px; width: 30px; height: 1px;
-            background: #e5e5e5; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+        body {
+            margin: 0;
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: "SF Mono", "Menlo", "Monaco", "Courier New", monospace; /* 等宽字体 */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+            user-select: none; /* 禁止选中文本，像个App */
+            transition: opacity 0.5s ease;
         }
-        /* 激活时的视觉反馈 */
-        .footer-line.active { background: #00f2ff; width: 60px; box-shadow: 0 0 10px #00f2ff; }
-        
+
+        /* 时钟主体 */
+        #clock {
+            font-size: 15vw; /* 响应式字体 */
+            font-weight: 400;
+            line-height: 1;
+            letter-spacing: -0.05em;
+            font-variant-numeric: tabular-nums; /* 关键：数字等宽，防止秒跳动时抖动 */
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+
+        /* 日期与格言 */
+        .meta-group {
+            text-align: center;
+            margin-top: 20px;
+            opacity: 0;
+            animation: fadeIn 2s ease-out forwards 1s;
+        }
+
+        #date {
+            font-size: 1.2rem;
+            color: var(--sub-text);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .motto {
+            font-size: 0.9rem;
+            color: #444;
+            font-style: italic;
+        }
+
+        /* --- 🔒 秘密入口交互区 --- */
+        /* 技巧：扩大点击热区，但视觉上保持极简 */
+        .trigger-area {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 80px; /* 巨大的点击区域 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: default; /* 不显示手型，增加隐蔽性 */
+            z-index: 99;
+        }
+
+        /* 视觉上的那条“线” */
+        .secret-line {
+            width: 40px;
+            height: 2px;
+            background: #333;
+            border-radius: 2px;
+            transition: all 0.3s var(--transition);
+        }
+
+        /* 点击时的反馈状态 */
+        .trigger-area:active .secret-line {
+            background: #666;
+            width: 60px;
+        }
+
+        /* 解锁进度反馈 (由JS控制) */
+        .secret-line.stage-1 { background: #444; }
+        .secret-line.stage-2 { background: #666; width: 45px; }
+        .secret-line.stage-3 { background: #888; width: 50px; }
+        .secret-line.stage-4 { background: #aaa; width: 55px; }
+        .secret-line.stage-5 { 
+            background: var(--accent); 
+            width: 100px; 
+            box-shadow: 0 0 15px var(--accent);
+            height: 3px;
+        }
+
+        /* 版权文字 */
         #tips {
-            position: fixed; bottom: 20px; font-size: 10px; color: #d2d2d7;
-            letter-spacing: 1px;
+            position: fixed;
+            bottom: 15px;
+            font-size: 10px;
+            color: #222;
+            pointer-events: none; /* 防止遮挡点击 */
+        }
+
+        /* --- 🌪️ 解锁特效 --- */
+        .glitch-mode {
+            animation: glitch-anim 0.3s infinite;
+        }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes glitch-anim {
+            0% { transform: translate(0) }
+            20% { transform: translate(-2px, 2px) }
+            40% { transform: translate(-2px, -2px) }
+            60% { transform: translate(2px, 2px) }
+            80% { transform: translate(2px, -2px) }
+            100% { transform: translate(0) }
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 600px) {
+            #clock { font-size: 20vw; }
         }
     </style>
 </head>
 <body>
 
     <div id="clock">00:00:00</div>
-    <div class="motto">Stay hungry, Stay foolish.</div>
+    
+    <div class="meta-group">
+        <div id="date">LOADING...</div>
+        <div class="motto">Stay hungry. Stay foolish.</div>
+    </div>
 
-    <div class="footer-line" id="gate"></div>
-    <div id="tips">© 2026 DIGITAL_STATION</div>
+    <div class="trigger-area" id="trigger">
+        <div class="secret-line" id="line"></div>
+    </div>
+
+    <div id="tips">DIGITAL STATION v2.0</div>
 
     <script>
-        // 1. 实时时钟
-        function update() {
-            const d = new Date();
-            const h = String(d.getHours()).padStart(2, '0');
-            const m = String(d.getMinutes()).padStart(2, '0');
-            const s = String(d.getSeconds()).padStart(2, '0');
-            document.getElementById('clock').innerText = `${h}:${m}:${s}`;
-        }
-        setInterval(update, 1000); update();
+        // --- 1. 时钟与日期逻辑 ---
+        const clockEl = document.getElementById('clock');
+        const dateEl = document.getElementById('date');
+        const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 
-        // 2. 秘密入口逻辑：连续点击 5 次
-        let count = 0;
-        let timer = null;
-        const gate = document.getElementById('gate');
-
-        gate.onclick = function() {
-            count++;
-            gate.classList.add('active'); // 给予点击反馈
+        function updateTime() {
+            const now = new Date();
             
-            // 每次点击重置定时器，如果 2 秒内没点够 5 次就重置
-            clearTimeout(timer);
-            timer = setTimeout(() => {
+            // 格式化时间 (补0)
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            const s = String(now.getSeconds()).padStart(2, '0');
+            
+            // 格式化日期
+            const y = now.getFullYear();
+            const mo = String(now.getMonth() + 1).padStart(2, '0');
+            const d = String(now.getDate()).padStart(2, '0');
+            const day = days[now.getDay()];
+
+            clockEl.innerText = `${h}:${m}:${s}`;
+            dateEl.innerText = `${y}.${mo}.${d} ${day}`;
+
+            requestAnimationFrame(updateTime);
+        }
+        requestAnimationFrame(updateTime);
+
+        // --- 2. 秘密入口逻辑 (连点5次) ---
+        const trigger = document.getElementById('trigger');
+        const line = document.getElementById('line');
+        
+        let count = 0;
+        let resetTimer = null;
+        const TARGET_CLICKS = 5;
+        // 你的真实主页地址
+        const REAL_HOMEPAGE = "portal.html"; // ⚠️ 记得修改这里
+
+        trigger.addEventListener('click', (e) => {
+            // 防止快速双击缩放
+            e.preventDefault();
+            
+            count++;
+            
+            // 视觉反馈：根据点击次数改变线条样式
+            line.className = `secret-line stage-${count}`;
+
+            // 震动反馈 (Android支持较好)
+            if (navigator.vibrate) navigator.vibrate(20);
+
+            // 重置逻辑：如果 2秒内 没继续点，就归零
+            clearTimeout(resetTimer);
+            resetTimer = setTimeout(() => {
                 count = 0;
-                gate.classList.remove('active');
+                line.className = 'secret-line'; // 恢复原状
             }, 2000);
 
-            if(count >= 5) {
-                // 震动反馈（仅部分移动端支持）
-                if (window.navigator.vibrate) window.navigator.vibrate(50);
-                // 跳转到你改名后的真实主页
-                window.location.href = "portal.html";
+            // --- 🔓 解锁成功 ---
+            if (count >= TARGET_CLICKS) {
+                clearTimeout(resetTimer);
+                activatePortal();
             }
-        };
+        });
+
+        function activatePortal() {
+            // 1. 强震动
+            if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+            
+            // 2. 视觉故障特效
+            document.body.classList.add('glitch-mode');
+            document.body.style.backgroundColor = '#111';
+            clockEl.style.color = '#00f2ff';
+            clockEl.innerText = "ACCESS";
+            dateEl.innerText = "GRANTED";
+
+            // 3. 延迟跳转
+            setTimeout(() => {
+                // 淡出效果
+                document.body.style.opacity = '0';
+                setTimeout(() => {
+                    window.location.href = REAL_HOMEPAGE;
+                }, 500);
+            }, 1200);
+        }
     </script>
 </body>
 </html>
