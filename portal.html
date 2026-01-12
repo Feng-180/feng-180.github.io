@@ -4,298 +4,442 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="theme-color" content="#05020a">
-  <title>风の魔法禁书录 | TERMINAL</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>风の魔法禁书录 | TERMINAL V2.0</title>
   <style>
-    /* --- 核心变量系统 --- */
+    /* --- SYSTEM CORE V2.0 --- */
     :root {
       --cyan: #00f2ff;
-      --pink: #ff003c; 
+      --pink: #ff0055;
       --void: #05020a;
-      --glass: rgba(255, 255, 255, 0.02);
-      --border: rgba(0, 242, 255, 0.15);
-      --font-code: "Consolas", "Monaco", "Courier New", monospace;
-      --font-main: "PingFang SC", system-ui, -apple-system, sans-serif;
+      --grid: rgba(0, 242, 255, 0.03);
+      --font-code: "JetBrains Mono", "Fira Code", "Consolas", monospace;
+      --font-main: "PingFang SC", "Helvetica Neue", sans-serif;
     }
 
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+
     body {
       margin: 0; background: var(--void); color: #fff;
       font-family: var(--font-main);
       overflow-x: hidden; min-height: 100vh;
       display: flex; flex-direction: column; align-items: center;
+      /* 升级：网格背景 + 晕影 */
       background-image: 
-        linear-gradient(rgba(0, 242, 255, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 242, 255, 0.03) 1px, transparent 1px),
-        radial-gradient(circle at 50% 50%, rgba(5,2,10,0.8) 0%, rgba(5,2,10,1) 100%);
-      background-size: 40px 40px, 40px 40px, 100% 100%;
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+      background-size: 30px 30px;
+      perspective: 1000px;
     }
 
-    body::after {
-      content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 999;
-      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
-      background-size: 100% 4px;
-      animation: scanlines 0.2s linear infinite; opacity: 0.3;
-    }
-
-    #bg-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
-
-    /* --- 头部区域 --- */
-    .header { position: relative; z-index: 5; padding-top: 6vh; text-align: center; width: 100%; }
-    
-    .title-wrapper { position: relative; display: inline-block; }
-    .main-title { 
-      font-size: clamp(24px, 6vw, 36px); 
-      letter-spacing: 0.3em; font-weight: 200; margin: 0; 
-      text-shadow: 0 0 15px var(--cyan);
-      position: relative;
+    /* 升级：CRT 屏幕扫描线特效 */
+    body::before {
+      content: " "; position: fixed; inset: 0; z-index: 900; pointer-events: none;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+      background-size: 100% 2px, 3px 100%;
+      background-blend-mode: overlay;
     }
     
-    .main-title::before, .main-title::after {
-      content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.8;
-    }
-    .main-title::before { color: var(--pink); z-index: -1; animation: glitch-anim-1 2.5s infinite linear alternate-reverse; }
-    .main-title::after { color: var(--cyan); z-index: -2; animation: glitch-anim-2 3s infinite linear alternate-reverse; }
+    #bg-canvas { position: fixed; inset: 0; z-index: 0; }
 
-    .id-tag { 
-      font-family: var(--font-code); font-size: 10px; color: var(--cyan); 
-      opacity: 0.6; margin-top: 10px; letter-spacing: 2px;
-      border: 1px solid rgba(0,242,255,0.2); display: inline-block;
-      padding: 2px 8px; border-radius: 4px; background: rgba(0,242,255,0.05);
-    }
+    /* --- UI 组件 --- */
+    .header { position: relative; z-index: 10; padding-top: 8vh; text-align: center; width: 100%; }
 
-    /* --- 魔法阵 v2.0 --- */
-    .magic-container {
-      position: relative; width: 280px; height: 280px; margin: 20px auto;
-      display: flex; align-items: center; justify-content: center;
+    .main-title {
+      font-size: clamp(28px, 7vw, 42px);
+      letter-spacing: 0.2em; font-weight: 800; margin: 0;
+      color: #fff; text-shadow: 2px 2px 0px var(--pink), -2px -2px 0px var(--cyan);
+      position: relative; display: inline-block;
     }
-    .magic-layer { position: absolute; inset: 0; width: 100%; height: 100%; fill: none; stroke-width: 1; }
-    .layer-1 { stroke: var(--cyan); opacity: 0.6; animation: rotate-cw 20s linear infinite; }
-    .layer-2 { stroke: var(--pink); opacity: 0.4; animation: rotate-ccw 15s linear infinite; transform-origin: center; scale: 0.75; }
-    .layer-3 { stroke: #fff; opacity: 0.8; animation: pulse 3s ease-in-out infinite; }
+    /* 升级：故障抖动动画 */
+    .main-title:hover { animation: glitch-skew 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite; }
 
-    .core-orb {
-      position: absolute; width: 60px; height: 60px; border-radius: 50%;
-      background: radial-gradient(circle, #fff 0%, var(--cyan) 40%, transparent 70%);
-      filter: blur(8px); mix-blend-mode: screen;
-      animation: breathe 3s ease-in-out infinite;
+    .status-bar {
+      margin-top: 15px; display: inline-flex; align-items: center; gap: 8px;
+      padding: 4px 12px; border: 1px solid rgba(0, 242, 255, 0.3);
+      background: rgba(0, 242, 255, 0.05); border-radius: 4px;
     }
+    .status-dot { width: 6px; height: 6px; background: var(--cyan); border-radius: 50%; box-shadow: 0 0 8px var(--cyan); animation: blink 2s infinite; }
+    .typewriter { font-family: var(--font-code); font-size: 12px; color: var(--cyan); letter-spacing: 1px; }
 
-    /* --- 播放器 --- */
-    .player-trigger { 
-      display: flex; align-items: center; justify-content: center; gap: 10px;
-      margin: 10px auto 30px; cursor: pointer; z-index: 10; 
-      padding: 8px 20px; border-radius: 20px;
-      background: linear-gradient(90deg, transparent, rgba(0,242,255,0.05), transparent);
-      border-top: 1px solid rgba(0,242,255,0.1);
-      border-bottom: 1px solid rgba(0,242,255,0.1);
-      transition: 0.3s;
+    /* --- 魔法阵 V3.0 (SVG CSS Animation) --- */
+    .magic-wrapper { position: relative; width: 260px; height: 260px; margin: 30px auto; filter: drop-shadow(0 0 15px rgba(0,242,255,0.3)); }
+    .magic-svg { width: 100%; height: 100%; animation: float 6s ease-in-out infinite; }
+    .ring-outer { transform-origin: center; animation: spin 20s linear infinite; stroke: var(--cyan); opacity: 0.6; }
+    .ring-inner { transform-origin: center; animation: spin-rev 15s linear infinite; stroke: var(--pink); opacity: 0.5; }
+    .core-pulse { transform-origin: center; animation: pulse 3s infinite; fill: #fff; }
+
+    /* --- 播放器控件 --- */
+    .player-deck {
+      display: flex; align-items: center; gap: 12px; margin: 0 auto 40px;
+      padding: 10px 24px; border-radius: 50px; cursor: pointer;
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(5px); transition: 0.3s;
     }
-    .player-trigger:hover { background: rgba(0,242,255,0.1); box-shadow: 0 0 15px rgba(0,242,255,0.2); }
-    .chanting { font-size: 10px; font-family: var(--font-code); color: var(--cyan); letter-spacing: 1px; }
-    
-    .v-bar { width: 3px; height: 10px; background: var(--pink); margin: 0 1px; border-radius: 2px; }
-    .playing .v-bar { animation: v-flow 0.5s infinite alternate; background: var(--cyan); }
+    .player-deck:hover, .player-deck.active { border-color: var(--cyan); box-shadow: 0 0 20px rgba(0,242,255,0.15); }
+    .spectrum { display: flex; align-items: flex-end; gap: 2px; height: 16px; }
+    .bar { width: 3px; background: var(--pink); border-radius: 2px; height: 4px; transition: 0.2s; }
+    .player-deck.active .bar { animation: equalizer 0.5s infinite alternate; background: var(--cyan); }
+    .player-deck.active .bar:nth-child(2) { animation-delay: 0.1s; }
+    .player-deck.active .bar:nth-child(3) { animation-delay: 0.2s; }
+    .player-deck.active .bar:nth-child(4) { animation-delay: 0.3s; }
 
     /* --- 菜单卡片 --- */
-    .menu { position: relative; z-index: 10; width: 90%; max-width: 400px; display: flex; flex-direction: column; gap: 16px; }
+    .nav-grid {
+      display: grid; gap: 16px; width: 90%; max-width: 420px; z-index: 20;
+      perspective: 1000px;
+    }
     
-    .menu-item { 
-      position: relative; display: flex; align-items: center; justify-content: space-between;
-      text-decoration: none; padding: 20px 24px; 
-      background: rgba(10, 10, 15, 0.4);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-left: 2px solid var(--cyan);
-      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      overflow: hidden;
+    .nav-card {
+      position: relative; padding: 22px; 
+      background: linear-gradient(145deg, rgba(20,20,30,0.6), rgba(10,10,15,0.8));
+      border: 1px solid rgba(255,255,255,0.08);
+      border-left: 3px solid #333;
+      text-decoration: none; overflow: hidden; transition: 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
       clip-path: polygon(0 0, 100% 0, 100% 85%, 95% 100%, 0 100%);
-      cursor: pointer;
+    }
+    
+    .nav-card::before {
+      content: ""; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      transform: skewX(-25deg); transition: 0.5s;
     }
 
-    .menu-item:hover { transform: translateX(10px); background: rgba(0, 242, 255, 0.08); border-left-color: var(--pink); box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
+    .nav-card:hover { transform: translateX(5px); border-left-color: var(--cyan); box-shadow: 0 5px 30px rgba(0,0,0,0.5); }
+    .nav-card:hover::before { left: 150%; }
+    .nav-card:active { transform: scale(0.98); }
 
-    .item-info { display: flex; flex-direction: column; }
-    .m-title { font-size: 16px; letter-spacing: 2px; color: #eee; font-weight: 500; }
-    .m-desc { font-size: 10px; color: #888; margin-top: 4px; font-family: var(--font-code); text-transform: uppercase; }
+    .card-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .card-title { font-size: 16px; font-weight: bold; color: #fff; letter-spacing: 1px; }
+    .card-sub { font-size: 10px; color: var(--pink); font-family: var(--font-code); opacity: 0.8; }
+    .icon-arrow { width: 8px; height: 8px; border-top: 2px solid #555; border-right: 2px solid #555; transform: rotate(45deg); transition: 0.3s; }
+    .nav-card:hover .icon-arrow { border-color: var(--cyan); transform: rotate(45deg) translate(3px, -3px); }
+
+    /* --- 弹窗与提示 --- */
+    .toast {
+      position: fixed; top: -50px; left: 50%; transform: translateX(-50%);
+      background: rgba(0, 242, 255, 0.1); border: 1px solid var(--cyan);
+      color: var(--cyan); padding: 10px 20px; border-radius: 4px;
+      font-family: var(--font-code); font-size: 12px; z-index: 2000;
+      backdrop-filter: blur(10px); transition: 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .toast.show { top: 20px; }
+
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px);
+      z-index: 1000; display: none; justify-content: center; align-items: center;
+      opacity: 0; transition: 0.3s;
+    }
+    .modal-overlay.open { opacity: 1; }
+    .modal-box {
+      width: 85%; max-width: 320px; background: #0b0b10; border: 1px solid #333;
+      padding: 30px; position: relative; text-align: center;
+      box-shadow: 0 0 30px rgba(0,0,0,0.8); transform: scale(0.9); transition: 0.3s;
+    }
+    .modal-overlay.open .modal-box { transform: scale(1); border-color: var(--pink); box-shadow: 0 0 20px rgba(255, 0, 60, 0.2); }
+
+    .secret-input {
+      width: 100%; background: #050505; border: 1px solid #333; color: var(--cyan);
+      padding: 15px; margin: 20px 0; text-align: center; font-family: var(--font-code);
+      font-size: 18px; letter-spacing: 4px; transition: 0.3s;
+    }
+    .secret-input:focus { border-color: var(--cyan); box-shadow: 0 0 10px rgba(0, 242, 255, 0.1); }
     
-    .arrow-icon { width: 14px; height: 14px; border-top: 2px solid var(--cyan); border-right: 2px solid var(--cyan); transform: rotate(45deg); opacity: 0.5; }
-    .menu-item:hover .arrow-icon { border-color: var(--pink); opacity: 1; transform: rotate(45deg) translate(2px, -2px); }
+    .btn-exec {
+      width: 100%; background: var(--cyan); border: none; padding: 12px;
+      color: #000; font-weight: 800; font-family: var(--font-code); cursor: pointer;
+      clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px);
+      transition: 0.2s;
+    }
+    .btn-exec:active { transform: scale(0.98); opacity: 0.8; }
 
-    /* --- 页脚与弹窗 --- */
-    .footer { padding: 40px 0 20px; text-align: center; z-index: 5; opacity: 0.5; }
-    .stat-val { font-family: var(--font-code); font-size: 12px; color: var(--pink); text-shadow: 0 0 5px var(--pink); }
+    footer { margin-top: auto; padding: 30px 0; text-align: center; z-index: 10; opacity: 0.6; }
+    .counter { font-family: var(--font-code); font-size: 12px; color: #666; }
+    .counter span { color: var(--pink); text-shadow: 0 0 5px var(--pink); }
 
-    #modal { position: fixed; inset: 0; z-index: 1000; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); }
-    .modal-card { width: 85%; max-width: 340px; padding: 2px; background: linear-gradient(135deg, var(--cyan), var(--pink)); border-radius: 4px; transform: scale(0.9); opacity: 0; transition: 0.3s; }
-    .modal-inner { background: #080808; padding: 30px; width: 100%; display: flex; flex-direction: column; align-items: center; }
-    #modal.active .modal-card { transform: scale(1); opacity: 1; }
-
-    .m-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid #333; color: var(--cyan); padding: 12px; text-align: center; outline: none; font-family: var(--font-code); font-size: 16px; margin: 20px 0; letter-spacing: 2px; }
-    .m-btn { background: var(--cyan); color: #000; border: none; padding: 12px 0; width: 100%; font-weight: bold; cursor: pointer; clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px); }
-
-    @keyframes rotate-cw { 100% { transform: rotate(360deg); } }
-    @keyframes rotate-ccw { 100% { transform: rotate(-360deg); } }
-    @keyframes pulse { 0%, 100% { opacity: 0.8; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.95); } }
-    @keyframes breathe { 0%, 100% { transform: scale(0.8); opacity: 0.3; } 50% { transform: scale(1.2); opacity: 0.6; } }
-    @keyframes v-flow { 0% { height: 4px; } 100% { height: 16px; } }
-    @keyframes scanlines { 0% { background-position: 0 0; } 100% { background-position: 0 100%; } }
-    
-    @keyframes glitch-anim-1 { 0% { clip: rect(30px, 9999px, 10px, 0); } 100% { clip: rect(40px, 9999px, 10px, 0); } }
-    @keyframes glitch-anim-2 { 0% { clip: rect(60px, 9999px, 5px, 0); } 100% { clip: rect(80px, 9999px, 5px, 0); } }
+    /* --- 动画关键帧 --- */
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+    @keyframes spin-rev { 100% { transform: rotate(-360deg); } }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+    @keyframes equalizer { 0% { height: 4px; } 100% { height: 14px; } }
+    @keyframes glitch-skew {
+      0% { transform: skew(0deg); }
+      20% { transform: skew(-2deg); }
+      40% { transform: skew(2deg); }
+      60% { transform: skew(-1deg); }
+      80% { transform: skew(1deg); }
+      100% { transform: skew(0deg); }
+    }
   </style>
 </head>
 <body>
 
   <canvas id="bg-canvas"></canvas>
 
+  <div class="toast" id="sys-toast">
+    <span style="color:var(--pink)">[SYSTEM]</span> <span id="toast-msg">Action Completed</span>
+  </div>
+
   <header class="header">
-    <div class="title-group">
-      <div class="title-wrapper"><h1 class="main-title" data-text="资源风の魔法站">资源风の魔法站</h1></div>
-      <br>
-      <div class="id-tag">SYSTEM STATUS: ONLINE</div>
+    <h1 class="main-title">风の魔法禁书录</h1>
+    
+    <div class="status-bar">
+      <div class="status-dot"></div>
+      <div class="typewriter" id="typing-text">INITIALIZING...</div>
     </div>
 
-    <div class="magic-container">
-      <div class="core-orb"></div>
-      <svg class="magic-layer layer-1" viewBox="0 0 200 200"><circle cx="100" cy="100" r="98" stroke-dasharray="1,4"/><path d="M100 10 L100 20 M100 180 L100 190 M10 100 L20 100 M180 100 L190 100" stroke-width="2"/></svg>
-      <svg class="magic-layer layer-2" viewBox="0 0 200 200"><path d="M100 20 L169 140 L31 140 Z" /><path d="M100 180 L31 60 L169 60 Z" /></svg>
-      <svg class="magic-layer layer-3" viewBox="0 0 200 200"><circle cx="100" cy="100" r="30" stroke-width="1" stroke-dasharray="5,5"/></svg>
+    <div class="magic-wrapper">
+      <svg class="magic-svg" viewBox="0 0 200 200">
+        <circle class="ring-outer" cx="100" cy="100" r="90" fill="none" stroke-width="2" stroke-dasharray="2,5,10,5" />
+        <circle class="ring-outer" cx="100" cy="100" r="85" fill="none" stroke-width="1" stroke-dasharray="50,50" style="animation-duration: 25s;" />
+        <circle class="ring-inner" cx="100" cy="100" r="60" fill="none" stroke-width="2" stroke-dasharray="4,4" />
+        <path class="ring-inner" d="M100 20 L170 140 L30 140 Z" fill="none" stroke-width="1" />
+        <path class="ring-inner" d="M100 180 L30 60 L170 60 Z" fill="none" stroke-width="1" style="animation-direction: reverse;" />
+        <circle class="core-pulse" cx="100" cy="100" r="15" fill="var(--cyan)" opacity="0.8">
+          <animate attributeName="opacity" values="0.4;0.8;0.4" dur="2s" repeatCount="indefinite" />
+        </circle>
+      </svg>
     </div>
-    
-    <div class="player-trigger" id="p-trigger" onclick="toggleMusic()">
-      <div class="audio-visual"><div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div><div class="v-bar"></div></div>
-      <span class="chanting" id="chant-txt">INITIATE AUDIO</span>
+
+    <div class="player-deck" onclick="toggleAudio()" id="player-deck">
+      <div class="spectrum">
+        <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+      </div>
+      <span class="typewriter" id="track-name" style="font-size:10px;">PLAY AUDIO LOG</span>
     </div>
-    <audio id="audio-player" src="bgm.mp3" loop></audio>
+    <audio id="bgm" src="bgm.mp3" loop></audio>
   </header>
 
-  <nav class="menu">
-    <a href="tutorial.html" class="menu-item">
-      <div class="item-info">
-        <span class="m-title">使用教程</span>
-        <span class="m-desc">MANUAL // SYSTEM GUIDE</span>
+  <nav class="nav-grid">
+    <a href="tutorial.html" class="nav-card">
+      <div class="card-head">
+        <span class="card-title">使用教程</span>
+        <div class="icon-arrow"></div>
       </div>
-      <div class="arrow-icon"></div>
+      <span class="card-sub">MANUAL // USER GUIDE V1.0</span>
     </a>
-    
-    <div onclick="invokeMagicGroup()" class="menu-item">
-      <div class="item-info">
-        <span class="m-title">魔法阵地</span>
-        <span class="m-desc">COORDINATES // SYNC</span>
+
+    <div class="nav-card" onclick="startLinkProtocol()">
+      <div class="card-head">
+        <span class="card-title">魔法阵地</span>
+        <div class="icon-arrow"></div>
       </div>
-      <div class="arrow-icon"></div>
+      <span class="card-sub">SYNC // QQ GROUP: 691105381</span>
     </div>
 
-    <div onclick="showModal()" class="menu-item">
-      <div class="item-info">
-        <span class="m-title">最新订阅</span>
-        <span class="m-desc">NODES // DATABASE SEARCH</span>
+    <div class="nav-card" onclick="toggleModal(true)">
+      <div class="card-head">
+        <span class="card-title">神秘节点</span>
+        <div class="icon-arrow"></div>
       </div>
-      <div class="arrow-icon"></div>
+      <span class="card-sub">DATABASE // PRIVATE ACCESS</span>
     </div>
   </nav>
 
-  <footer class="footer">
-    <div class="stat-val" id="counter-val">0000350859</div>
-    <div style="font-size:10px; color:#555; margin-top:5px;">SECURE CONNECTION</div>
+  <footer>
+    <div class="counter">ACCESS COUNT: <span id="visitor-count">0000350859</span></div>
+    <div style="font-size:10px; color:#444; margin-top:8px;">SECURE PROTOCOL // ENCRYPTED</div>
   </footer>
 
-  <div id="modal" onclick="if(event.target==this) closeModal()">
-    <div class="modal-card">
-      <div class="modal-inner">
-        <div style="font-size: 10px; color: var(--pink); letter-spacing: 3px; margin-bottom: 20px; font-weight:bold;">// IDENTITY CHECK</div>
-        <input type="text" id="m-input" placeholder="输入访问密钥" autocomplete="off">
-        <button onclick="checkCode()" class="m-btn">执行解禁 [ENTER]</button>
-      </div>
+  <div class="modal-overlay" id="secret-modal" onclick="if(event.target===this) toggleModal(false)">
+    <div class="modal-box">
+      <div style="font-size:12px; color:var(--pink); letter-spacing:2px; margin-bottom:10px; font-weight:bold;">// SECURITY CHECK</div>
+      <div style="font-size:10px; color:#666;">PLEASE ENTER ACCESS KEY</div>
+      <input type="password" id="key-input" class="secret-input" placeholder="******">
+      <button class="btn-exec" onclick="verifyKey()">EXECUTE</button>
     </div>
   </div>
 
   <script>
-    const TODAY_CODE = "资源风888"; 
-    
-    // --- 粒子系统 ---
-    const canvas = document.getElementById("bg-canvas"), ctx = canvas.getContext("2d");
-    let w, h, dots = [];
-    function initCanvas() {
-      w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight;
-      dots = [];
-      const count = window.innerWidth < 600 ? 30 : 60;
-      for(let i=0; i<count; i++) {
-        dots.push({ x: Math.random()*w, y: Math.random()*h, r: Math.random()*2+0.5, vx: (Math.random()-0.5)*0.5, vy: (Math.random()-0.5)*0.5, color: Math.random()>0.8?'#ff003c':'#00f2ff' });
+    // --- 核心配置 ---
+    const CONFIG = {
+      qqGroup: "691105381",
+      accessKey: "资源风888",
+      redirectUrl: "nodes.html"
+    };
+
+    // --- 1. 打字机效果 ---
+    const phrases = [
+      "SYSTEM STATUS: ONLINE", 
+      "SCANNING NETWORK...", 
+      "DETECTING MAGIC...", 
+      "WELCOME TRAVELER"
+    ];
+    let pIndex = 0, charIndex = 0, isDeleting = false;
+    const typeSpeed = 100, deleteSpeed = 50, pauseDelay = 2000;
+    const typeTarget = document.getElementById('typing-text');
+
+    function typeLoop() {
+      const currentPhrase = phrases[pIndex];
+      if (isDeleting) {
+        typeTarget.innerText = currentPhrase.substring(0, charIndex - 1);
+        charIndex--;
+      } else {
+        typeTarget.innerText = currentPhrase.substring(0, charIndex + 1);
+        charIndex++;
+      }
+
+      let delta = isDeleting ? deleteSpeed : typeSpeed;
+
+      if (!isDeleting && charIndex === currentPhrase.length) {
+        delta = pauseDelay;
+        isDeleting = true;
+      } else if (isDeleting && charIndex === 0) {
+        isDeleting = false;
+        pIndex = (pIndex + 1) % phrases.length;
+      }
+
+      setTimeout(typeLoop, delta);
+    }
+    typeLoop();
+
+    // --- 2. 优化版粒子背景 ---
+    const cvs = document.getElementById('bg-canvas'), ctx = cvs.getContext('2d');
+    let w, h, particles = [];
+
+    function initParticles() {
+      w = cvs.width = window.innerWidth;
+      h = cvs.height = window.innerHeight;
+      particles = [];
+      const cnt = w < 600 ? 40 : 80; // 移动端减少粒子数
+      for(let i=0; i<cnt; i++) {
+        particles.push({
+          x: Math.random()*w, y: Math.random()*h,
+          vx: (Math.random()-0.5)*0.5, vy: (Math.random()-0.5)*0.5,
+          size: Math.random()*1.5,
+          color: Math.random()>0.5 ? '#00f2ff' : '#ff0055'
+        });
       }
     }
-    function render() {
+
+    function draw() {
       ctx.clearRect(0, 0, w, h);
-      for(let i=0; i<dots.length; i++) {
-        let d = dots[i]; d.x += d.vx; d.y += d.vy;
-        if(d.x<0 || d.x>w) d.vx*=-1; if(d.y<0 || d.y>h) d.vy*=-1;
-        ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI*2); ctx.fillStyle = d.color; ctx.fill();
-        for(let j=i+1; j<dots.length; j++) {
-          let d2 = dots[j]; let dist = Math.hypot(d.x-d2.x, d.y-d2.y);
-          if(dist < 100) { ctx.beginPath(); ctx.strokeStyle = `rgba(0, 242, 255, ${1-dist/100})`; ctx.lineWidth = 0.5; ctx.moveTo(d.x, d.y); ctx.lineTo(d2.x, d2.y); ctx.stroke(); }
+      for(let i=0; i<particles.length; i++) {
+        let p = particles[i];
+        p.x += p.vx; p.y += p.vy;
+        if(p.x < 0 || p.x > w) p.vx *= -1;
+        if(p.y < 0 || p.y > h) p.vy *= -1;
+        
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = 0.6;
+        ctx.fill();
+
+        // 连线逻辑
+        for(let j=i+1; j<particles.length; j++) {
+          let p2 = particles[j];
+          let dist = Math.hypot(p.x-p2.x, p.y-p2.y);
+          if(dist < 100) {
+            ctx.beginPath();
+            ctx.strokeStyle = `rgba(0, 242, 255, ${1 - dist/100})`;
+            ctx.lineWidth = 0.3;
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+          }
         }
       }
-      requestAnimationFrame(render);
+      requestAnimationFrame(draw);
     }
-    window.addEventListener('resize', initCanvas); initCanvas(); render();
+    window.addEventListener('resize', initParticles);
+    initParticles();
+    draw();
 
-    // --- 修复：魔法阵地跳转逻辑 ---
-    function invokeMagicGroup() {
-        const groupNum = "691105381"; 
-        const protocols = [
-            `mqqapi://card/show_pslcard?src_type=internal&version=1&uin=${groupNum}&card_type=group&source=qrcode`,
-            `mqqapi://card/show_pslcard?uin=${groupNum}&card_type=group`,
-            `tencent://groupwpa/?subcmd=all&param=7B2267726F757055696E223A${groupNum}2C22657874506172616D223A22227D`
-        ];
+    // --- 3. 交互逻辑 (QQ跳转 & 提示) ---
+    function showToast(msg) {
+      const t = document.getElementById('sys-toast');
+      document.getElementById('toast-msg').innerText = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
 
-        // 自动复制
-        const textArea = document.createElement("textarea");
-        textArea.value = groupNum;
-        document.body.appendChild(textArea);
-        textArea.select();
+    async function startLinkProtocol() {
+      // 1. 尝试复制
+      try {
+        await navigator.clipboard.writeText(CONFIG.qqGroup);
+        showToast(`群号 ${CONFIG.qqGroup} 已复制`);
+      } catch (err) {
+        // 降级方案
+        const ta = document.createElement('textarea');
+        ta.value = CONFIG.qqGroup;
+        document.body.appendChild(ta);
+        ta.select();
         document.execCommand('copy');
-        document.body.removeChild(textArea);
+        document.body.removeChild(ta);
+        showToast("群号已复制到剪贴板");
+      }
 
-        // 尝试跳转
-        window.location.href = protocols[0];
-
-        setTimeout(() => {
-            if (!document.hidden) {
-                const jump = confirm("「坐标同步提示」\n\n1. 正在尝试拉起QQ...\n2. 群号已自动同步至剪贴板\n\n如果无法自动跳转，请在QQ手动搜索加入：\n691105381");
-                if(jump) window.location.href = protocols[1];
-            }
-        }, 1000);
+      // 2. 延迟跳转
+      setTimeout(() => {
+        const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+        if(isMobile) {
+          window.location.href = `mqqapi://card/show_pslcard?src_type=internal&version=1&uin=${CONFIG.qqGroup}&card_type=group&source=qrcode`;
+        } else {
+          window.open(`https://qm.qq.com/cgi-bin/qm/qr?k=YOUR_KEY_HERE&jump_from=webapi`, '_blank');
+        }
+      }, 1000);
     }
 
-    // --- 其他交互 ---
-    const modal = document.getElementById('modal');
-    function showModal() { modal.style.display = 'flex'; requestAnimationFrame(() => modal.classList.add('active')); document.getElementById('m-input').focus(); }
-    function closeModal() { modal.classList.remove('active'); setTimeout(() => modal.style.display = 'none', 300); }
-    function checkCode() {
-      const btn = document.querySelector('.m-btn'), input = document.getElementById('m-input');
-      if(input.value.trim() === TODAY_CODE) { 
-        btn.innerText = "ACCESS GRANTED"; btn.style.background = "#0f0";
-        setTimeout(() => window.location.href = "nodes.html", 500);
-      } else { 
-        input.style.borderColor = "red"; btn.innerText = "DENIED";
-        setTimeout(() => { input.style.borderColor = "#333"; btn.innerText = "执行解禁"; }, 1000);
+    // --- 4. 模态框与验证 ---
+    function toggleModal(show) {
+      const m = document.getElementById('secret-modal');
+      m.style.display = show ? 'flex' : 'none';
+      if(show) {
+        setTimeout(() => m.classList.add('open'), 10);
+        document.getElementById('key-input').focus();
+      } else {
+        m.classList.remove('open');
       }
     }
 
-    const el = document.querySelector('.id-tag');
-    const phrases = ['SYSTEM STATUS: ONLINE', 'DETECTING MAGIC...', 'CONNECTING TO VOID', 'WELCOME, TRAVELER'];
-    let counter = 0;
-    setInterval(() => { el.innerText = phrases[counter]; counter = (counter + 1) % phrases.length; }, 3000);
-
-    const audio = document.getElementById('audio-player'), trigger = document.getElementById('p-trigger');
-    function toggleMusic() {
-      if(audio.paused) { audio.play(); trigger.classList.add('playing'); document.getElementById('chant-txt').innerText = "PLAYING: BGM_01"; }
-      else { audio.pause(); trigger.classList.remove('playing'); document.getElementById('chant-txt').innerText = "PAUSED"; }
+    function verifyKey() {
+      const input = document.getElementById('key-input');
+      const btn = document.querySelector('.btn-exec');
+      if(input.value === CONFIG.accessKey) {
+        btn.style.background = "#0f0";
+        btn.innerText = "ACCESS GRANTED";
+        showToast("身份验证通过");
+        setTimeout(() => window.location.href = CONFIG.redirectUrl, 800);
+      } else {
+        input.value = "";
+        btn.style.background = "var(--pink)";
+        btn.innerText = "DENIED";
+        input.placeholder = "ERROR KEY";
+        setTimeout(() => {
+          btn.style.background = "var(--cyan)";
+          btn.innerText = "EXECUTE";
+        }, 1500);
+      }
     }
-    
-    let count = 350859; 
-    setInterval(() => { count += Math.floor(Math.random()*3); document.getElementById('counter-val').innerText = count.toString().padStart(10, '0'); }, 3000);
+
+    // --- 5. 音乐控制 ---
+    const audio = document.getElementById('bgm');
+    const playerDeck = document.getElementById('player-deck');
+    const trackName = document.getElementById('track-name');
+
+    function toggleAudio() {
+      if(audio.paused) {
+        audio.play().then(() => {
+            playerDeck.classList.add('active');
+            trackName.innerText = "PLAYING: CYBER_WIND.mp3";
+        }).catch(() => showToast("请先与页面交互以播放音频"));
+      } else {
+        audio.pause();
+        playerDeck.classList.remove('active');
+        trackName.innerText = "AUDIO PAUSED";
+      }
+    }
+
+    // --- 6. 随机访客数 ---
+    setInterval(() => {
+      const el = document.getElementById('visitor-count');
+      let count = parseInt(el.innerText);
+      el.innerText = (count + Math.floor(Math.random() * 3)).toString().padStart(10, '0');
+    }, 5000);
+
   </script>
 </body>
 </html>
