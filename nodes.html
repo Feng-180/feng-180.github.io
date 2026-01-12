@@ -2,353 +2,151 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <meta name="theme-color" content="#05020a">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>风の数据流 | NODE STREAM</title>
   <style>
-    :root {
-      --cyan: #00f2ff;
-      --pink: #ff0055;
-      --purple: #bc13fe;
-      --void: #05020a;
-      --card-bg: rgba(16, 20, 30, 0.7);
-      --font-code: "JetBrains Mono", "Consolas", monospace;
-      --font-main: "PingFang SC", "Helvetica Neue", sans-serif;
-    }
-    
+    :root { --cyan: #00f2ff; --pink: #ff0055; --void: #05020a; --card-bg: rgba(16, 20, 30, 0.7); --font-code: "Consolas", monospace; }
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+    body { margin: 0; background: var(--void); color: #fff; font-family: sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding-bottom: 80px; overflow-x: hidden; }
+    #matrix-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.3; }
     
-    body {
-      margin: 0; background: var(--void); color: #fff;
-      font-family: var(--font-main);
-      min-height: 100vh;
-      display: flex; flex-direction: column; align-items: center;
-      overflow-x: hidden;
-      padding-bottom: 80px;
-    }
+    .header-group { width: 90%; max-width: 600px; margin-top: 50px; position: relative; z-index: 2; }
+    .status-badge { font-family: var(--font-code); font-size: 10px; background: var(--cyan); color: #000; padding: 2px 8px; border-radius: 2px; display: inline-block; font-weight: bold; }
+    .page-title { font-size: 24px; margin: 10px 0; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; background: linear-gradient(90deg, #fff, #888); -webkit-background-clip: text; color: transparent; }
+    .update-time { font-size: 10px; color: #666; font-family: var(--font-code); margin-bottom: 30px; }
 
-    /* 矩阵背景 */
-    #matrix-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.4; }
-    
-    /* 顶部光晕 */
-    body::before {
-      content: ""; position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
-      width: 80%; height: 200px; background: var(--cyan);
-      filter: blur(120px); opacity: 0.15; z-index: 0; pointer-events: none;
-    }
-
-    /* --- 标题区域 --- */
-    .header-group {
-      width: 90%; max-width: 680px; margin-top: 60px; margin-bottom: 40px;
-      position: relative; z-index: 2;
-      display: flex; flex-direction: column; align-items: flex-start;
-    }
-    
-    .status-badge {
-      font-family: var(--font-code); font-size: 10px; color: #000;
-      background: var(--cyan); padding: 2px 8px; border-radius: 2px;
-      margin-bottom: 10px; font-weight: bold;
-      box-shadow: 0 0 10px var(--cyan);
-    }
-
-    .page-title {
-      font-size: 28px; letter-spacing: 2px; margin: 0; color: #fff;
-      font-weight: 800; text-transform: uppercase;
-      background: linear-gradient(90deg, #fff, #aaa); -webkit-background-clip: text; color: transparent;
-    }
-    
-    .sub-desc {
-      font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 8px;
-      max-width: 80%; line-height: 1.5;
-    }
-
-    /* --- 分区标题 --- */
-    .section-title {
-      width: 90%; max-width: 680px; z-index: 2;
-      font-size: 12px; color: var(--pink); margin: 40px 0 15px;
-      font-family: var(--font-code); display: flex; align-items: center; letter-spacing: 1px;
-    }
-    .section-title::after {
-      content: ""; flex: 1; height: 1px; 
-      background: linear-gradient(90deg, rgba(255, 0, 85, 0.3), transparent); margin-left: 15px; 
-    }
-
-    /* --- 卡片系统 --- */
-    .card-grid {
-      width: 90%; max-width: 680px; z-index: 2;
-      display: grid; gap: 16px;
-    }
-
-    .card {
-      background: var(--card-bg);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      padding: 18px; position: relative; overflow: hidden;
-      border-radius: 8px;
-      backdrop-filter: blur(10px);
-      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      cursor: pointer; group;
-    }
-
-    /* 卡片悬停光效 */
-    .card:hover {
-      transform: translateY(-2px);
-      border-color: var(--cyan);
-      box-shadow: 0 5px 20px rgba(0, 242, 255, 0.15);
-      background: rgba(20, 25, 35, 0.9);
-    }
-    
-    .card::before {
-      content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
-      background: var(--cyan); opacity: 0; transition: 0.3s;
-    }
+    .card-grid { width: 90%; max-width: 600px; z-index: 2; display: grid; gap: 15px; }
+    .card { background: var(--card-bg); border: 1px solid rgba(255,255,255,0.08); padding: 15px; border-radius: 6px; backdrop-filter: blur(10px); transition: 0.3s; position: relative; overflow: hidden; }
+    .card:hover { transform: translateY(-2px); border-color: var(--cyan); box-shadow: 0 5px 20px rgba(0, 242, 255, 0.1); background: rgba(20, 25, 35, 0.9); }
+    .card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--cyan); opacity: 0; transition: 0.3s; }
     .card:hover::before { opacity: 1; }
 
-    .card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-    .c-name { font-size: 15px; font-weight: bold; color: #fff; }
-    .c-tag { 
-      font-size: 9px; padding: 3px 6px; border-radius: 4px;
-      font-family: var(--font-code); letter-spacing: 0.5px;
-      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-      color: rgba(255,255,255,0.6);
-    }
-    .c-tag.hot { color: var(--pink); border-color: rgba(255, 0, 85, 0.3); background: rgba(255, 0, 85, 0.05); }
-    .c-tag.speed { color: var(--cyan); border-color: rgba(0, 242, 255, 0.3); background: rgba(0, 242, 255, 0.05); }
+    .c-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .c-name { font-weight: bold; font-size: 14px; }
+    .c-tag { font-size: 9px; padding: 2px 5px; background: rgba(255,255,255,0.1); border-radius: 3px; color: #aaa; }
+    
+    .link-box { font-family: var(--font-code); font-size: 10px; color: #666; background: #000; padding: 8px; border-radius: 4px; border: 1px dashed #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .card:hover .link-box { color: var(--cyan); border-color: rgba(0,242,255,0.3); }
+    
+    .btn-row { margin-top: 10px; display: flex; gap: 10px; }
+    .btn { flex: 1; padding: 8px; font-size: 10px; text-align: center; border: 1px solid #333; color: #888; text-decoration: none; border-radius: 4px; transition: 0.2s; cursor: pointer; }
+    .btn:hover { border-color: var(--cyan); color: var(--cyan); background: rgba(0,242,255,0.05); }
+    .btn.clash:hover { border-color: var(--pink); color: var(--pink); background: rgba(255,0,85,0.05); }
 
-    .link-box {
-      font-family: var(--font-code); font-size: 11px; color: #666;
-      background: #000; padding: 10px; border-radius: 4px;
-      word-break: break-all; border: 1px dashed #333;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      transition: 0.3s;
-    }
-    .card:hover .link-box { color: var(--cyan); border-color: rgba(0, 242, 255, 0.3); }
+    .back-btn { margin-top: 40px; z-index: 5; padding: 10px 30px; border: 1px solid var(--cyan); color: var(--cyan); text-decoration: none; border-radius: 50px; font-size: 12px; transition: 0.3s; }
+    .back-btn:hover { background: var(--cyan); color: #000; box-shadow: 0 0 20px var(--cyan); }
 
-    .action-row {
-      display: flex; justify-content: flex-end; margin-top: 10px;
-      font-size: 10px; color: var(--cyan); font-weight: bold; 
-      opacity: 0; transform: translateX(-10px); transition: 0.3s;
-    }
-    .card:hover .action-row { opacity: 1; transform: translateX(0); }
-
-    /* --- 终端窗口 --- */
-    .terminal {
-      width: 90%; max-width: 680px; z-index: 2; margin-top: 20px;
-      background: #0a0a0f; border: 1px solid #333; border-radius: 8px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-      font-family: var(--font-code); font-size: 12px;
-    }
-    .term-head {
-      background: #15151a; padding: 8px 12px; border-bottom: 1px solid #222;
-      display: flex; gap: 6px; border-radius: 8px 8px 0 0;
-    }
-    .dot { width: 10px; height: 10px; border-radius: 50%; background: #333; }
-    .term-content {
-      padding: 15px; color: #888; height: 200px; overflow-y: hidden;
-      display: flex; flex-direction: column; justify-content: flex-end;
-    }
-    .log-line { margin: 4px 0; }
-    .log-line.success { color: var(--cyan); }
-    .log-line.warn { color: var(--pink); }
-
-    /* --- 底部按钮 --- */
-    .back-btn {
-      margin-top: 50px; z-index: 5;
-      padding: 14px 40px;
-      background: rgba(0, 242, 255, 0.1);
-      border: 1px solid var(--cyan);
-      color: var(--cyan); font-weight: bold;
-      text-decoration: none; font-size: 14px; letter-spacing: 2px;
-      border-radius: 50px;
-      transition: 0.3s; box-shadow: 0 0 15px rgba(0, 242, 255, 0.1);
-    }
-    .back-btn:hover { background: var(--cyan); color: #000; box-shadow: 0 0 30px rgba(0, 242, 255, 0.4); }
-
-    /* --- Toast --- */
-    #toast {
-      position: fixed; top: 30px; left: 50%; transform: translateX(-50%) scale(0.9);
-      background: rgba(16, 20, 30, 0.9); border: 1px solid var(--cyan);
-      color: var(--cyan); padding: 12px 30px; border-radius: 4px;
-      font-family: var(--font-code); font-size: 12px; z-index: 2000;
-      backdrop-filter: blur(10px); opacity: 0; pointer-events: none;
-      transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      display: flex; align-items: center; gap: 10px;
-    }
-    #toast.show { transform: translateX(-50%) scale(1); opacity: 1; }
+    #toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100%); background: rgba(10,15,20,0.9); border: 1px solid var(--cyan); color: var(--cyan); padding: 10px 20px; border-radius: 4px; font-size: 12px; z-index: 999; opacity: 0; transition: 0.3s; }
+    #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
   </style>
 </head>
 <body>
-
   <canvas id="matrix-canvas"></canvas>
-  
-  <div id="toast">
-    <div style="width:8px; height:8px; background:var(--cyan); border-radius:50%; box-shadow:0 0 5px var(--cyan);"></div>
-    <span id="toast-text">COPIED TO CLIPBOARD</span>
-  </div>
+  <div id="toast">LINK COPIED</div>
 
   <div class="header-group">
     <div class="status-badge">SYSTEM ONLINE</div>
-    <h1 class="page-title">全球节点订阅库</h1>
-    <div class="sub-desc">
-      AUTO-UPDATED PROXY POOL // COMPATIBLE WITH CLASH & V2RAY<br>
-      点击卡片即可复制订阅链接，支持 Shadowrocket / Clash / Surge
-    </div>
+    <div class="page-title">全球节点订阅库</div>
+    <div class="update-time">LAST SYNC: 2026-01-12 17:46:28</div>
   </div>
 
-  <div class="section-title">核心聚合订阅 (强烈推荐)</div>
   <div class="card-grid">
-    <div class="card" onclick="copyText('https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/sub/sub_merge.txt')">
-      <div class="card-top"><span class="c-name">V2Ray Aggregator</span><span class="c-tag hot">STABLE</span></div>
-      <div class="link-box">https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/sub/sub_merge.txt</div>
-      <div class="action-row">>> CLICK TO COPY</div>
-    </div>
     
-    <div class="card" onclick="copyText('https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml')">
-      <div class="card-top"><span class="c-name">Ermaozi Clash</span><span class="c-tag speed">YAML</span></div>
-      <div class="link-box">https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml</div>
-      <div class="action-row">>> CLICK TO COPY</div>
-    </div>
-
-    <div class="card" onclick="copyText('https://raw.githubusercontent.com/Pawdroid/Free-servers/main/sub')">
-      <div class="card-top"><span class="c-name">Pawdroid Servers</span><span class="c-tag">BASE64</span></div>
-      <div class="link-box">https://raw.githubusercontent.com/Pawdroid/Free-servers/main/sub</div>
-      <div class="action-row">>> CLICK TO COPY</div>
-    </div>
-  </div>
-
-  <div class="section-title">备用数据源 (Backup)</div>
-  <div class="card-grid">
-    <div class="card" onclick="copyText('https://raw.githubusercontent.com/free18/v2ray/main/subscribe')">
-      <div class="card-top"><span class="c-name">Free18 V2Ray</span><span class="c-tag">DAILY</span></div>
-      <div class="link-box">https://raw.githubusercontent.com/free18/v2ray/main/subscribe</div>
-      <div class="action-row">>> CLICK TO COPY</div>
-    </div>
-
-    <div class="card" onclick="copyText('https://raw.githubusercontent.com/anaer/Sub/main/clash.yaml')">
-      <div class="card-top"><span class="c-name">Anaer Clash</span><span class="c-tag speed">FAST</span></div>
-      <div class="link-box">https://raw.githubusercontent.com/anaer/Sub/main/clash.yaml</div>
-      <div class="action-row">>> CLICK TO COPY</div>
-    </div>
-  </div>
-
-  <div class="section-title">工具箱 (Tools)</div>
-  <div class="card-grid">
-    <div class="card" onclick="window.open('https://acl4ssr-sub.github.io/', '_blank')">
-      <div class="card-top"><span class="c-name">在线订阅转换 (ACL4SSR)</span><span class="c-tag" style="color:var(--purple); border-color:var(--purple)">WEB</span></div>
-      <div class="link-box">解决订阅格式不兼容问题 (Base64 <-> Clash)</div>
-      <div class="action-row">>> OPEN TOOL</div>
-    </div>
-  </div>
-
-  <div class="terminal">
-    <div class="term-head">
-      <div class="dot" style="background:#ff5f56"></div>
-      <div class="dot" style="background:#ffbd2e"></div>
-      <div class="dot" style="background:#27c93f"></div>
-    </div>
-    <div class="term-content" id="term-log">
+    <div class="card">
+      <div class="c-top">
+        <span class="c-name">FreeFQ_高频更新</span>
+        <span class="c-tag">ACTIVE</span>
       </div>
+      <div class="link-box" onclick="copyText('https://raw.githubusercontent.com/freefq/free/master/v2')">https://raw.githubusercontent.com/freefq/free/master/v2</div>
+      <div class="btn-row">
+        <div class="btn" onclick="copyText('https://raw.githubusercontent.com/freefq/free/master/v2')">复制链接</div>
+        <a class="btn clash" href="clash://install-config?url=https://raw.githubusercontent.com/freefq/free/master/v2">导入 Clash</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="c-top">
+        <span class="c-name">Pawdroid_聚合源</span>
+        <span class="c-tag">ACTIVE</span>
+      </div>
+      <div class="link-box" onclick="copyText('https://raw.githubusercontent.com/Pawdroid/Free-nodes/master/node.txt')">https://raw.githubusercontent.com/Pawdroid/Free-nodes/master/node.txt</div>
+      <div class="btn-row">
+        <div class="btn" onclick="copyText('https://raw.githubusercontent.com/Pawdroid/Free-nodes/master/node.txt')">复制链接</div>
+        <a class="btn clash" href="clash://install-config?url=https://raw.githubusercontent.com/Pawdroid/Free-nodes/master/node.txt">导入 Clash</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="c-top">
+        <span class="c-name">Oslook_Clash精选</span>
+        <span class="c-tag">ACTIVE</span>
+      </div>
+      <div class="link-box" onclick="copyText('https://raw.githubusercontent.com/oslook/free-ssr-v2ray/master/clash.yaml')">https://raw.githubusercontent.com/oslook/free-ssr-v2ray/master/clash.yaml</div>
+      <div class="btn-row">
+        <div class="btn" onclick="copyText('https://raw.githubusercontent.com/oslook/free-ssr-v2ray/master/clash.yaml')">复制链接</div>
+        <a class="btn clash" href="clash://install-config?url=https://raw.githubusercontent.com/oslook/free-ssr-v2ray/master/clash.yaml">导入 Clash</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="c-top">
+        <span class="c-name">CyanBird_公益池</span>
+        <span class="c-tag">ACTIVE</span>
+      </div>
+      <div class="link-box" onclick="copyText('https://raw.githubusercontent.com/vpei/Free-Node-Merge/main/out/nodes.txt')">https://raw.githubusercontent.com/vpei/Free-Node-Merge/main/out/nodes.txt</div>
+      <div class="btn-row">
+        <div class="btn" onclick="copyText('https://raw.githubusercontent.com/vpei/Free-Node-Merge/main/out/nodes.txt')">复制链接</div>
+        <a class="btn clash" href="clash://install-config?url=https://raw.githubusercontent.com/vpei/Free-Node-Merge/main/out/nodes.txt">导入 Clash</a>
+      </div>
+    </div>
+
   </div>
 
-  <a href="index.html" class="back-btn">DISCONNECT</a>
+  <a href="index.html" class="back-btn">DISCONNECT // 返回</a>
 
   <script>
-    // --- 1. 矩阵雨背景 ---
     const canvas = document.getElementById('matrix-canvas');
     const ctx = canvas.getContext('2d');
-    
     let width = canvas.width = window.innerWidth;
     let height = canvas.height = window.innerHeight;
-    
     const chars = '01ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     const drops = [];
     const fontSize = 14;
     const columns = width / fontSize;
-    
-    for(let i = 0; i < columns; i++) drops[i] = 1;
+    for(let i=0; i<columns; i++) drops[i] = 1;
 
-    function drawMatrix() {
-      ctx.fillStyle = 'rgba(5, 2, 10, 0.05)'; // 拖尾效果
+    function draw() {
+      ctx.fillStyle = 'rgba(5, 2, 10, 0.1)';
       ctx.fillRect(0, 0, width, height);
-      
-      ctx.fillStyle = '#00f2ff'; // 字体颜色
+      ctx.fillStyle = '#003333';
       ctx.font = fontSize + 'px monospace';
-      
-      for(let i = 0; i < drops.length; i++) {
-        const text = chars[Math.floor(Math.random() * chars.length)];
-        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-        
-        if(drops[i] * fontSize > height && Math.random() > 0.975) {
-          drops[i] = 0;
-        }
+      for(let i=0; i<drops.length; i++) {
+        const text = chars[Math.floor(Math.random()*chars.length)];
+        ctx.fillText(text, i*fontSize, drops[i]*fontSize);
+        if(drops[i]*fontSize > height && Math.random() > 0.975) drops[i] = 0;
         drops[i]++;
       }
-      requestAnimationFrame(drawMatrix);
+      requestAnimationFrame(draw);
     }
-    window.addEventListener('resize', () => {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-    });
-    drawMatrix();
+    draw(); window.addEventListener('resize', ()=>{ width=canvas.width=window.innerWidth; height=canvas.height=window.innerHeight; });
 
-    // --- 2. 复制功能 (增强兼容性) ---
     async function copyText(text) {
-      const toast = document.getElementById('toast');
-      const toastText = document.getElementById('toast-text');
-      
+      const t = document.getElementById('toast');
       try {
         await navigator.clipboard.writeText(text);
-        toastText.innerText = "LINK COPIED SUCCESSFUL";
-        showToast();
+        t.innerText = "COPIED SUCCESSFUL";
       } catch (err) {
-        // 降级方案
-        const textArea = document.createElement("textarea");
-        textArea.value = text;
-        document.body.appendChild(textArea);
-        textArea.select();
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
         document.execCommand('copy');
-        document.body.removeChild(textArea);
-        toastText.innerText = "COPIED (FALLBACK MODE)";
-        showToast();
+        document.body.removeChild(ta);
+        t.innerText = "COPIED (FALLBACK)";
       }
-    }
-
-    function showToast() {
-      const t = document.getElementById('toast');
       t.classList.add('show');
-      setTimeout(() => t.classList.remove('show'), 2000);
+      setTimeout(()=>t.classList.remove('show'), 2000);
     }
-
-    // --- 3. 终端模拟 ---
-    const logs = [
-      "Connecting to GitHub API...",
-      "Fetching subscription data from @mahdibland...",
-      "Verifying node integrity...",
-      "[SUCCESS] 142 nodes loaded.",
-      "Testing latency: hk-01 (45ms), jp-03 (62ms)...",
-      "Optimizing route tables...",
-      "System ready. Waiting for user input."
-    ];
-    const termContainer = document.getElementById('term-log');
-    let logIndex = 0;
-
-    function addLog() {
-      if(logIndex >= logs.length) return;
-      
-      const div = document.createElement('div');
-      div.className = 'log-line';
-      const txt = logs[logIndex];
-      
-      if(txt.includes("SUCCESS")) div.classList.add('success');
-      if(txt.includes("Connecting")) div.classList.add('warn');
-      
-      div.innerText = `> ${txt}`;
-      termContainer.appendChild(div);
-      logIndex++;
-      
-      setTimeout(addLog, Math.random() * 800 + 200);
-    }
-    setTimeout(addLog, 500);
-
   </script>
 </body>
 </html>
