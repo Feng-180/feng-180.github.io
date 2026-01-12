@@ -4,18 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="theme-color" content="#05020a">
-  <title>订阅数据流 | DATABASE</title>
+  <title>风の数据流 | NODE STREAM</title>
   <style>
     :root {
       --cyan: #00f2ff;
-      --pink: #ff003c;
+      --pink: #ff0055;
+      --purple: #bc13fe;
       --void: #05020a;
-      --glass: rgba(10, 15, 20, 0.6);
-      --font-code: "Consolas", "Monaco", "Courier New", monospace;
-      --font-main: "PingFang SC", system-ui, sans-serif;
+      --card-bg: rgba(16, 20, 30, 0.7);
+      --font-code: "JetBrains Mono", "Consolas", monospace;
+      --font-main: "PingFang SC", "Helvetica Neue", sans-serif;
     }
     
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
     
     body {
       margin: 0; background: var(--void); color: #fff;
@@ -23,319 +24,331 @@
       min-height: 100vh;
       display: flex; flex-direction: column; align-items: center;
       overflow-x: hidden;
-      background-image: 
-        linear-gradient(rgba(0, 242, 255, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 242, 255, 0.03) 1px, transparent 1px),
-        radial-gradient(circle at top center, #1a0f2e 0%, #05020a 80%);
-      background-size: 40px 40px, 40px 40px, 100% 100%;
-      padding-bottom: 60px;
+      padding-bottom: 80px;
     }
 
-    #bg-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+    /* 矩阵背景 */
+    #matrix-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.4; }
+    
+    /* 顶部光晕 */
+    body::before {
+      content: ""; position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
+      width: 80%; height: 200px; background: var(--cyan);
+      filter: blur(120px); opacity: 0.15; z-index: 0; pointer-events: none;
+    }
 
+    /* --- 标题区域 --- */
     .header-group {
-      width: 90%; max-width: 650px; margin-top: 50px; margin-bottom: 30px;
+      width: 90%; max-width: 680px; margin-top: 60px; margin-bottom: 40px;
       position: relative; z-index: 2;
-      border-left: 4px solid var(--pink);
-      padding-left: 20px;
-      display: flex; flex-direction: column;
+      display: flex; flex-direction: column; align-items: flex-start;
     }
     
-    .page-title {
-      font-size: 24px; letter-spacing: 4px; margin: 0; color: #fff;
-      text-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
-    }
-    .sub-tag {
-      font-family: var(--font-code); font-size: 10px; color: var(--cyan);
-      opacity: 0.7; margin-top: 8px; letter-spacing: 2px;
+    .status-badge {
+      font-family: var(--font-code); font-size: 10px; color: #000;
+      background: var(--cyan); padding: 2px 8px; border-radius: 2px;
+      margin-bottom: 10px; font-weight: bold;
+      box-shadow: 0 0 10px var(--cyan);
     }
 
-    .section-title {
-      width: 90%; max-width: 650px; z-index: 2;
-      font-size: 14px; color: var(--cyan); margin: 30px 0 15px;
-      display: flex; align-items: center; letter-spacing: 1px;
+    .page-title {
+      font-size: 28px; letter-spacing: 2px; margin: 0; color: #fff;
+      font-weight: 800; text-transform: uppercase;
+      background: linear-gradient(90deg, #fff, #aaa); -webkit-background-clip: text; color: transparent;
     }
-    .section-title::before {
-      content: ''; width: 8px; height: 8px; background: var(--cyan);
-      margin-right: 10px; transform: rotate(45deg);
+    
+    .sub-desc {
+      font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 8px;
+      max-width: 80%; line-height: 1.5;
+    }
+
+    /* --- 分区标题 --- */
+    .section-title {
+      width: 90%; max-width: 680px; z-index: 2;
+      font-size: 12px; color: var(--pink); margin: 40px 0 15px;
+      font-family: var(--font-code); display: flex; align-items: center; letter-spacing: 1px;
     }
     .section-title::after {
       content: ""; flex: 1; height: 1px; 
-      background: linear-gradient(90deg, rgba(0,242,255,0.3), transparent); margin-left: 15px; 
+      background: linear-gradient(90deg, rgba(255, 0, 85, 0.3), transparent); margin-left: 15px; 
     }
 
+    /* --- 卡片系统 --- */
     .card-grid {
-      width: 90%; max-width: 650px; z-index: 2;
-      display: grid; gap: 15px;
+      width: 90%; max-width: 680px; z-index: 2;
+      display: grid; gap: 16px;
     }
 
     .card {
-      background: var(--glass);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-left: 2px solid var(--cyan);
-      padding: 20px;
-      position: relative; overflow: hidden;
-      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-      transition: 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-      cursor: pointer;
+      background: var(--card-bg);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 18px; position: relative; overflow: hidden;
+      border-radius: 8px;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      cursor: pointer; group;
     }
 
+    /* 卡片悬停光效 */
     .card:hover {
-      transform: translateY(-3px);
-      border-left-color: var(--pink);
-      background: rgba(255, 255, 255, 0.05);
-      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+      transform: translateY(-2px);
+      border-color: var(--cyan);
+      box-shadow: 0 5px 20px rgba(0, 242, 255, 0.15);
+      background: rgba(20, 25, 35, 0.9);
     }
+    
+    .card::before {
+      content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+      background: var(--cyan); opacity: 0; transition: 0.3s;
+    }
+    .card:hover::before { opacity: 1; }
 
-    .card::after {
-      content: ''; position: absolute; top: 0; right: 0;
-      width: 0; height: 0;
-      border-style: solid; border-width: 0 30px 30px 0;
-      border-color: transparent rgba(255,255,255,0.05) transparent transparent;
+    .card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .c-name { font-size: 15px; font-weight: bold; color: #fff; }
+    .c-tag { 
+      font-size: 9px; padding: 3px 6px; border-radius: 4px;
+      font-family: var(--font-code); letter-spacing: 0.5px;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.6);
+    }
+    .c-tag.hot { color: var(--pink); border-color: rgba(255, 0, 85, 0.3); background: rgba(255, 0, 85, 0.05); }
+    .c-tag.speed { color: var(--cyan); border-color: rgba(0, 242, 255, 0.3); background: rgba(0, 242, 255, 0.05); }
+
+    .link-box {
+      font-family: var(--font-code); font-size: 11px; color: #666;
+      background: #000; padding: 10px; border-radius: 4px;
+      word-break: break-all; border: 1px dashed #333;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
       transition: 0.3s;
     }
-    .card:hover::after { border-color: transparent var(--pink) transparent transparent; }
+    .card:hover .link-box { color: var(--cyan); border-color: rgba(0, 242, 255, 0.3); }
 
-    .card-header {
-      display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;
+    .action-row {
+      display: flex; justify-content: flex-end; margin-top: 10px;
+      font-size: 10px; color: var(--cyan); font-weight: bold; 
+      opacity: 0; transform: translateX(-10px); transition: 0.3s;
     }
-    .c-name { font-size: 15px; font-weight: bold; color: #fff; letter-spacing: 1px; }
-    .c-status { 
-      font-size: 9px; padding: 2px 6px; border-radius: 2px;
-      background: rgba(0, 242, 255, 0.1); color: var(--cyan);
-      border: 1px solid rgba(0, 242, 255, 0.2); font-family: var(--font-code);
-    }
-    
-    .link-display {
-      font-family: var(--font-code); font-size: 11px; color: rgba(255,255,255,0.5);
-      background: rgba(0,0,0,0.3); padding: 10px; border-radius: 4px;
-      word-break: break-all; border: 1px dashed rgba(255,255,255,0.1);
-      position: relative; transition: 0.3s; max-height: 60px; overflow: hidden;
-    }
-    .card:hover .link-display { color: var(--cyan); border-color: rgba(0,242,255,0.3); }
+    .card:hover .action-row { opacity: 1; transform: translateX(0); }
 
-    .copy-hint {
-      position: absolute; right: 10px; bottom: 10px;
-      font-size: 10px; color: var(--pink); opacity: 0;
-      transform: translateX(10px); transition: 0.3s; font-weight: bold;
+    /* --- 终端窗口 --- */
+    .terminal {
+      width: 90%; max-width: 680px; z-index: 2; margin-top: 20px;
+      background: #0a0a0f; border: 1px solid #333; border-radius: 8px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+      font-family: var(--font-code); font-size: 12px;
     }
-    .card:hover .copy-hint { opacity: 1; transform: translateX(0); }
+    .term-head {
+      background: #15151a; padding: 8px 12px; border-bottom: 1px solid #222;
+      display: flex; gap: 6px; border-radius: 8px 8px 0 0;
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; background: #333; }
+    .term-content {
+      padding: 15px; color: #888; height: 200px; overflow-y: hidden;
+      display: flex; flex-direction: column; justify-content: flex-end;
+    }
+    .log-line { margin: 4px 0; }
+    .log-line.success { color: var(--cyan); }
+    .log-line.warn { color: var(--pink); }
 
-    .terminal-window {
-      width: 90%; max-width: 650px; z-index: 2; margin-top: 10px;
-      background: #080808; border: 1px solid #333; border-radius: 6px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      overflow: hidden;
-    }
-    .term-header {
-      background: #1a1a1a; padding: 8px 15px; display: flex; gap: 6px;
-      border-bottom: 1px solid #333;
-    }
-    .dot { width: 10px; height: 10px; border-radius: 50%; }
-    .dot.r { background: #ff5f56; } .dot.y { background: #ffbd2e; } .dot.g { background: #27c93f; }
-    
-    .term-body {
-      padding: 15px; color: #0f0; font-family: var(--font-code); font-size: 12px;
-      line-height: 1.5; white-space: pre-wrap; height: 300px; overflow-y: auto;
-      scrollbar-width: thin; scrollbar-color: #333 #000;
-    }
-    .term-body::-webkit-scrollbar { width: 6px; }
-    .term-body::-webkit-scrollbar-thumb { background: #333; }
-
+    /* --- 底部按钮 --- */
     .back-btn {
-      margin-top: 40px; z-index: 5;
-      padding: 12px 40px;
-      background: transparent;
+      margin-top: 50px; z-index: 5;
+      padding: 14px 40px;
+      background: rgba(0, 242, 255, 0.1);
       border: 1px solid var(--cyan);
-      color: var(--cyan);
+      color: var(--cyan); font-weight: bold;
       text-decoration: none; font-size: 14px; letter-spacing: 2px;
-      clip-path: polygon(10px 0, 100% 0, 100% 70%, calc(100% - 10px) 100%, 0 100%, 0 30%);
-      transition: 0.3s;
+      border-radius: 50px;
+      transition: 0.3s; box-shadow: 0 0 15px rgba(0, 242, 255, 0.1);
     }
-    .back-btn:hover { background: var(--cyan); color: #000; box-shadow: 0 0 20px rgba(0,242,255,0.4); }
+    .back-btn:hover { background: var(--cyan); color: #000; box-shadow: 0 0 30px rgba(0, 242, 255, 0.4); }
 
+    /* --- Toast --- */
     #toast {
-      position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100%);
-      background: var(--pink); color: #fff; padding: 10px 25px;
-      border-radius: 30px; font-size: 12px; letter-spacing: 1px;
-      box-shadow: 0 5px 20px rgba(255, 0, 60, 0.4); z-index: 1000;
-      opacity: 0; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: fixed; top: 30px; left: 50%; transform: translateX(-50%) scale(0.9);
+      background: rgba(16, 20, 30, 0.9); border: 1px solid var(--cyan);
+      color: var(--cyan); padding: 12px 30px; border-radius: 4px;
+      font-family: var(--font-code); font-size: 12px; z-index: 2000;
+      backdrop-filter: blur(10px); opacity: 0; pointer-events: none;
+      transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      display: flex; align-items: center; gap: 10px;
     }
-    #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-
+    #toast.show { transform: translateX(-50%) scale(1); opacity: 1; }
   </style>
 </head>
 <body>
 
-  <canvas id="bg-canvas"></canvas>
+  <canvas id="matrix-canvas"></canvas>
   
-  <div id="toast">📋 LINK COPIED TO CLIPBOARD</div>
+  <div id="toast">
+    <div style="width:8px; height:8px; background:var(--cyan); border-radius:50%; box-shadow:0 0 5px var(--cyan);"></div>
+    <span id="toast-text">COPIED TO CLIPBOARD</span>
+  </div>
 
   <div class="header-group">
-    <h1 class="page-title">全球节点订阅中心</h1>
-    <div class="sub-tag">FREE NODES // 2026 UPDATED // SHADOWROCKET & CLASH COMPATIBLE</div>
-  </div>
-
-  <!-- 单个节点示例（从你提供的base64解码） -->
-  <div class="section-title">实时节点示例 (直接导入小火箭/Clash)</div>
-  <div class="card-grid">
-    <div class="card" onclick="copyText('ss://Y2hhY2hhMjAtaWV0Zi1wb2x5MTMwNTowMWRjMGQ3Y2JiNjUwYmMz@109.61.39.150:11201#%E5%8C%88%E7%89%99%E5%88%A9+V2CROSS.COM')">
-      <div class="card-header"><span class="c-name">SS - 匈牙利节点</span><span class="c-status">REALTIME</span></div>
-      <div class="link-display">ss://Y2hhY2hhMjAtaWV0Zi1wb2x5MTMwNTowMWRjMGQ3Y... (点击复制完整)</div>
-      <div class="copy-hint">CLICK TO COPY</div>
-    </div>
-    <div class="card" onclick="copyText('trojan://BxceQaOe@58.152.30.149:443?allowInsecure=0&sni=t.me%25252Fripaojiedian#%E9%A6%99%E6%B8%AF+%E7%94%B5%E8%AE%AF%E7%9B%88%E7%A7%91')">
-      <div class="card-header"><span class="c-name">Trojan - 香港电信</span><span class="c-status">HIGH SPEED</span></div>
-      <div class="link-display">trojan://BxceQaOe@58.152.30.149:443?... (点击复制完整)</div>
-      <div class="copy-hint">CLICK TO COPY</div>
-    </div>
-    <div class="card" onclick="copyText('vmess://eyJ2IjoyLCJwcyI6Ilx1N2Y4ZVx1NTZmZCBDbG91ZEZsYXJlIiwgImFkZCI6InN5NC42MjA3MjAueHl6IiwgInBvcnQiOiI0NDMiLCJpZCI6IjUxNmQ4YTdhL...')">
-      <div class="card-header"><span class="c-name">Vmess - CloudFlare WS</span><span class="c-status">TLS</span></div>
-      <div class="link-display">vmess://eyJ2IjoyLCJwcyI6Ilx1N2Y4ZVx1NTZmZCBDbG91ZEZsYXJlIi... (点击复制完整)</div>
-      <div class="copy-hint">CLICK TO COPY</div>
+    <div class="status-badge">SYSTEM ONLINE</div>
+    <h1 class="page-title">全球节点订阅库</h1>
+    <div class="sub-desc">
+      AUTO-UPDATED PROXY POOL // COMPATIBLE WITH CLASH & V2RAY<br>
+      点击卡片即可复制订阅链接，支持 Shadowrocket / Clash / Surge
     </div>
   </div>
 
-  <!-- GitHub 公益订阅 -->
-  <div class="section-title">GitHub 公益订阅 (每日/实时更新)</div>
+  <div class="section-title">核心聚合订阅 (强烈推荐)</div>
   <div class="card-grid">
-    <div class="card" onclick="copyText('https://raw.githubusercontent.com/mermeroo/Loon/main/node')">
-      <div class="card-header"><span class="c-name">mermeroo / Loon Node</span><span class="c-status">DAILY</span></div>
-      <div class="link-display">https://raw.githubusercontent.com/mermeroo/Loon/main/node</div>
+    <div class="card" onclick="copyText('https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/sub/sub_merge.txt')">
+      <div class="card-top"><span class="c-name">V2Ray Aggregator</span><span class="c-tag hot">STABLE</span></div>
+      <div class="link-box">https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/sub/sub_merge.txt</div>
+      <div class="action-row">>> CLICK TO COPY</div>
     </div>
-    <div class="card" onclick="copyText('https://raw.githubusercontent.com/free18/v2ray/main/subscribe')">
-      <div class="card-header"><span class="c-name">free18 / V2ray Subscribe</span><span class="c-status">REALTIME</span></div>
-      <div class="link-display">https://raw.githubusercontent.com/free18/v2ray/main/subscribe</div>
-    </div>
-    <div class="card" onclick="copyText('https://raw.githubusercontent.com/mahdibland/ShadowsocksAggregator/master/sub/sub_merge.txt')">
-      <div class="card-header"><span class="c-name">mahdibland / SS Aggregator</span><span class="c-status">ACTIVE</span></div>
-      <div class="link-display">https://raw.githubusercontent.com/mahdibland/ShadowsocksAggregator/master/sub/sub_merge.txt</div>
-    </div>
-    <div class="card" onclick="copyText('https://raw.githubusercontent.com/barry-far/V2ray-Configs/refs/heads/main/All_Configs_Sub.txt')">
-      <div class="card-header"><span class="c-name">barry-far / All Configs</span><span class="c-status">HIGH VOLUME</span></div>
-      <div class="link-display">https://raw.githubusercontent.com/barry-far/V2ray-Configs/refs/heads/main/All_Configs_Sub.txt</div>
-    </div>
-    <div class="card" onclick="copyText('https://clashgithub.com/')">
-      <div class="card-header"><span class="c-name">ClashGitHub.com 聚合</span><span class="c-status">50+ NODES DAILY</span></div>
-      <div class="link-display">https://clashgithub.com/ (最高20M/s+)</div>
-    </div>
-  </div>
-
-  <!-- Clash 专用订阅 -->
-  <div class="section-title">Clash 专用订阅 (YAML 格式，高速)</div>
-  <div class="card-grid">
+    
     <div class="card" onclick="copyText('https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml')">
-      <div class="card-header"><span class="c-name">ermaozi / Clash.yml</span><span class="c-status">DAILY 22M/s</span></div>
-      <div class="link-display">https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml</div>
+      <div class="card-top"><span class="c-name">Ermaozi Clash</span><span class="c-tag speed">YAML</span></div>
+      <div class="link-box">https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml</div>
+      <div class="action-row">>> CLICK TO COPY</div>
     </div>
-    <div class="card" onclick="copyText('https://raw.githubusercontent.com/anaer/Sub/main/clash.yaml')">
-      <div class="card-header"><span class="c-name">anaer / Clash</span><span class="c-status">STABLE</span></div>
-      <div class="link-display">https://raw.githubusercontent.com/anaer/Sub/main/clash.yaml</div>
-    </div>
-    <div class="card" onclick="copyText('https://raw.githubusercontent.com/oslook/clash-freenode/main/clash.yaml')">
-      <div class="card-header"><span class="c-name">oslook / FreeNode</span><span class="c-status">HIGH SPEED</span></div>
-      <div class="link-display">https://raw.githubusercontent.com/oslook/clash-freenode/main/clash.yaml</div>
-    </div>
-    <div class="card" onclick="copyText('https://raw.githubusercontent.com/vveg26/get_proxy/main/dist/clash.config.yaml')">
-      <div class="card-header"><span class="c-name">vveg26 / Clash Config</span><span class="c-status">UPDATED</span></div>
-      <div class="link-display">https://raw.githubusercontent.com/vveg26/get_proxy/main/dist/clash.config.yaml</div>
+
+    <div class="card" onclick="copyText('https://raw.githubusercontent.com/Pawdroid/Free-servers/main/sub')">
+      <div class="card-top"><span class="c-name">Pawdroid Servers</span><span class="c-tag">BASE64</span></div>
+      <div class="link-box">https://raw.githubusercontent.com/Pawdroid/Free-servers/main/sub</div>
+      <div class="action-row">>> CLICK TO COPY</div>
     </div>
   </div>
 
-  <!-- 其他热门来源 -->
-  <div class="section-title">其他聚合来源 (Base64 / Mix)</div>
+  <div class="section-title">备用数据源 (Backup)</div>
   <div class="card-grid">
-    <div class="card" onclick="copyText('https://www.freeclashnode.com/free-node/')">
-      <div class="card-header"><span class="c-name">FreeClashNode</span><span class="c-status">22M/s+ DAILY</span></div>
-      <div class="link-display">https://www.freeclashnode.com/free-node/</div>
+    <div class="card" onclick="copyText('https://raw.githubusercontent.com/free18/v2ray/main/subscribe')">
+      <div class="card-top"><span class="c-name">Free18 V2Ray</span><span class="c-tag">DAILY</span></div>
+      <div class="link-box">https://raw.githubusercontent.com/free18/v2ray/main/subscribe</div>
+      <div class="action-row">>> CLICK TO COPY</div>
     </div>
-    <div class="card" onclick="copyText('https://sub.pmsub.me/base64')">
-      <div class="card-header"><span class="c-name">PMSUB Base64</span><span class="c-status">MIXED</span></div>
-      <div class="link-display">https://sub.pmsub.me/base64</div>
-    </div>
-    <div class="card" onclick="copyText('https://lncn.org')">
-      <div class="card-header"><span class="c-name">LNCN.org 聚合</span><span class="c-status">REALTIME</span></div>
-      <div class="link-display">https://lncn.org</div>
+
+    <div class="card" onclick="copyText('https://raw.githubusercontent.com/anaer/Sub/main/clash.yaml')">
+      <div class="card-top"><span class="c-name">Anaer Clash</span><span class="c-tag speed">FAST</span></div>
+      <div class="link-box">https://raw.githubusercontent.com/anaer/Sub/main/clash.yaml</div>
+      <div class="action-row">>> CLICK TO COPY</div>
     </div>
   </div>
 
-  <div class="section-title">实时节点终端 (持续加载)</div>
-  <div class="terminal-window">
-    <div class="term-header">
-      <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
-      <div style="font-size:10px; color:#666; margin-left:10px;">bash — 80x24</div>
+  <div class="section-title">工具箱 (Tools)</div>
+  <div class="card-grid">
+    <div class="card" onclick="window.open('https://acl4ssr-sub.github.io/', '_blank')">
+      <div class="card-top"><span class="c-name">在线订阅转换 (ACL4SSR)</span><span class="c-tag" style="color:var(--purple); border-color:var(--purple)">WEB</span></div>
+      <div class="link-box">解决订阅格式不兼容问题 (Base64 <-> Clash)</div>
+      <div class="action-row">>> OPEN TOOL</div>
     </div>
-    <div class="term-body" id="typewriter"></div>
   </div>
 
-  <a href="index.html" class="back-btn">返回主控台</a>
+  <div class="terminal">
+    <div class="term-head">
+      <div class="dot" style="background:#ff5f56"></div>
+      <div class="dot" style="background:#ffbd2e"></div>
+      <div class="dot" style="background:#27c93f"></div>
+    </div>
+    <div class="term-content" id="term-log">
+      </div>
+  </div>
+
+  <a href="index.html" class="back-btn">DISCONNECT</a>
 
   <script>
-    const canvas = document.getElementById("bg-canvas"), ctx = canvas.getContext("2d");
-    let w, h, dots = [];
-    function initCanvas() {
-      w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight;
-      dots = [];
-      const count = window.innerWidth < 600 ? 20 : 40;
-      for(let i=0; i<count; i++) {
-        dots.push({x: Math.random()*w, y: Math.random()*h, vx: (Math.random()-0.5)*0.3, vy: (Math.random()-0.5)*0.3, r: Math.random()*1.5});
+    // --- 1. 矩阵雨背景 ---
+    const canvas = document.getElementById('matrix-canvas');
+    const ctx = canvas.getContext('2d');
+    
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+    
+    const chars = '01ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const drops = [];
+    const fontSize = 14;
+    const columns = width / fontSize;
+    
+    for(let i = 0; i < columns; i++) drops[i] = 1;
+
+    function drawMatrix() {
+      ctx.fillStyle = 'rgba(5, 2, 10, 0.05)'; // 拖尾效果
+      ctx.fillRect(0, 0, width, height);
+      
+      ctx.fillStyle = '#00f2ff'; // 字体颜色
+      ctx.font = fontSize + 'px monospace';
+      
+      for(let i = 0; i < drops.length; i++) {
+        const text = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        
+        if(drops[i] * fontSize > height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+      requestAnimationFrame(drawMatrix);
+    }
+    window.addEventListener('resize', () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    });
+    drawMatrix();
+
+    // --- 2. 复制功能 (增强兼容性) ---
+    async function copyText(text) {
+      const toast = document.getElementById('toast');
+      const toastText = document.getElementById('toast-text');
+      
+      try {
+        await navigator.clipboard.writeText(text);
+        toastText.innerText = "LINK COPIED SUCCESSFUL";
+        showToast();
+      } catch (err) {
+        // 降级方案
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        toastText.innerText = "COPIED (FALLBACK MODE)";
+        showToast();
       }
     }
-    function render() {
-      ctx.clearRect(0,0,w,h);
-      ctx.fillStyle = "rgba(0, 242, 255, 0.4)";
-      dots.forEach(d => {
-        d.x += d.vx; d.y += d.vy;
-        if(d.x<0 || d.x>w) d.vx*=-1; if(d.y<0 || d.y>h) d.vy*=-1;
-        ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI*2); ctx.fill();
-      });
-      requestAnimationFrame(render);
-    }
-    window.addEventListener('resize', initCanvas);
-    initCanvas(); render();
 
-    function copyText(text) {
-      navigator.clipboard.writeText(text).then(() => {
-        const toast = document.getElementById('toast');
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 2000);
-      }).catch(() => alert('复制失败，请手动选择'));
+    function showToast() {
+      const t = document.getElementById('toast');
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2000);
     }
 
-    // 真实节点打字机
-    const rawData = [
-      "# Scanning global node pool (2026-01-09)...",
-      "# High-speed links detected:",
-      "ss://Y2hhY2hhMjAtaWV0Zi1wb2x5MTMwNTowMWRjMGQ3Y2JiNjUwYmMz@109.61.39.150:11201#匈牙利 V2CROSS",
-      "trojan://BxceQaOe@58.152.30.149:443?allowInsecure=0&sni=t.me%25252Fripaojiedian#香港 电信盈科",
-      "vmess://eyJ2IjoyLCJwcyI6IlJlbGF5X05vZGUiLCJhZGQiOiJzeTQuNjIwNzIwLnh5eiIsInBvcnQiOjQ0MywiaWQiOiI1MTZkOGE3YS0zZjBiLTQxZDMtYmFkMC0yNDYxMTYzODE1MTYiLCJhaWQiOjAsIm5ldCI6IndzIiwicGF0aCI6Ii8iLCJob3N0Ijoic3k0LjYyMDcyMC54eXoiLCJ0bHMiOiJ0bHMifQ==",
-      "vmess://eyJhZGQiOiIyMTYuMTY3LjI2LjIyMCIsInYiOiIyIiwicHMiOiJVUyBOVFQiLCJwb3J0IjozNDEyOCwiaWQiOiI0MTQ1ZWMyYS1iYzYxLTRkNzItYmZkNS1mOWZmYmRmNjZjMjgiLCJhaWQiOjAsIm5ldCI6Im5vbmUiLCJ0eXBlIjoiIiwiaG9zdCI6IiIsInBhdGgiOiIiLCJ0bHMiOiIifQ==",
-      "# More nodes loading from subscriptions...",
-      "# Tip: 免费节点适合临时使用，长期推荐付费机场"
+    // --- 3. 终端模拟 ---
+    const logs = [
+      "Connecting to GitHub API...",
+      "Fetching subscription data from @mahdibland...",
+      "Verifying node integrity...",
+      "[SUCCESS] 142 nodes loaded.",
+      "Testing latency: hk-01 (45ms), jp-03 (62ms)...",
+      "Optimizing route tables...",
+      "System ready. Waiting for user input."
     ];
-    const termBody = document.getElementById('typewriter');
-    let lineIndex = 0;
-    
-    function typeLine() {
-      if (lineIndex < rawData.length) {
-        const p = document.createElement('div');
-        p.textContent = `> ${rawData[lineIndex]}`;
-        if(Math.random() > 0.6) p.style.color = "var(--pink)";
-        termBody.appendChild(p);
-        termBody.scrollTop = termBody.scrollHeight;
-        lineIndex++;
-        setTimeout(typeLine, Math.random() * 600 + 300);
-      } else {
-        const blink = document.createElement('div');
-        blink.innerHTML = "> <span style='animation:blink 1s infinite'>_</span>";
-        termBody.appendChild(blink);
-      }
+    const termContainer = document.getElementById('term-log');
+    let logIndex = 0;
+
+    function addLog() {
+      if(logIndex >= logs.length) return;
+      
+      const div = document.createElement('div');
+      div.className = 'log-line';
+      const txt = logs[logIndex];
+      
+      if(txt.includes("SUCCESS")) div.classList.add('success');
+      if(txt.includes("Connecting")) div.classList.add('warn');
+      
+      div.innerText = `> ${txt}`;
+      termContainer.appendChild(div);
+      logIndex++;
+      
+      setTimeout(addLog, Math.random() * 800 + 200);
     }
-    const style = document.createElement('style');
-    style.innerHTML = `@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }`;
-    document.head.appendChild(style);
-    
-    setTimeout(typeLine, 1000);
+    setTimeout(addLog, 500);
+
   </script>
 </body>
 </html>
