@@ -1,4 +1,6 @@
 FreeFQ_高频更新#https://raw.githubusercontent.com/freefq/free/master/v2
-Pawdroid_聚合源#https://raw.githubusercontent.com/Pawdroid/Free-nodes/master/node.txt
-Oslook_Clash精选#https://raw.githubusercontent.com/oslook/free-ssr-v2ray/master/clash.yaml
+Pawdroid_修正源#https://raw.githubusercontent.com/Pawdroid/Free-servers/main/sub
 CyanBird_公益池#https://raw.githubusercontent.com/vpei/Free-Node-Merge/main/out/nodes.txt
+Ermaozi_Clash精选#https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml
+Mahdi_全球聚合#https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/sub/sub_merge.txt
+Anaer_高速节点#https://raw.githubusercontent.com/anaer/Sub/main/clash.yaml
