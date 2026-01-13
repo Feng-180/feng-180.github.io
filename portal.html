@@ -24,7 +24,6 @@
       font-family: var(--font-main);
       overflow-x: hidden; min-height: 100vh;
       display: flex; flex-direction: column; align-items: center;
-      /* 升级：网格背景 + 晕影 */
       background-image: 
         linear-gradient(var(--grid) 1px, transparent 1px),
         linear-gradient(90deg, var(--grid) 1px, transparent 1px);
@@ -32,7 +31,6 @@
       perspective: 1000px;
     }
 
-    /* 升级：CRT 屏幕扫描线特效 */
     body::before {
       content: " "; position: fixed; inset: 0; z-index: 900; pointer-events: none;
       background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
@@ -42,7 +40,6 @@
     
     #bg-canvas { position: fixed; inset: 0; z-index: 0; }
 
-    /* --- UI 组件 --- */
     .header { position: relative; z-index: 10; padding-top: 8vh; text-align: center; width: 100%; }
 
     .main-title {
@@ -51,7 +48,6 @@
       color: #fff; text-shadow: 2px 2px 0px var(--pink), -2px -2px 0px var(--cyan);
       position: relative; display: inline-block;
     }
-    /* 升级：故障抖动动画 */
     .main-title:hover { animation: glitch-skew 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) both infinite; }
 
     .status-bar {
@@ -62,14 +58,12 @@
     .status-dot { width: 6px; height: 6px; background: var(--cyan); border-radius: 50%; box-shadow: 0 0 8px var(--cyan); animation: blink 2s infinite; }
     .typewriter { font-family: var(--font-code); font-size: 12px; color: var(--cyan); letter-spacing: 1px; }
 
-    /* --- 魔法阵 V3.0 (SVG CSS Animation) --- */
     .magic-wrapper { position: relative; width: 260px; height: 260px; margin: 30px auto; filter: drop-shadow(0 0 15px rgba(0,242,255,0.3)); }
     .magic-svg { width: 100%; height: 100%; animation: float 6s ease-in-out infinite; }
     .ring-outer { transform-origin: center; animation: spin 20s linear infinite; stroke: var(--cyan); opacity: 0.6; }
     .ring-inner { transform-origin: center; animation: spin-rev 15s linear infinite; stroke: var(--pink); opacity: 0.5; }
     .core-pulse { transform-origin: center; animation: pulse 3s infinite; fill: #fff; }
 
-    /* --- 播放器控件 --- */
     .player-deck {
       display: flex; align-items: center; gap: 12px; margin: 0 auto 40px;
       padding: 10px 24px; border-radius: 50px; cursor: pointer;
@@ -84,7 +78,6 @@
     .player-deck.active .bar:nth-child(3) { animation-delay: 0.2s; }
     .player-deck.active .bar:nth-child(4) { animation-delay: 0.3s; }
 
-    /* --- 菜单卡片 --- */
     .nav-grid {
       display: grid; gap: 16px; width: 90%; max-width: 420px; z-index: 20;
       perspective: 1000px;
@@ -115,7 +108,6 @@
     .icon-arrow { width: 8px; height: 8px; border-top: 2px solid #555; border-right: 2px solid #555; transform: rotate(45deg); transition: 0.3s; }
     .nav-card:hover .icon-arrow { border-color: var(--cyan); transform: rotate(45deg) translate(3px, -3px); }
 
-    /* --- 弹窗与提示 --- */
     .toast {
       position: fixed; top: -50px; left: 50%; transform: translateX(-50%);
       background: rgba(0, 242, 255, 0.1); border: 1px solid var(--cyan);
@@ -139,10 +131,12 @@
     }
     .modal-overlay.open .modal-box { transform: scale(1); border-color: var(--pink); box-shadow: 0 0 20px rgba(255, 0, 60, 0.2); }
 
+    /* --- 修改点：为了支持中文输入并保持隐藏 --- */
     .secret-input {
       width: 100%; background: #050505; border: 1px solid #333; color: var(--cyan);
       padding: 15px; margin: 20px 0; text-align: center; font-family: var(--font-code);
       font-size: 18px; letter-spacing: 4px; transition: 0.3s;
+      -webkit-text-security: disc; /* 核心：用圆点掩盖文字，但本质是文本框 */
     }
     .secret-input:focus { border-color: var(--cyan); box-shadow: 0 0 10px rgba(0, 242, 255, 0.1); }
     
@@ -158,7 +152,6 @@
     .counter { font-family: var(--font-code); font-size: 12px; color: #666; }
     .counter span { color: var(--pink); text-shadow: 0 0 5px var(--pink); }
 
-    /* --- 动画关键帧 --- */
     @keyframes spin { 100% { transform: rotate(360deg); } }
     @keyframes spin-rev { 100% { transform: rotate(-360deg); } }
     @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
@@ -247,7 +240,7 @@
     <div class="modal-box">
       <div style="font-size:12px; color:var(--pink); letter-spacing:2px; margin-bottom:10px; font-weight:bold;">// SECURITY CHECK</div>
       <div style="font-size:10px; color:#666;">PLEASE ENTER ACCESS KEY</div>
-      <input type="password" id="key-input" class="secret-input" placeholder="******">
+      <input type="text" id="key-input" class="secret-input" placeholder="输入神秘口令">
       <button class="btn-exec" onclick="verifyKey()">EXECUTE</button>
     </div>
   </div>
@@ -261,14 +254,8 @@
     };
 
     // --- 1. 打字机效果 ---
-    const phrases = [
-      "SYSTEM STATUS: ONLINE", 
-      "SCANNING NETWORK...", 
-      "DETECTING MAGIC...", 
-      "WELCOME TRAVELER"
-    ];
+    const phrases = ["SYSTEM STATUS: ONLINE", "SCANNING NETWORK...", "DETECTING MAGIC...", "WELCOME TRAVELER"];
     let pIndex = 0, charIndex = 0, isDeleting = false;
-    const typeSpeed = 100, deleteSpeed = 50, pauseDelay = 2000;
     const typeTarget = document.getElementById('typing-text');
 
     function typeLoop() {
@@ -280,75 +267,43 @@
         typeTarget.innerText = currentPhrase.substring(0, charIndex + 1);
         charIndex++;
       }
-
-      let delta = isDeleting ? deleteSpeed : typeSpeed;
-
+      let delta = isDeleting ? 50 : 100;
       if (!isDeleting && charIndex === currentPhrase.length) {
-        delta = pauseDelay;
-        isDeleting = true;
+        delta = 2000; isDeleting = true;
       } else if (isDeleting && charIndex === 0) {
-        isDeleting = false;
-        pIndex = (pIndex + 1) % phrases.length;
+        isDeleting = false; pIndex = (pIndex + 1) % phrases.length;
       }
-
       setTimeout(typeLoop, delta);
     }
     typeLoop();
 
-    // --- 2. 优化版粒子背景 ---
+    // --- 2. 粒子背景 ---
     const cvs = document.getElementById('bg-canvas'), ctx = cvs.getContext('2d');
     let w, h, particles = [];
-
     function initParticles() {
-      w = cvs.width = window.innerWidth;
-      h = cvs.height = window.innerHeight;
+      w = cvs.width = window.innerWidth; h = cvs.height = window.innerHeight;
       particles = [];
-      const cnt = w < 600 ? 40 : 80; // 移动端减少粒子数
+      const cnt = w < 600 ? 40 : 80;
       for(let i=0; i<cnt; i++) {
-        particles.push({
-          x: Math.random()*w, y: Math.random()*h,
-          vx: (Math.random()-0.5)*0.5, vy: (Math.random()-0.5)*0.5,
-          size: Math.random()*1.5,
-          color: Math.random()>0.5 ? '#00f2ff' : '#ff0055'
-        });
+        particles.push({x: Math.random()*w, y: Math.random()*h, vx: (Math.random()-0.5)*0.5, vy: (Math.random()-0.5)*0.5, size: Math.random()*1.5, color: Math.random()>0.5 ? '#00f2ff' : '#ff0055'});
       }
     }
-
     function draw() {
       ctx.clearRect(0, 0, w, h);
-      for(let i=0; i<particles.length; i++) {
-        let p = particles[i];
+      particles.forEach((p, i) => {
         p.x += p.vx; p.y += p.vy;
-        if(p.x < 0 || p.x > w) p.vx *= -1;
-        if(p.y < 0 || p.y > h) p.vy *= -1;
-        
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
-        ctx.fillStyle = p.color;
-        ctx.globalAlpha = 0.6;
-        ctx.fill();
-
-        // 连线逻辑
+        if(p.x < 0 || p.x > w) p.vx *= -1; if(p.y < 0 || p.y > h) p.vy *= -1;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fillStyle = p.color; ctx.globalAlpha = 0.6; ctx.fill();
         for(let j=i+1; j<particles.length; j++) {
-          let p2 = particles[j];
-          let dist = Math.hypot(p.x-p2.x, p.y-p2.y);
-          if(dist < 100) {
-            ctx.beginPath();
-            ctx.strokeStyle = `rgba(0, 242, 255, ${1 - dist/100})`;
-            ctx.lineWidth = 0.3;
-            ctx.moveTo(p.x, p.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.stroke();
-          }
+          let p2 = particles[j], dist = Math.hypot(p.x-p2.x, p.y-p2.y);
+          if(dist < 100) { ctx.beginPath(); ctx.strokeStyle = `rgba(0, 242, 255, ${1 - dist/100})`; ctx.lineWidth = 0.3; ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y); ctx.stroke(); }
         }
-      }
+      });
       requestAnimationFrame(draw);
     }
-    window.addEventListener('resize', initParticles);
-    initParticles();
-    draw();
+    window.addEventListener('resize', initParticles); initParticles(); draw();
 
-    // --- 3. 交互逻辑 (QQ跳转 & 提示) ---
+    // --- 3. 交互逻辑 ---
     function showToast(msg) {
       const t = document.getElementById('sys-toast');
       document.getElementById('toast-msg').innerText = msg;
@@ -357,29 +312,17 @@
     }
 
     async function startLinkProtocol() {
-      // 1. 尝试复制
       try {
         await navigator.clipboard.writeText(CONFIG.qqGroup);
         showToast(`群号 ${CONFIG.qqGroup} 已复制`);
       } catch (err) {
-        // 降级方案
-        const ta = document.createElement('textarea');
-        ta.value = CONFIG.qqGroup;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        document.body.removeChild(ta);
+        const ta = document.createElement('textarea'); ta.value = CONFIG.qqGroup; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
         showToast("群号已复制到剪贴板");
       }
-
-      // 2. 延迟跳转
       setTimeout(() => {
         const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
-        if(isMobile) {
-          window.location.href = `mqqapi://card/show_pslcard?src_type=internal&version=1&uin=${CONFIG.qqGroup}&card_type=group&source=qrcode`;
-        } else {
-          window.open(`https://qm.qq.com/cgi-bin/qm/qr?k=YOUR_KEY_HERE&jump_from=webapi`, '_blank');
-        }
+        if(isMobile) window.location.href = `mqqapi://card/show_pslcard?src_type=internal&version=1&uin=${CONFIG.qqGroup}&card_type=group&source=qrcode`;
+        else window.open(`https://qm.qq.com/cgi-bin/qm/qr?k=YOUR_KEY_HERE&jump_from=webapi`, '_blank');
       }, 1000);
     }
 
@@ -390,28 +333,21 @@
       if(show) {
         setTimeout(() => m.classList.add('open'), 10);
         document.getElementById('key-input').focus();
-      } else {
-        m.classList.remove('open');
-      }
+      } else { m.classList.remove('open'); }
     }
 
     function verifyKey() {
       const input = document.getElementById('key-input');
       const btn = document.querySelector('.btn-exec');
-      if(input.value === CONFIG.accessKey) {
-        btn.style.background = "#0f0";
-        btn.innerText = "ACCESS GRANTED";
+      // 这里的逻辑已经支持中文匹配
+      if(input.value.trim() === CONFIG.accessKey) {
+        btn.style.background = "#0f0"; btn.innerText = "ACCESS GRANTED";
         showToast("身份验证通过");
         setTimeout(() => window.location.href = CONFIG.redirectUrl, 800);
       } else {
-        input.value = "";
-        btn.style.background = "var(--pink)";
-        btn.innerText = "DENIED";
-        input.placeholder = "ERROR KEY";
-        setTimeout(() => {
-          btn.style.background = "var(--cyan)";
-          btn.innerText = "EXECUTE";
-        }, 1500);
+        input.value = ""; btn.style.background = "var(--pink)"; btn.innerText = "DENIED";
+        input.placeholder = "口令错误";
+        setTimeout(() => { btn.style.background = "var(--cyan)"; btn.innerText = "EXECUTE"; }, 1500);
       }
     }
 
@@ -419,18 +355,10 @@
     const audio = document.getElementById('bgm');
     const playerDeck = document.getElementById('player-deck');
     const trackName = document.getElementById('track-name');
-
     function toggleAudio() {
       if(audio.paused) {
-        audio.play().then(() => {
-            playerDeck.classList.add('active');
-            trackName.innerText = "PLAYING: CYBER_WIND.mp3";
-        }).catch(() => showToast("请先与页面交互以播放音频"));
-      } else {
-        audio.pause();
-        playerDeck.classList.remove('active');
-        trackName.innerText = "AUDIO PAUSED";
-      }
+        audio.play().then(() => { playerDeck.classList.add('active'); trackName.innerText = "PLAYING: CYBER_WIND.mp3"; }).catch(() => showToast("请先点击页面以激活音频"));
+      } else { audio.pause(); playerDeck.classList.remove('active'); trackName.innerText = "AUDIO PAUSED"; }
     }
 
     // --- 6. 随机访客数 ---
@@ -439,7 +367,6 @@
       let count = parseInt(el.innerText);
       el.innerText = (count + Math.floor(Math.random() * 3)).toString().padStart(10, '0');
     }, 5000);
-
   </script>
 </body>
 </html>
