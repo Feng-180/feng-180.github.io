@@ -13,6 +13,8 @@
       --card-bg: rgba(20, 25, 35, 0.6);
       --font-code: "JetBrains Mono", "Consolas", monospace;
       --font-main: "PingFang SC", system-ui, sans-serif;
+      --wechat: #09b83e;
+      --alipay: #1677dd;
     }
 
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
@@ -77,7 +79,7 @@
       border-bottom: 1px solid rgba(255,255,255,0.1); color: #888;
     }
 
-    /* --- 核心卡片 (支付/联系) --- */
+    /* --- 支付卡片 (支付/联系) --- */
     .card.highlight {
       border: 1px solid rgba(255, 0, 85, 0.3);
       background: linear-gradient(160deg, rgba(255,0,85,0.05) 0%, rgba(10,10,15,0.9) 100%);
@@ -88,13 +90,47 @@
     .pay-title { font-size: 18px; font-weight: bold; letter-spacing: 2px; }
     .pay-sub { font-size: 10px; color: var(--pink); opacity: 0.8; margin-top: 5px; font-family: var(--font-code); }
 
+    /* --- 支付方式切换 --- */
+    .pay-tabs {
+      display: flex; gap: 10px; margin-bottom: 20px; justify-content: center;
+    }
+
+    .pay-tab {
+      padding: 8px 16px; border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.05); border-radius: 6px;
+      cursor: pointer; font-size: 12px; font-weight: bold;
+      transition: 0.3s; color: #aaa;
+      font-family: var(--font-code);
+    }
+
+    .pay-tab.active {
+      border-color: var(--cyan); background: rgba(0, 242, 255, 0.1);
+      color: var(--cyan); box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
+    }
+
+    .pay-tab.wechat.active {
+      border-color: var(--wechat); background: rgba(9, 184, 62, 0.1);
+      color: var(--wechat); box-shadow: 0 0 15px rgba(9, 184, 62, 0.2);
+    }
+
+    .pay-tab.alipay.active {
+      border-color: var(--alipay); background: rgba(22, 119, 221, 0.1);
+      color: var(--alipay); box-shadow: 0 0 15px rgba(22, 119, 221, 0.2);
+    }
+
     /* 扫描仪效果 */
     .scanner-box {
       width: 220px; height: 220px; margin: 0 auto 25px;
       position: relative; padding: 10px;
       background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1);
       display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: 0.3s;
     }
+
+    .scanner-box:hover {
+      border-color: var(--cyan); box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
+    }
+
     /* 扫描仪四角 */
     .corner {
       position: absolute; width: 15px; height: 15px;
@@ -109,7 +145,6 @@
 
     .qr-img {
       width: 100%; height: 100%; object-fit: contain; display: block;
-      /* 如果图片加载失败，显示占位符 */
       background: repeating-linear-gradient(45deg, #111, #111 10px, #222 10px, #222 20px);
     }
     
@@ -118,6 +153,22 @@
       position: absolute; top: 0; left: 0; width: 100%; height: 2px;
       background: var(--pink); box-shadow: 0 0 15px var(--pink), 0 0 30px var(--pink);
       animation: scan 2.5s ease-in-out infinite; opacity: 0.8; pointer-events: none;
+    }
+
+    /* 支付方式指示 */
+    .pay-method-label {
+      position: absolute; bottom: 8px; right: 8px;
+      font-size: 10px; font-weight: bold; font-family: var(--font-code);
+      padding: 4px 8px; background: rgba(0,0,0,0.6); border-radius: 3px;
+      border: 1px solid currentColor;
+    }
+
+    .scanner-box.wechat .pay-method-label {
+      color: var(--wechat); border-color: var(--wechat);
+    }
+
+    .scanner-box.alipay .pay-method-label {
+      color: var(--alipay); border-color: var(--alipay);
     }
 
     .btn-action {
@@ -153,6 +204,45 @@
     }
     .btn-back:hover { border-color: var(--cyan); color: var(--cyan); background: rgba(0, 242, 255, 0.05); }
 
+    /* --- 全屏预览模态框 --- */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 9999;
+      display: none; justify-content: center; align-items: center;
+      opacity: 0; transition: 0.3s;
+    }
+
+    .modal-overlay.show {
+      display: flex; opacity: 1;
+    }
+
+    .modal-content {
+      position: relative; max-width: 90vw; max-height: 90vh;
+    }
+
+    .modal-img {
+      width: 100%; height: 100%; object-fit: contain;
+    }
+
+    .modal-close {
+      position: absolute; top: 20px; right: 20px;
+      width: 40px; height: 40px; background: rgba(255,255,255,0.1);
+      border: 1px solid var(--cyan); border-radius: 50%;
+      color: var(--cyan); font-size: 24px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: 0.3s;
+    }
+
+    .modal-close:hover {
+      background: rgba(0, 242, 255, 0.2); box-shadow: 0 0 15px rgba(0, 242, 255, 0.3);
+    }
+
+    .modal-tip {
+      position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+      background: rgba(0,0,0,0.8); color: var(--cyan); padding: 10px 20px;
+      border-radius: 4px; font-size: 12px; font-family: var(--font-code);
+      border: 1px solid var(--cyan);
+    }
+
     /* --- 动画 --- */
     @keyframes scan { 0% { top: 5%; opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { top: 95%; opacity: 0; } }
     @keyframes glitch-skew {
@@ -164,12 +254,15 @@
       position: fixed; top: 30px; left: 50%; transform: translateX(-50%) translateY(-20px);
       background: rgba(10, 15, 20, 0.95); border: 1px solid var(--pink);
       color: #fff; padding: 12px 25px; border-radius: 4px;
-      font-family: var(--font-code); font-size: 12px; z-index: 9999;
+      font-family: var(--font-code); font-size: 12px; z-index: 9998;
       opacity: 0; pointer-events: none; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       box-shadow: 0 5px 20px rgba(255, 0, 85, 0.2);
       display: flex; align-items: center; gap: 8px;
     }
     #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+    /* 隐藏的支付二维码 */
+    .hidden-qr { display: none; }
   </style>
 </head>
 <body>
@@ -181,27 +274,51 @@
     <span id="toast-text">SYSTEM NOTICE</span>
   </div>
 
+  <!-- 全屏预览模态框 -->
+  <div class="modal-overlay" id="qrModal">
+    <div class="modal-content">
+      <img id="modalQrImg" class="modal-img" src="" alt="QR Code">
+      <div class="modal-close" onclick="closeQrModal()">✕</div>
+      <div class="modal-tip">长按保存或截图 · 使用手机扫描</div>
+    </div>
+  </div>
+
   <div class="header-group">
     <h1 class="main-title">风の魔法书</h1>
-    <div class="sub-badge">SYSTEM: USER_GUIDE_V3.0</div>
+    <div class="sub-badge">SYSTEM: USER_GUIDE_V3.1</div>
   </div>
 
   <div class="container">
     
     <div class="card highlight">
-      <div class="step-tag">PROTOCOL_01 // ACCESS</div>
+      <div class="step-tag">PROTOCOL_01 // PAYMENT</div>
       
       <div class="pay-header">
         <div class="pay-title">获取权限通行证</div>
         <div class="pay-sub">SCAN TO UNLOCK DATABASE</div>
       </div>
+
+      <!-- 支付方式切换 -->
+      <div class="pay-tabs">
+        <div class="pay-tab wechat active" onclick="switchPayMethod('wechat')">
+          💚 微信支付
+        </div>
+        <div class="pay-tab alipay" onclick="switchPayMethod('alipay')">
+          💙 支付宝
+        </div>
+      </div>
       
-      <div class="scanner-box">
+      <!-- 二维码扫描区 -->
+      <div class="scanner-box wechat" id="scannerBox" onclick="openQrModal()">
         <div class="corner tl"></div><div class="corner tr"></div>
         <div class="corner bl"></div><div class="corner br"></div>
         <div class="scan-beam"></div>
-        <img src="skm.jpg" alt="QR Code" class="qr-img" onerror="this.style.display='none'">
+        <img src="skm.jpg" alt="WeChat QR Code" class="qr-img" id="qrDisplay" onerror="this.style.display='none'">
+        <div class="pay-method-label" id="methodLabel">WECHAT</div>
       </div>
+
+      <!-- 隐藏的支付宝二维码（如果有） -->
+      <img src="skm.jpg" alt="Alipay QR Code" class="hidden-qr" id="alipayQr">
       
       <button onclick="handleContact()" class="btn-action">
         已支付 &raquo; 唤醒站长
@@ -287,8 +404,30 @@
     window.addEventListener('resize', initCvs);
     initCvs(); draw();
 
-    // --- 2. 交互逻辑 ---
-    const CONFIG = { qq: "2902939692" };
+    // --- 2. 支付方式切换逻辑 ---
+    const CONFIG = { qq: "2902939692", currentMethod: 'wechat' };
+
+    function switchPayMethod(method) {
+      CONFIG.currentMethod = method;
+      
+      // 更新标签页样式
+      document.querySelectorAll('.pay-tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      event.target.closest('.pay-tab').classList.add('active');
+
+      // 更新扫描框样式和二维码
+      const scannerBox = document.getElementById('scannerBox');
+      scannerBox.classList.remove('wechat', 'alipay');
+      scannerBox.classList.add(method);
+
+      const methodLabel = document.getElementById('methodLabel');
+      methodLabel.textContent = method === 'wechat' ? 'WECHAT' : 'ALIPAY';
+
+      // 这里可以加载不同的二维码图片
+      // 目前使用同一张图片，实际使用时可以替换为不同的收款码
+      showToast(`已切换至${method === 'wechat' ? '微信' : '支付宝'}支付`);
+    }
 
     function showToast(msg) {
       const t = document.getElementById('toast');
@@ -297,6 +436,28 @@
       setTimeout(() => t.classList.remove('show'), 2000);
     }
 
+    // --- 3. 全屏预览二维码 ---
+    function openQrModal() {
+      const modal = document.getElementById('qrModal');
+      const qrDisplay = document.getElementById('qrDisplay');
+      const modalQrImg = document.getElementById('modalQrImg');
+      
+      modalQrImg.src = qrDisplay.src;
+      modal.classList.add('show');
+      showToast('长按保存二维码或截图');
+    }
+
+    function closeQrModal() {
+      const modal = document.getElementById('qrModal');
+      modal.classList.remove('show');
+    }
+
+    // 点击模态框外部关闭
+    document.getElementById('qrModal').addEventListener('click', (e) => {
+      if(e.target.id === 'qrModal') closeQrModal();
+    });
+
+    // --- 4. 支付后联系逻辑 ---
     async function handleContact() {
       // 1. 尝试复制 QQ
       try {
@@ -328,6 +489,11 @@
         }
       }, 1200);
     }
+
+    // --- 5. 键盘快捷键关闭模态框 ---
+    document.addEventListener('keydown', (e) => {
+      if(e.key === 'Escape') closeQrModal();
+    });
   </script>
 </body>
 </html>
