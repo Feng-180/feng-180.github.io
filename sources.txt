@@ -1,6 +1,13 @@
-FreeFQ_高频更新#https://raw.githubusercontent.com/freefq/free/master/v2
-Pawdroid_修正源#https://raw.githubusercontent.com/Pawdroid/Free-servers/main/sub
-CyanBird_公益池#https://raw.githubusercontent.com/vpei/Free-Node-Merge/main/out/nodes.txt
-Ermaozi_Clash精选#https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml
-Mahdi_全球聚合#https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/sub/sub_merge.txt
-Anaer_高速节点#https://raw.githubusercontent.com/anaer/Sub/main/clash.yaml
+# 节点源配置
+# 格式：名称#订阅链接
+# 以下为经过筛选的高质量稳定源
+
+# === 精选聚合源 ===
+节点池_多协议聚合#https://raw.githubusercontent.com/peasoft/NoMoreWalls/master/list.txt
+全球节点_自动抓取#https://raw.githubusercontent.com/mfuu/v2ray/master/v2ray
+高速订阅_每日更新#https://raw.githubusercontent.com/aiboboxx/v2rayfree/main/v2
+多国节点_精选合集#https://raw.githubusercontent.com/barry-far/V2ray-Servers/main/Sub
+电报采集_大量节点#https://raw.githubusercontent.com/yebekhe/TelegramV2rayCollector/main/sub/normal/mix
+混合协议_稳定可用#https://raw.githubusercontent.com/vxiaov/free_proxies/main/subscribe/v2ray.txt
+爬虫聚合_自动更新#https://raw.githubusercontent.com/Leon406/SubCrawler/master/sub/share/vless
+永久免费_持续维护#https://raw.githubusercontent.com/Alvin9999/pac2/master/xray/config.json

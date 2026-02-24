@@ -8,22 +8,25 @@
   <meta name="description" content="风の魔法禁书录主控台 - 赛博朋克风格的终端界面，集成联系站长、社群、节点功能。">
   <meta name="keywords" content="魔法禁书录,赛博朋克,终端,节点订阅">
   <meta name="author" content="Feng-180">
-  <meta property="og:title" content="风の魔法禁书录 | TERMINAL V3.0">
+  <meta property="og:title" content="风の魔法禁书录 | 主控台">
   <meta property="og:description" content="赛博朋克风格的主控台终端，集成多功能模块导航。">
   <meta property="og:type" content="website">
   <meta property="og:image" content="logo.png">
   <link rel="icon" type="image/png" href="logo.png">
   <link rel="apple-touch-icon" href="logo.png">
-  <title>风の魔法禁书录 | TERMINAL V3.0</title>
+  <title>风の魔法禁书录 | 主控台</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
-    /* --- SYSTEM CORE V2.1 --- */
+    /* --- 系统核心 --- */
     :root {
       --cyan: #00f2ff;
       --pink: #ff0055;
       --void: #05020a;
       --grid: rgba(0, 242, 255, 0.03);
       --font-code: "JetBrains Mono", "Fira Code", "Consolas", monospace;
-      --font-main: "PingFang SC", "Helvetica Neue", sans-serif;
+      --font-main: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
     }
 
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
@@ -216,7 +219,7 @@
   <canvas id="bg-canvas"></canvas>
 
   <div class="toast" id="sys-toast">
-    <span style="color:var(--pink)">[SYSTEM]</span> <span id="toast-msg">Action Completed</span>
+    <span style="color:var(--pink)">[系统]</span> <span id="toast-msg">操作完成</span>
   </div>
 
   <header class="header">
@@ -224,7 +227,7 @@
     
     <div class="status-bar">
       <div class="status-dot"></div>
-      <div class="typewriter" id="typing-text">INITIALIZING...</div>
+      <div class="typewriter" id="typing-text">系统初始化中...</div>
     </div>
 
     <div class="magic-wrapper">
@@ -244,7 +247,7 @@
       <div class="spectrum">
         <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
       </div>
-      <span class="typewriter" id="track-name" style="font-size:10px;">PLAY AUDIO LOG</span>
+      <span class="typewriter" id="track-name" style="font-size:10px;">播放音乐</span>
     </div>
     <audio id="bgm" src="bgm.mp3" loop></audio>
   </header>
@@ -255,7 +258,7 @@
         <span class="card-title">联系站长</span>
         <div class="icon-arrow"></div>
       </div>
-      <span class="card-sub">CONTACT // QQ: 2902939692</span>
+      <span class="card-sub">站长QQ：2902939692</span>
     </div>
 
     <div class="nav-card" onclick="startLinkProtocol()">
@@ -263,7 +266,7 @@
         <span class="card-title">魔法阵地</span>
         <div class="icon-arrow"></div>
       </div>
-      <span class="card-sub">SYNC // QQ GROUP: 691105381</span>
+      <span class="card-sub">群号：691105381</span>
     </div>
 
     <div class="nav-card" onclick="toggleModal(true)">
@@ -271,29 +274,29 @@
         <span class="card-title">神秘节点</span>
         <div class="icon-arrow"></div>
       </div>
-      <span class="card-sub">DATABASE // PRIVATE ACCESS</span>
+      <span class="card-sub">需要口令验证</span>
     </div>
 
     <a href="guide.html" class="nav-card guide-card">
       <div class="card-head">
-        <span class="card-title">科学上网指南 <span class="hot-badge">HOT</span></span>
+        <span class="card-title">科学上网指南 <span class="hot-badge">热门</span></span>
         <div class="icon-arrow"></div>
       </div>
-      <span class="card-sub">FREEDOM // BYPASS THE WALL</span>
+      <span class="card-sub">解锁互联网自由</span>
     </a>
   </nav>
 
   <footer>
-    <div class="counter">ACCESS COUNT: <span id="visitor-count">0000350859</span></div>
-    <div style="font-size:10px; color:#444; margin-top:8px;">SECURE PROTOCOL // ENCRYPTED v2.1</div>
+    <div class="counter">访问次数：<span id="visitor-count">0000350859</span></div>
+    <div style="font-size:10px; color:#444; margin-top:8px;">风の魔法禁书录</div>
   </footer>
 
   <div class="modal-overlay" id="secret-modal" onclick="if(event.target===this) toggleModal(false)">
     <div class="modal-box">
-      <div style="font-size:12px; color:var(--pink); letter-spacing:2px; margin-bottom:10px; font-weight:bold;">// SECURITY CHECK</div>
-      <div style="font-size:10px; color:#666;">PLEASE ENTER ACCESS KEY</div>
+      <div style="font-size:12px; color:var(--pink); letter-spacing:2px; margin-bottom:10px; font-weight:bold;">安全验证</div>
+      <div style="font-size:10px; color:#666;">请输入访问口令</div>
       <input type="text" id="key-input" class="secret-input" placeholder="输入神秘口令" onkeydown="if(event.key==='Enter')verifyKey()">
-      <button class="btn-exec" onclick="verifyKey()">EXECUTE</button>
+      <button class="btn-exec" onclick="verifyKey()">验证</button>
     </div>
   </div>
 
@@ -307,7 +310,7 @@
     };
 
     // --- 1. 打字机效果 ---
-    const phrases = ["SYSTEM STATUS: ONLINE", "SCANNING NETWORK...", "DETECTING MAGIC...", "WELCOME TRAVELER"];
+    const phrases = ["系统状态：在线", "正在扫描网络...", "检测魔法中...", "欢迎，旅行者"];
     let pIndex = 0, charIndex = 0, isDeleting = false;
     const typeTarget = document.getElementById('typing-text');
 
@@ -402,13 +405,13 @@
       const btn = document.querySelector('.btn-exec');
       const inputHash = await sha256(input.value.trim());
       if(inputHash === CONFIG.accessKeyHash) {
-        btn.style.background = "#0f0"; btn.innerText = "ACCESS GRANTED";
+        btn.style.background = "#0f0"; btn.innerText = "验证通过";
         showToast("身份验证通过");
         setTimeout(() => window.location.href = CONFIG.redirectUrl, 800);
       } else {
-        input.value = ""; btn.style.background = "var(--pink)"; btn.innerText = "DENIED";
+        input.value = ""; btn.style.background = "var(--pink)"; btn.innerText = "验证失败";
         input.placeholder = "口令错误";
-        setTimeout(() => { btn.style.background = "var(--cyan)"; btn.innerText = "EXECUTE"; }, 1500);
+        setTimeout(() => { btn.style.background = "var(--cyan)"; btn.innerText = "验证"; }, 1500);
       }
     }
 
@@ -418,8 +421,8 @@
     const trackName = document.getElementById('track-name');
     function toggleAudio() {
       if(audio.paused) {
-        audio.play().then(() => { playerDeck.classList.add('active'); trackName.innerText = "PLAYING: CYBER_WIND.mp3"; }).catch(() => showToast("请先点击页面以激活音频"));
-      } else { audio.pause(); playerDeck.classList.remove('active'); trackName.innerText = "AUDIO PAUSED"; }
+        audio.play().then(() => { playerDeck.classList.add('active'); trackName.innerText = "正在播放..."; }).catch(() => showToast("请先点击页面以激活音频"));
+      } else { audio.pause(); playerDeck.classList.remove('active'); trackName.innerText = "已暂停"; }
     }
 
     // --- 6. 随机访客数 ---

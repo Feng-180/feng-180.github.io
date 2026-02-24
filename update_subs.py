@@ -12,10 +12,14 @@ CHECK_TIMEOUT = 10               # URL 可用性检测超时（秒）
 
 # 默认源 (如果用户没有 sources.txt)
 DEFAULT_SOURCES = """
-V2Ray-Aggregator#https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/sub/sub_merge.txt
-Clash-Yaml-HighSpeed#https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml
-Pawdroid-Base64#https://raw.githubusercontent.com/Pawdroid/Free-servers/main/sub
-Free18-Daily#https://raw.githubusercontent.com/free18/v2ray/main/subscribe
+节点池_多协议聚合#https://raw.githubusercontent.com/peasoft/NoMoreWalls/master/list.txt
+全球节点_自动抓取#https://raw.githubusercontent.com/mfuu/v2ray/master/v2ray
+高速订阅_每日更新#https://raw.githubusercontent.com/aiboboxx/v2rayfree/main/v2
+多国节点_精选合集#https://raw.githubusercontent.com/barry-far/V2ray-Servers/main/Sub
+电报采集_大量节点#https://raw.githubusercontent.com/yebekhe/TelegramV2rayCollector/main/sub/normal/mix
+混合协议_稳定可用#https://raw.githubusercontent.com/vxiaov/free_proxies/main/subscribe/v2ray.txt
+爬虫聚合_自动更新#https://raw.githubusercontent.com/Leon406/SubCrawler/master/sub/share/vless
+永久免费_持续维护#https://raw.githubusercontent.com/Alvin9999/pac2/master/xray/config.json
 """
 # ===========================================
 
@@ -32,17 +36,20 @@ def get_html_template(cards_html, update_time, total_count):
   <meta name="theme-color" content="#05020a">
   <meta name="description" content="全球节点订阅库 - 实时更新的高速节点列表，支持一键复制和Clash导入。">
   <meta name="author" content="Feng-180">
-  <meta property="og:title" content="风の数据流 | NODE STREAM">
+  <meta property="og:title" content="风の数据流 | 节点订阅库">
   <meta property="og:description" content="全球节点订阅库，Matrix代码雨风格界面。">
   <meta property="og:type" content="website">
   <meta property="og:image" content="logo.png">
   <link rel="icon" type="image/png" href="logo.png">
   <link rel="apple-touch-icon" href="logo.png">
-  <title>风の数据流 | NODE STREAM</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700;900&display=swap" rel="stylesheet">
+  <title>风の数据流 | 节点订阅库</title>
   <style>
-    :root {{ --cyan: #00f2ff; --pink: #ff0055; --void: #05020a; --card-bg: rgba(16, 20, 30, 0.7); --font-code: "Consolas", monospace; }}
+    :root {{ --cyan: #00f2ff; --pink: #ff0055; --void: #05020a; --card-bg: rgba(16, 20, 30, 0.7); --font-code: "Consolas", monospace; --font-main: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; }}
     * {{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }}
-    body {{ margin: 0; background: var(--void); color: #fff; font-family: sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding-bottom: 80px; overflow-x: hidden; }}
+    body {{ margin: 0; background: var(--void); color: #fff; font-family: var(--font-main); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding-bottom: 80px; overflow-x: hidden; }}
     #matrix-canvas {{ position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.3; }}
     
     .header-group {{ width: 90%; max-width: 600px; margin-top: 50px; position: relative; z-index: 2; }}
@@ -110,31 +117,31 @@ def get_html_template(cards_html, update_time, total_count):
 </head>
 <body>
   <canvas id="matrix-canvas"></canvas>
-  <div id="toast">LINK COPIED</div>
+  <div id="toast">链接已复制</div>
 
   <div class="header-group">
-    <div class="status-badge">SYSTEM ONLINE</div>
+    <div class="status-badge">系统在线</div>
     <div class="page-title">全球节点订阅库</div>
-    <div class="update-time">LAST SYNC: {update_time}</div>
+    <div class="update-time">最后更新：{update_time}</div>
   </div>
 
   <div class="search-box">
     <span class="search-icon">&#9906;</span>
-    <input type="text" class="search-input" id="searchInput" placeholder="SEARCH NODES..." oninput="filterNodes()">
+    <input type="text" class="search-input" id="searchInput" placeholder="搜索节点..." oninput="filterNodes()">
   </div>
 
   <div class="stats-bar">
-    <div class="stats-info">NODES: <span id="nodeCount">{total_count}</span> / <span id="totalCount">{total_count}</span></div>
-    <button class="btn-copy-all" onclick="copyAllLinks()">COPY ALL LINKS</button>
+    <div class="stats-info">节点：<span id="nodeCount">{total_count}</span> / <span id="totalCount">{total_count}</span></div>
+    <button class="btn-copy-all" onclick="copyAllLinks()">复制全部链接</button>
   </div>
 
   <div class="card-grid" id="cardGrid">
     {cards_html}
   </div>
 
-  <div class="no-results" id="noResults">NO MATCHING NODES FOUND</div>
+  <div class="no-results" id="noResults">未找到匹配的节点</div>
 
-  <a href="portal.html" class="back-btn">DISCONNECT // 返回</a>
+  <a href="portal.html" class="back-btn">返回主控台</a>
 
   <div class="scroll-top" id="scrollTop" onclick="window.scrollTo({{top:0,behavior:'smooth'}})">&#8593;</div>
 
@@ -168,7 +175,7 @@ def get_html_template(cards_html, update_time, total_count):
       const t = document.getElementById('toast');
       try {{
         await navigator.clipboard.writeText(text);
-        t.innerText = "COPIED SUCCESSFUL";
+        t.innerText = "复制成功";
       }} catch (err) {{
         const ta = document.createElement("textarea");
         ta.value = text;
@@ -176,7 +183,7 @@ def get_html_template(cards_html, update_time, total_count):
         ta.select();
         document.execCommand('copy');
         document.body.removeChild(ta);
-        t.innerText = "COPIED (FALLBACK)";
+        t.innerText = "复制成功（备用方式）";
       }}
       t.classList.add('show');
       setTimeout(()=>t.classList.remove('show'), 2000);
@@ -207,7 +214,7 @@ def get_html_template(cards_html, update_time, total_count):
       }});
       await copyText(links.join('\\n'));
       const t = document.getElementById('toast');
-      t.innerText = `COPIED ${{links.length}} LINKS`;
+      t.innerText = `已复制 ${{links.length}} 条链接`;
       t.classList.add('show');
       setTimeout(() => t.classList.remove('show'), 2000);
     }}
@@ -292,13 +299,13 @@ def process_data():
                 if is_active:
                     stats["active"] += 1
                     tag_class = "active"
-                    tag_text = "ACTIVE"
+                    tag_text = "在线"
                     card_class = ""
                     print(f"OK ({status})")
                 else:
                     stats["offline"] += 1
                     tag_class = "offline"
-                    tag_text = "OFFLINE"
+                    tag_text = "离线"
                     card_class = " offline"
                     print(f"FAIL ({status})")
 

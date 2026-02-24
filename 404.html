@@ -6,12 +6,14 @@
   <meta name="theme-color" content="#05020a">
   <meta name="description" content="404 - 页面未找到">
   <link rel="icon" type="image/png" href="logo.png">
-  <title>404 | SIGNAL LOST</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700;900&display=swap" rel="stylesheet">
+  <title>404 | 页面丢失</title>
   <style>
-    :root { --cyan: #00f2ff; --pink: #ff0055; --void: #05020a; --font-code: "JetBrains Mono", "Consolas", monospace; }
+    :root { --cyan: #00f2ff; --pink: #ff0055; --void: #05020a; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background: var(--void); color: #fff; font-family: var(--font-code);
+      background: var(--void); color: #fff;
+      font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
       min-height: 100vh; display: flex; flex-direction: column;
       align-items: center; justify-content: center;
       overflow: hidden; user-select: none;
@@ -21,7 +23,6 @@
       background-size: 30px 30px;
     }
 
-    /* 扫描线 */
     body::before {
       content: ""; position: fixed; inset: 0; z-index: 900; pointer-events: none;
       background: linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.25) 50%),
@@ -59,21 +60,21 @@
     }
 
     .error-label {
-      font-size: 14px; color: var(--pink); letter-spacing: 8px;
-      margin: 15px 0 30px; text-transform: uppercase;
+      font-size: 16px; color: var(--pink); letter-spacing: 6px;
+      margin: 15px 0 30px; font-weight: 700;
       animation: blink-text 2s infinite;
     }
 
     .error-msg {
-      font-size: 12px; color: #555; line-height: 1.8;
+      font-size: 13px; color: #888; line-height: 1.8;
       margin-bottom: 35px;
     }
-    .error-msg .highlight { color: var(--cyan); }
 
     .terminal-box {
       background: rgba(0,0,0,0.5); border: 1px solid #222;
       border-radius: 6px; padding: 20px; text-align: left;
-      margin-bottom: 30px; font-size: 11px; line-height: 2;
+      margin-bottom: 30px; font-size: 12px; line-height: 2;
+      font-family: "Consolas", monospace;
     }
     .terminal-box .prompt { color: var(--cyan); }
     .terminal-box .error { color: var(--pink); }
@@ -88,7 +89,7 @@
       display: inline-block; padding: 14px 40px;
       border: 1px solid var(--cyan); color: var(--cyan);
       text-decoration: none; border-radius: 50px;
-      font-family: var(--font-code); font-size: 12px;
+      font-size: 13px; font-weight: 700;
       letter-spacing: 2px; transition: 0.3s;
       position: relative; overflow: hidden;
     }
@@ -142,28 +143,27 @@
 
   <div class="container">
     <div class="error-code">404</div>
-    <div class="error-label">SIGNAL LOST</div>
+    <div class="error-label">信号丢失</div>
 
     <div class="terminal-box">
-      <div><span class="prompt">root@feng-180:~$</span> locate page</div>
-      <div><span class="error">ERROR:</span> Requested resource not found</div>
-      <div><span class="dim">// The page you are looking for has been</span></div>
-      <div><span class="dim">// moved, deleted, or never existed.</span></div>
-      <div><span class="prompt">root@feng-180:~$</span> suggest --fix<span class="cursor"></span></div>
+      <div><span class="prompt">feng-180:~$</span> 查找页面</div>
+      <div><span class="error">错误：</span>请求的资源未找到</div>
+      <div><span class="dim">// 该页面可能已被移动、删除</span></div>
+      <div><span class="dim">// 或者从未存在过。</span></div>
+      <div><span class="prompt">feng-180:~$</span> 修复建议<span class="cursor"></span></div>
     </div>
 
     <div class="error-msg">
-      <span class="highlight">[SYSTEM]</span> 目标页面信号丢失<br>
-      建议返回主控台重新建立连接
+      目标页面信号丢失<br>
+      建议返回首页重新建立连接
     </div>
 
-    <a href="index.html" class="btn-home">RECONNECT // 返回首页</a>
+    <a href="index.html" class="btn-home">返回首页</a>
 
-    <div class="footer-text">SECURE PROTOCOL // FENG-180 NETWORK</div>
+    <div class="footer-text">风の魔法禁书录</div>
   </div>
 
   <script>
-    // 粒子背景
     const cvs = document.getElementById('bg-canvas'), ctx = cvs.getContext('2d');
     let w, h, particles = [];
     function init() {
