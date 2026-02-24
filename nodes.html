@@ -3,6 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#05020a">
+  <meta name="description" content="全球节点订阅库 - 实时更新的高速节点列表，支持一键复制和Clash导入。">
+  <meta name="author" content="Feng-180">
+  <meta property="og:title" content="风の数据流 | NODE STREAM">
+  <meta property="og:description" content="全球节点订阅库，Matrix代码雨风格界面。">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="logo.png">
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="apple-touch-icon" href="logo.png">
   <title>风の数据流 | NODE STREAM</title>
   <style>
     :root { --cyan: #00f2ff; --pink: #ff0055; --void: #05020a; --card-bg: rgba(16, 20, 30, 0.7); --font-code: "Consolas", monospace; }
@@ -38,6 +47,64 @@
 
     #toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100%); background: rgba(10,15,20,0.9); border: 1px solid var(--cyan); color: var(--cyan); padding: 10px 20px; border-radius: 4px; font-size: 12px; z-index: 999; opacity: 0; transition: 0.3s; }
     #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+    /* 搜索框 */
+    .search-box {
+      width: 90%; max-width: 600px; z-index: 2; margin-bottom: 15px;
+      position: relative;
+    }
+    .search-input {
+      width: 100%; padding: 12px 15px 12px 40px;
+      background: rgba(16, 20, 30, 0.7); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px; color: var(--cyan); font-family: var(--font-code);
+      font-size: 12px; backdrop-filter: blur(10px); transition: 0.3s;
+    }
+    .search-input::placeholder { color: #555; }
+    .search-input:focus { border-color: var(--cyan); box-shadow: 0 0 15px rgba(0,242,255,0.1); }
+    .search-icon {
+      position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+      color: #555; font-size: 14px; pointer-events: none;
+    }
+
+    /* 统计栏 */
+    .stats-bar {
+      width: 90%; max-width: 600px; z-index: 2;
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 15px; font-family: var(--font-code); font-size: 10px;
+    }
+    .stats-info { color: #666; }
+    .stats-info span { color: var(--cyan); }
+    .btn-copy-all {
+      padding: 6px 14px; border: 1px solid #333; border-radius: 4px;
+      color: #888; font-size: 10px; cursor: pointer; transition: 0.3s;
+      background: transparent; font-family: var(--font-code);
+    }
+    .btn-copy-all:hover { border-color: var(--pink); color: var(--pink); background: rgba(255,0,85,0.05); }
+
+    /* 回到顶部按钮 */
+    .scroll-top {
+      position: fixed; bottom: 30px; right: 20px; z-index: 100;
+      width: 40px; height: 40px; border-radius: 50%;
+      background: rgba(16, 20, 30, 0.8); border: 1px solid var(--cyan);
+      color: var(--cyan); font-size: 18px; cursor: pointer;
+      display: none; align-items: center; justify-content: center;
+      transition: 0.3s; backdrop-filter: blur(10px);
+    }
+    .scroll-top:hover { background: var(--cyan); color: #000; box-shadow: 0 0 20px var(--cyan); }
+    .scroll-top.visible { display: flex; }
+
+    /* 卡片入场动画 */
+    @keyframes cardFadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .card { opacity: 0; animation: cardFadeIn 0.4s ease forwards; }
+    .card:nth-child(1) { animation-delay: 0.05s; }
+    .card:nth-child(2) { animation-delay: 0.1s; }
+    .card:nth-child(3) { animation-delay: 0.15s; }
+    .card:nth-child(4) { animation-delay: 0.2s; }
+    .card:nth-child(5) { animation-delay: 0.25s; }
+    .card:nth-child(6) { animation-delay: 0.3s; }
+
+    /* 无结果提示 */
+    .no-results { display: none; text-align: center; color: #555; font-family: var(--font-code); font-size: 12px; padding: 40px 0; z-index: 2; }
   </style>
 </head>
 <body>
@@ -50,7 +117,19 @@
     <div class="update-time">LAST SYNC: 2026-02-23 22:42:26</div>
   </div>
 
-  <div class="card-grid">
+  <!-- 搜索框 -->
+  <div class="search-box">
+    <span class="search-icon">&#9906;</span>
+    <input type="text" class="search-input" id="searchInput" placeholder="SEARCH NODES..." oninput="filterNodes()">
+  </div>
+
+  <!-- 统计栏 -->
+  <div class="stats-bar">
+    <div class="stats-info">NODES: <span id="nodeCount">6</span> / <span id="totalCount">6</span></div>
+    <button class="btn-copy-all" onclick="copyAllLinks()">COPY ALL LINKS</button>
+  </div>
+
+  <div class="card-grid" id="cardGrid">
     
     <div class="card">
       <div class="c-top">
@@ -126,7 +205,12 @@
 
   </div>
 
-  <a href="index.html" class="back-btn">DISCONNECT // 返回</a>
+  <div class="no-results" id="noResults">NO MATCHING NODES FOUND</div>
+
+  <a href="portal.html" class="back-btn">DISCONNECT // 返回</a>
+
+  <!-- 回到顶部按钮 -->
+  <div class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">&#8593;</div>
 
   <script>
     const canvas = document.getElementById('matrix-canvas');
@@ -171,6 +255,52 @@
       t.classList.add('show');
       setTimeout(()=>t.classList.remove('show'), 2000);
     }
+
+    // --- 搜索过滤 ---
+    function filterNodes() {
+      const keyword = document.getElementById('searchInput').value.toLowerCase();
+      const cards = document.querySelectorAll('#cardGrid .card');
+      let visibleCount = 0;
+
+      cards.forEach(card => {
+        const name = card.querySelector('.c-name').textContent.toLowerCase();
+        const link = card.querySelector('.link-box').textContent.toLowerCase();
+        const match = name.includes(keyword) || link.includes(keyword);
+        card.style.display = match ? '' : 'none';
+        if (match) visibleCount++;
+      });
+
+      document.getElementById('nodeCount').textContent = visibleCount;
+      document.getElementById('noResults').style.display = visibleCount === 0 ? 'block' : 'none';
+    }
+
+    // --- 一键复制全部链接 ---
+    async function copyAllLinks() {
+      const cards = document.querySelectorAll('#cardGrid .card');
+      const links = [];
+      cards.forEach(card => {
+        if (card.style.display !== 'none') {
+          links.push(card.querySelector('.link-box').textContent.trim());
+        }
+      });
+      await copyText(links.join('\n'));
+      const t = document.getElementById('toast');
+      t.innerText = `COPIED ${links.length} LINKS`;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2000);
+    }
+
+    // --- 初始化节点计数 ---
+    const totalNodes = document.querySelectorAll('#cardGrid .card').length;
+    document.getElementById('totalCount').textContent = totalNodes;
+    document.getElementById('nodeCount').textContent = totalNodes;
+
+    // --- 回到顶部按钮 ---
+    window.addEventListener('scroll', () => {
+      const btn = document.getElementById('scrollTop');
+      if (window.scrollY > 300) btn.classList.add('visible');
+      else btn.classList.remove('visible');
+    });
   </script>
 </body>
 </html>

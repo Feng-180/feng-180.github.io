@@ -5,6 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="theme-color" content="#05020a">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="description" content="风の魔法禁书录主控台 - 赛博朋克风格的终端界面，集成教程、节点、社群功能。">
+  <meta name="keywords" content="魔法禁书录,赛博朋克,终端,节点订阅">
+  <meta name="author" content="Feng-180">
+  <meta property="og:title" content="风の魔法禁书录 | TERMINAL V2.1">
+  <meta property="og:description" content="赛博朋克风格的主控台终端，集成多功能模块导航。">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="logo.png">
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="apple-touch-icon" href="logo.png">
   <title>风の魔法禁书录 | TERMINAL V2.1</title>
   <style>
     /* --- SYSTEM CORE V2.1 --- */
@@ -167,6 +176,7 @@
     @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
     @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
     @keyframes equalizer { 0% { height: 4px; } 100% { height: 14px; } }
+    @keyframes pulse { 0%,100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.05); opacity: 1; } }
     @keyframes glitch-skew {
       0% { transform: skew(0deg); }
       20% { transform: skew(-2deg); }
@@ -175,6 +185,12 @@
       80% { transform: skew(1deg); }
       100% { transform: skew(0deg); }
     }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    .nav-card { opacity: 0; animation: fadeInUp 0.6s ease forwards; }
+    .nav-card:nth-child(1) { animation-delay: 0.1s; }
+    .nav-card:nth-child(2) { animation-delay: 0.2s; }
+    .nav-card:nth-child(3) { animation-delay: 0.3s; }
+    .nav-card:nth-child(4) { animation-delay: 0.4s; }
   </style>
 </head>
 <body>
@@ -258,7 +274,7 @@
     <div class="modal-box">
       <div style="font-size:12px; color:var(--pink); letter-spacing:2px; margin-bottom:10px; font-weight:bold;">// SECURITY CHECK</div>
       <div style="font-size:10px; color:#666;">PLEASE ENTER ACCESS KEY</div>
-      <input type="text" id="key-input" class="secret-input" placeholder="输入神秘口令">
+      <input type="text" id="key-input" class="secret-input" placeholder="输入神秘口令" onkeydown="if(event.key==='Enter')verifyKey()">
       <button class="btn-exec" onclick="verifyKey()">EXECUTE</button>
     </div>
   </div>
@@ -340,7 +356,7 @@
       setTimeout(() => {
         const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
         if(isMobile) window.location.href = `mqqapi://card/show_pslcard?src_type=internal&version=1&uin=${CONFIG.qqGroup}&card_type=group&source=qrcode`;
-        else window.open(`https://qm.qq.com/cgi-bin/qm/qr?k=YOUR_KEY_HERE&jump_from=webapi`, '_blank');
+        else window.open(`https://qm.qq.com/q/wMqfnG2Sp`, '_blank');
       }, 1000);
     }
 
@@ -389,6 +405,11 @@
     function goToPayment() {
       window.location.href = 'tutorial.html';
     }
+
+    // --- 8. 键盘快捷键 ---
+    document.addEventListener('keydown', (e) => {
+      if(e.key === 'Escape') toggleModal(false);
+    });
   </script>
 </body>
 </html>

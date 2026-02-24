@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#05020a">
+  <meta name="description" content="404 - 页面未找到">
+  <link rel="icon" type="image/png" href="logo.png">
+  <title>404 | SIGNAL LOST</title>
+  <style>
+    :root { --cyan: #00f2ff; --pink: #ff0055; --void: #05020a; --font-code: "JetBrains Mono", "Consolas", monospace; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--void); color: #fff; font-family: var(--font-code);
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      overflow: hidden; user-select: none;
+      background-image:
+        linear-gradient(rgba(0, 242, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 242, 255, 0.03) 1px, transparent 1px);
+      background-size: 30px 30px;
+    }
+
+    /* 扫描线 */
+    body::before {
+      content: ""; position: fixed; inset: 0; z-index: 900; pointer-events: none;
+      background: linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,0.25) 50%),
+        linear-gradient(90deg, rgba(255,0,0,0.06), rgba(0,255,0,0.02), rgba(0,0,255,0.06));
+      background-size: 100% 2px, 3px 100%;
+    }
+
+    #bg-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+    .container {
+      position: relative; z-index: 10; text-align: center;
+      padding: 40px; max-width: 500px;
+    }
+
+    .error-code {
+      font-size: clamp(80px, 20vw, 150px); font-weight: 900;
+      line-height: 1; letter-spacing: -5px;
+      background: linear-gradient(135deg, var(--cyan), var(--pink));
+      -webkit-background-clip: text; color: transparent;
+      position: relative;
+      animation: glitch-text 3s infinite;
+    }
+
+    .error-code::before, .error-code::after {
+      content: "404"; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      -webkit-background-clip: text; background-clip: text;
+    }
+    .error-code::before {
+      color: var(--cyan); z-index: -1;
+      animation: glitch-1 2s infinite linear alternate-reverse;
+    }
+    .error-code::after {
+      color: var(--pink); z-index: -2;
+      animation: glitch-2 3s infinite linear alternate-reverse;
+    }
+
+    .error-label {
+      font-size: 14px; color: var(--pink); letter-spacing: 8px;
+      margin: 15px 0 30px; text-transform: uppercase;
+      animation: blink-text 2s infinite;
+    }
+
+    .error-msg {
+      font-size: 12px; color: #555; line-height: 1.8;
+      margin-bottom: 35px;
+    }
+    .error-msg .highlight { color: var(--cyan); }
+
+    .terminal-box {
+      background: rgba(0,0,0,0.5); border: 1px solid #222;
+      border-radius: 6px; padding: 20px; text-align: left;
+      margin-bottom: 30px; font-size: 11px; line-height: 2;
+    }
+    .terminal-box .prompt { color: var(--cyan); }
+    .terminal-box .error { color: var(--pink); }
+    .terminal-box .dim { color: #444; }
+    .terminal-box .cursor {
+      display: inline-block; width: 8px; height: 14px;
+      background: var(--cyan); animation: cursor-blink 1s infinite;
+      vertical-align: text-bottom; margin-left: 4px;
+    }
+
+    .btn-home {
+      display: inline-block; padding: 14px 40px;
+      border: 1px solid var(--cyan); color: var(--cyan);
+      text-decoration: none; border-radius: 50px;
+      font-family: var(--font-code); font-size: 12px;
+      letter-spacing: 2px; transition: 0.3s;
+      position: relative; overflow: hidden;
+    }
+    .btn-home:hover {
+      background: var(--cyan); color: #000;
+      box-shadow: 0 0 30px rgba(0, 242, 255, 0.4);
+    }
+    .btn-home::before {
+      content: ""; position: absolute; top: 0; left: -100%;
+      width: 50%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transform: skewX(-25deg); transition: 0.5s;
+    }
+    .btn-home:hover::before { left: 150%; }
+
+    .footer-text {
+      margin-top: 40px; font-size: 10px; color: #333;
+      letter-spacing: 2px;
+    }
+
+    @keyframes glitch-1 {
+      0% { clip-path: inset(40% 0 61% 0); transform: translate(-2px, -1px); }
+      20% { clip-path: inset(92% 0 1% 0); transform: translate(1px, 2px); }
+      40% { clip-path: inset(43% 0 1% 0); transform: translate(-1px, 3px); }
+      60% { clip-path: inset(25% 0 58% 0); transform: translate(3px, -1px); }
+      80% { clip-path: inset(54% 0 7% 0); transform: translate(-3px, 2px); }
+      100% { clip-path: inset(58% 0 43% 0); transform: translate(2px, -2px); }
+    }
+    @keyframes glitch-2 {
+      0% { clip-path: inset(65% 0 13% 0); transform: translate(2px, 1px); }
+      20% { clip-path: inset(15% 0 62% 0); transform: translate(-1px, -2px); }
+      40% { clip-path: inset(79% 0 2% 0); transform: translate(1px, -1px); }
+      60% { clip-path: inset(28% 0 55% 0); transform: translate(-2px, 3px); }
+      80% { clip-path: inset(3% 0 85% 0); transform: translate(3px, 1px); }
+      100% { clip-path: inset(42% 0 30% 0); transform: translate(-1px, -3px); }
+    }
+    @keyframes glitch-text {
+      0%, 95% { opacity: 1; }
+      96% { opacity: 0.8; transform: translate(-2px, 1px); }
+      97% { opacity: 1; transform: translate(0); }
+      98% { opacity: 0.9; transform: translate(1px, -1px); }
+      99% { opacity: 1; transform: translate(0); }
+    }
+    @keyframes blink-text { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    @keyframes cursor-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+  </style>
+</head>
+<body>
+
+  <canvas id="bg-canvas"></canvas>
+
+  <div class="container">
+    <div class="error-code">404</div>
+    <div class="error-label">SIGNAL LOST</div>
+
+    <div class="terminal-box">
+      <div><span class="prompt">root@feng-180:~$</span> locate page</div>
+      <div><span class="error">ERROR:</span> Requested resource not found</div>
+      <div><span class="dim">// The page you are looking for has been</span></div>
+      <div><span class="dim">// moved, deleted, or never existed.</span></div>
+      <div><span class="prompt">root@feng-180:~$</span> suggest --fix<span class="cursor"></span></div>
+    </div>
+
+    <div class="error-msg">
+      <span class="highlight">[SYSTEM]</span> 目标页面信号丢失<br>
+      建议返回主控台重新建立连接
+    </div>
+
+    <a href="index.html" class="btn-home">RECONNECT // 返回首页</a>
+
+    <div class="footer-text">SECURE PROTOCOL // FENG-180 NETWORK</div>
+  </div>
+
+  <script>
+    // 粒子背景
+    const cvs = document.getElementById('bg-canvas'), ctx = cvs.getContext('2d');
+    let w, h, particles = [];
+    function init() {
+      w = cvs.width = window.innerWidth; h = cvs.height = window.innerHeight;
+      particles = [];
+      const cnt = w < 600 ? 30 : 60;
+      for(let i = 0; i < cnt; i++) {
+        particles.push({
+          x: Math.random()*w, y: Math.random()*h,
+          vx: (Math.random()-0.5)*0.4, vy: (Math.random()-0.5)*0.4,
+          size: Math.random()*1.2,
+          color: Math.random() > 0.5 ? '#00f2ff' : '#ff0055'
+        });
+      }
+    }
+    function draw() {
+      ctx.clearRect(0, 0, w, h);
+      particles.forEach((p, i) => {
+        p.x += p.vx; p.y += p.vy;
+        if(p.x < 0 || p.x > w) p.vx *= -1;
+        if(p.y < 0 || p.y > h) p.vy *= -1;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+        ctx.fillStyle = p.color; ctx.globalAlpha = 0.4; ctx.fill();
+        for(let j = i+1; j < particles.length; j++) {
+          let p2 = particles[j], dist = Math.hypot(p.x-p2.x, p.y-p2.y);
+          if(dist < 100) {
+            ctx.beginPath(); ctx.strokeStyle = `rgba(0, 242, 255, ${0.1 * (1-dist/100)})`;
+            ctx.lineWidth = 0.3; ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
+          }
+        }
+      });
+      ctx.globalAlpha = 1;
+      requestAnimationFrame(draw);
+    }
+    window.addEventListener('resize', init);
+    init(); draw();
+  </script>
+</body>
+</html>
