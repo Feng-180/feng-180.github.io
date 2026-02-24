@@ -5,16 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="theme-color" content="#05020a">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="description" content="风の魔法禁书录主控台 - 赛博朋克风格的终端界面，集成教程、节点、社群功能。">
+  <meta name="description" content="风の魔法禁书录主控台 - 赛博朋克风格的终端界面，集成联系站长、社群、节点功能。">
   <meta name="keywords" content="魔法禁书录,赛博朋克,终端,节点订阅">
   <meta name="author" content="Feng-180">
-  <meta property="og:title" content="风の魔法禁书录 | TERMINAL V2.1">
+  <meta property="og:title" content="风の魔法禁书录 | TERMINAL V3.0">
   <meta property="og:description" content="赛博朋克风格的主控台终端，集成多功能模块导航。">
   <meta property="og:type" content="website">
   <meta property="og:image" content="logo.png">
   <link rel="icon" type="image/png" href="logo.png">
   <link rel="apple-touch-icon" href="logo.png">
-  <title>风の魔法禁书录 | TERMINAL V2.1</title>
+  <title>风の魔法禁书录 | TERMINAL V3.0</title>
   <style>
     /* --- SYSTEM CORE V2.1 --- */
     :root {
@@ -117,16 +117,16 @@
     .icon-arrow { width: 8px; height: 8px; border-top: 2px solid #555; border-right: 2px solid #555; transform: rotate(45deg); transition: 0.3s; }
     .nav-card:hover .icon-arrow { border-color: var(--cyan); transform: rotate(45deg) translate(3px, -3px); }
 
-    /* 支付入口卡片 */
-    .nav-card.payment-card {
-      border-left-color: var(--pink);
-      background: linear-gradient(145deg, rgba(255,0,85,0.08), rgba(10,10,15,0.8));
+    /* 联系站长卡片 */
+    .nav-card.contact-card {
+      border-left-color: #ffa500;
+      background: linear-gradient(145deg, rgba(255,165,0,0.06), rgba(10,10,15,0.8));
     }
-    .nav-card.payment-card:hover {
-      border-left-color: var(--pink);
-      box-shadow: 0 5px 30px rgba(255, 0, 85, 0.2);
+    .nav-card.contact-card:hover {
+      border-left-color: #ffa500;
+      box-shadow: 0 5px 30px rgba(255, 165, 0, 0.2);
     }
-    .nav-card.payment-card .card-sub { color: var(--pink); }
+    .nav-card.contact-card .card-sub { color: #ffa500; }
 
     .toast {
       position: fixed; top: -50px; left: 50%; transform: translateX(-50%);
@@ -188,9 +188,8 @@
     @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
     .nav-card { opacity: 0; animation: fadeInUp 0.6s ease forwards; }
     .nav-card:nth-child(1) { animation-delay: 0.1s; }
-    .nav-card:nth-child(2) { animation-delay: 0.2s; }
-    .nav-card:nth-child(3) { animation-delay: 0.3s; }
-    .nav-card:nth-child(4) { animation-delay: 0.4s; }
+    .nav-card:nth-child(2) { animation-delay: 0.25s; }
+    .nav-card:nth-child(3) { animation-delay: 0.4s; }
   </style>
 </head>
 <body>
@@ -232,13 +231,13 @@
   </header>
 
   <nav class="nav-grid">
-    <a href="tutorial.html" class="nav-card">
+    <div class="nav-card contact-card" onclick="contactOwner()">
       <div class="card-head">
-        <span class="card-title">使用教程</span>
+        <span class="card-title">联系站长</span>
         <div class="icon-arrow"></div>
       </div>
-      <span class="card-sub">MANUAL // USER GUIDE V3.1</span>
-    </a>
+      <span class="card-sub">CONTACT // QQ: 2902939692</span>
+    </div>
 
     <div class="nav-card" onclick="startLinkProtocol()">
       <div class="card-head">
@@ -254,14 +253,6 @@
         <div class="icon-arrow"></div>
       </div>
       <span class="card-sub">DATABASE // PRIVATE ACCESS</span>
-    </div>
-
-    <div class="nav-card payment-card" onclick="goToPayment()">
-      <div class="card-head">
-        <span class="card-title">💳 赞助支持</span>
-        <div class="icon-arrow"></div>
-      </div>
-      <span class="card-sub">PAYMENT // WECHAT & ALIPAY</span>
     </div>
   </nav>
 
@@ -282,6 +273,7 @@
   <script>
     // --- 核心配置 ---
     const CONFIG = {
+      ownerQQ: "2902939692",
       qqGroup: "691105381",
       accessKey: "资源风888",
       redirectUrl: "nodes.html"
@@ -401,9 +393,23 @@
       el.innerText = (count + Math.floor(Math.random() * 3)).toString().padStart(10, '0');
     }, 5000);
 
-    // --- 7. 支付入口 ---
-    function goToPayment() {
-      window.location.href = 'tutorial.html';
+    // --- 7. 联系站长 ---
+    async function contactOwner() {
+      try {
+        await navigator.clipboard.writeText(CONFIG.ownerQQ);
+        showToast(`站长QQ ${CONFIG.ownerQQ} 已复制`);
+      } catch (err) {
+        const ta = document.createElement('textarea'); ta.value = CONFIG.ownerQQ; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+        showToast("站长QQ已复制到剪贴板");
+      }
+      setTimeout(() => {
+        const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+        if(isMobile) {
+          window.location.href = `mqqapi://card/show_pslcard?src_type=internal&version=1&uin=${CONFIG.ownerQQ}&card_type=person&source=qrcode`;
+        } else {
+          window.open(`tencent://message/?uin=${CONFIG.ownerQQ}&Site=Sambow&Menu=yes`, '_blank');
+        }
+      }, 1000);
     }
 
     // --- 8. 键盘快捷键 ---
