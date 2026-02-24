@@ -128,6 +128,24 @@
     }
     .nav-card.contact-card .card-sub { color: #ffa500; }
 
+    /* 科学上网卡片 */
+    .nav-card.guide-card {
+      border-left-color: #a855f7;
+      background: linear-gradient(145deg, rgba(168,85,247,0.08), rgba(10,10,15,0.8));
+    }
+    .nav-card.guide-card:hover {
+      border-left-color: #a855f7;
+      box-shadow: 0 5px 30px rgba(168, 85, 247, 0.25);
+    }
+    .nav-card.guide-card .card-sub { color: #a855f7; }
+    .nav-card.guide-card .card-title { display: flex; align-items: center; gap: 6px; }
+    .hot-badge {
+      font-size: 9px; padding: 1px 6px; background: var(--pink); color: #fff;
+      border-radius: 3px; font-family: var(--font-code); animation: hotPulse 1.5s infinite;
+      letter-spacing: 0;
+    }
+    @keyframes hotPulse { 0%,100% { opacity: 1; } 50% { opacity: 0.6; } }
+
     .toast {
       position: fixed; top: -50px; left: 50%; transform: translateX(-50%);
       background: rgba(0, 242, 255, 0.1); border: 1px solid var(--cyan);
@@ -188,8 +206,9 @@
     @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
     .nav-card { opacity: 0; animation: fadeInUp 0.6s ease forwards; }
     .nav-card:nth-child(1) { animation-delay: 0.1s; }
-    .nav-card:nth-child(2) { animation-delay: 0.25s; }
-    .nav-card:nth-child(3) { animation-delay: 0.4s; }
+    .nav-card:nth-child(2) { animation-delay: 0.2s; }
+    .nav-card:nth-child(3) { animation-delay: 0.3s; }
+    .nav-card:nth-child(4) { animation-delay: 0.4s; }
   </style>
 </head>
 <body>
@@ -254,6 +273,14 @@
       </div>
       <span class="card-sub">DATABASE // PRIVATE ACCESS</span>
     </div>
+
+    <a href="guide.html" class="nav-card guide-card">
+      <div class="card-head">
+        <span class="card-title">科学上网指南 <span class="hot-badge">HOT</span></span>
+        <div class="icon-arrow"></div>
+      </div>
+      <span class="card-sub">FREEDOM // BYPASS THE WALL</span>
+    </a>
   </nav>
 
   <footer>
@@ -275,7 +302,7 @@
     const CONFIG = {
       ownerQQ: "2902939692",
       qqGroup: "691105381",
-      accessKey: "资源风888",
+      accessKeyHash: "7ba42c5088a273f88721285565edbdd83dced31328a8fb2a9b48c593a0890673",
       redirectUrl: "nodes.html"
     };
 
@@ -348,8 +375,16 @@
       setTimeout(() => {
         const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
         if(isMobile) window.location.href = `mqqapi://card/show_pslcard?src_type=internal&version=1&uin=${CONFIG.qqGroup}&card_type=group&source=qrcode`;
-        else window.open(`https://qm.qq.com/q/wMqfnG2Sp`, '_blank');
+        else window.open(`https://qm.qq.com/q/UZVqUAkC8m`, '_blank');
       }, 1000);
+    }
+
+    // --- SHA-256 哈希函数 ---
+    async function sha256(message) {
+      const msgBuffer = new TextEncoder().encode(message);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     }
 
     // --- 4. 模态框与验证 ---
@@ -362,10 +397,11 @@
       } else { m.classList.remove('open'); }
     }
 
-    function verifyKey() {
+    async function verifyKey() {
       const input = document.getElementById('key-input');
       const btn = document.querySelector('.btn-exec');
-      if(input.value.trim() === CONFIG.accessKey) {
+      const inputHash = await sha256(input.value.trim());
+      if(inputHash === CONFIG.accessKeyHash) {
         btn.style.background = "#0f0"; btn.innerText = "ACCESS GRANTED";
         showToast("身份验证通过");
         setTimeout(() => window.location.href = CONFIG.redirectUrl, 800);

@@ -90,9 +90,14 @@ python3 update_subs.py
 const CONFIG = {
   ownerQQ: "2902939692",       // 站长 QQ
   qqGroup: "691105381",        // QQ 群号
-  accessKey: "资源风888",       // 节点列表访问密钥
+  accessKeyHash: "sha256(...)",// 节点列表访问密钥（SHA-256 哈希值）
   redirectUrl: "nodes.html"
 };
+```
+
+如需修改密码，用以下命令生成新哈希值：
+```bash
+node -e "const c=require('crypto');console.log(c.createHash('sha256').update('你的新密码').digest('hex'))"
 ```
 
 ### 添加新的节点源
