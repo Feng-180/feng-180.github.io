@@ -27,17 +27,33 @@
     .page-title { font-size: 24px; margin: 10px 0; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; background: linear-gradient(90deg, #fff, #888); -webkit-background-clip: text; color: transparent; }
     .update-time { font-size: 10px; color: #666; font-family: var(--font-code); margin-bottom: 30px; }
 
+    .search-box { width: 90%; max-width: 600px; z-index: 2; margin-bottom: 15px; position: relative; }
+    .search-input { width: 100%; padding: 12px 15px 12px 40px; background: rgba(16, 20, 30, 0.7); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: var(--cyan); font-family: var(--font-code); font-size: 12px; backdrop-filter: blur(10px); transition: 0.3s; }
+    .search-input::placeholder { color: #555; }
+    .search-input:focus { border-color: var(--cyan); box-shadow: 0 0 15px rgba(0,242,255,0.1); }
+    .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #555; font-size: 14px; pointer-events: none; }
+
+    .stats-bar { width: 90%; max-width: 600px; z-index: 2; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-family: var(--font-code); font-size: 10px; }
+    .stats-info { color: #666; }
+    .stats-info span { color: var(--cyan); }
+    .btn-copy-all { padding: 6px 14px; border: 1px solid #333; border-radius: 4px; color: #888; font-size: 10px; cursor: pointer; transition: 0.3s; background: transparent; font-family: var(--font-code); }
+    .btn-copy-all:hover { border-color: var(--pink); color: var(--pink); background: rgba(255,0,85,0.05); }
+
     .card-grid { width: 90%; max-width: 600px; z-index: 2; display: grid; gap: 15px; }
     .card { background: var(--card-bg); border: 1px solid rgba(255,255,255,0.08); padding: 15px; border-radius: 6px; backdrop-filter: blur(10px); transition: 0.3s; position: relative; overflow: hidden; }
     .card:hover { transform: translateY(-2px); border-color: var(--cyan); box-shadow: 0 5px 20px rgba(0, 242, 255, 0.1); background: rgba(20, 25, 35, 0.9); }
     .card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--cyan); opacity: 0; transition: 0.3s; }
     .card:hover::before { opacity: 1; }
+    .card.offline { opacity: 0.5; }
+    .card.offline::before { background: var(--pink); }
 
     .c-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
     .c-name { font-weight: bold; font-size: 14px; }
     .c-tag { font-size: 9px; padding: 2px 5px; background: rgba(255,255,255,0.1); border-radius: 3px; color: #aaa; }
+    .c-tag.active { color: var(--cyan); background: rgba(0,242,255,0.1); }
+    .c-tag.offline { color: var(--pink); background: rgba(255,0,85,0.1); }
     
-    .link-box { font-family: var(--font-code); font-size: 10px; color: #666; background: #000; padding: 8px; border-radius: 4px; border: 1px dashed #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .link-box { font-family: var(--font-code); font-size: 10px; color: #666; background: #000; padding: 8px; border-radius: 4px; border: 1px dashed #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
     .card:hover .link-box { color: var(--cyan); border-color: rgba(0,242,255,0.3); }
     
     .btn-row { margin-top: 10px; display: flex; gap: 10px; }
@@ -51,52 +67,12 @@
     #toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100%); background: rgba(10,15,20,0.9); border: 1px solid var(--cyan); color: var(--cyan); padding: 10px 20px; border-radius: 4px; font-size: 12px; z-index: 999; opacity: 0; transition: 0.3s; }
     #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
-    /* 搜索框 */
-    .search-box {
-      width: 90%; max-width: 600px; z-index: 2; margin-bottom: 15px;
-      position: relative;
-    }
-    .search-input {
-      width: 100%; padding: 12px 15px 12px 40px;
-      background: rgba(16, 20, 30, 0.7); border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 6px; color: var(--cyan); font-family: var(--font-code);
-      font-size: 12px; backdrop-filter: blur(10px); transition: 0.3s;
-    }
-    .search-input::placeholder { color: #555; }
-    .search-input:focus { border-color: var(--cyan); box-shadow: 0 0 15px rgba(0,242,255,0.1); }
-    .search-icon {
-      position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
-      color: #555; font-size: 14px; pointer-events: none;
-    }
-
-    /* 统计栏 */
-    .stats-bar {
-      width: 90%; max-width: 600px; z-index: 2;
-      display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 15px; font-family: var(--font-code); font-size: 10px;
-    }
-    .stats-info { color: #666; }
-    .stats-info span { color: var(--cyan); }
-    .btn-copy-all {
-      padding: 6px 14px; border: 1px solid #333; border-radius: 4px;
-      color: #888; font-size: 10px; cursor: pointer; transition: 0.3s;
-      background: transparent; font-family: var(--font-code);
-    }
-    .btn-copy-all:hover { border-color: var(--pink); color: var(--pink); background: rgba(255,0,85,0.05); }
-
-    /* 回到顶部按钮 */
-    .scroll-top {
-      position: fixed; bottom: 30px; right: 20px; z-index: 100;
-      width: 40px; height: 40px; border-radius: 50%;
-      background: rgba(16, 20, 30, 0.8); border: 1px solid var(--cyan);
-      color: var(--cyan); font-size: 18px; cursor: pointer;
-      display: none; align-items: center; justify-content: center;
-      transition: 0.3s; backdrop-filter: blur(10px);
-    }
+    .scroll-top { position: fixed; bottom: 30px; right: 20px; z-index: 100; width: 40px; height: 40px; border-radius: 50%; background: rgba(16,20,30,0.8); border: 1px solid var(--cyan); color: var(--cyan); font-size: 18px; cursor: pointer; display: none; align-items: center; justify-content: center; transition: 0.3s; backdrop-filter: blur(10px); }
     .scroll-top:hover { background: var(--cyan); color: #000; box-shadow: 0 0 20px var(--cyan); }
     .scroll-top.visible { display: flex; }
 
-    /* 卡片入场动画 */
+    .no-results { display: none; text-align: center; color: #555; font-family: var(--font-code); font-size: 12px; padding: 40px 0; z-index: 2; }
+
     @keyframes cardFadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     .card { opacity: 0; animation: cardFadeIn 0.4s ease forwards; }
     .card:nth-child(1) { animation-delay: 0.05s; }
@@ -105,9 +81,8 @@
     .card:nth-child(4) { animation-delay: 0.2s; }
     .card:nth-child(5) { animation-delay: 0.25s; }
     .card:nth-child(6) { animation-delay: 0.3s; }
-
-    /* 无结果提示 */
-    .no-results { display: none; text-align: center; color: #555; font-family: var(--font-code); font-size: 12px; padding: 40px 0; z-index: 2; }
+    .card:nth-child(7) { animation-delay: 0.35s; }
+    .card:nth-child(8) { animation-delay: 0.4s; }
   </style>
 </head>
 <body>
@@ -117,18 +92,16 @@
   <div class="header-group">
     <div class="status-badge">系统在线</div>
     <div class="page-title">全球节点订阅库</div>
-    <div class="update-time">最后更新：2026-02-23 22:42:26</div>
+    <div class="update-time">最后更新：2026-02-24 22:35:43</div>
   </div>
 
-  <!-- 搜索框 -->
   <div class="search-box">
     <span class="search-icon">&#9906;</span>
     <input type="text" class="search-input" id="searchInput" placeholder="搜索节点..." oninput="filterNodes()">
   </div>
 
-  <!-- 统计栏 -->
   <div class="stats-bar">
-    <div class="stats-info">节点：<span id="nodeCount">6</span> / <span id="totalCount">6</span></div>
+    <div class="stats-info">节点：<span id="nodeCount">8</span> / <span id="totalCount">8</span></div>
     <button class="btn-copy-all" onclick="copyAllLinks()">复制全部链接</button>
   </div>
 
@@ -136,73 +109,97 @@
     
     <div class="card">
       <div class="c-top">
-        <span class="c-name">FreeFQ_高频更新</span>
-        <span class="c-tag">在线</span>
+        <span class="c-name">节点池_多协议聚合</span>
+        <span class="c-tag active">在线</span>
       </div>
-      <div class="link-box" onclick="copyText('https://raw.githubusercontent.com/freefq/free/master/v2')">https://raw.githubusercontent.com/freefq/free/master/v2</div>
+      <div class="link-box" onclick="copyText('https://raw.githubusercontent.com/peasoft/NoMoreWalls/master/list.txt')">https://raw.githubusercontent.com/peasoft/NoMoreWalls/master/list.txt</div>
       <div class="btn-row">
-        <div class="btn" onclick="copyText('https://raw.githubusercontent.com/freefq/free/master/v2')">复制链接</div>
-        <a class="btn clash" href="clash://install-config?url=https://raw.githubusercontent.com/freefq/free/master/v2">导入 Clash</a>
+        <div class="btn" onclick="copyText('https://raw.githubusercontent.com/peasoft/NoMoreWalls/master/list.txt')">复制链接</div>
+        <a class="btn clash" href="clash://install-config?url=https://raw.githubusercontent.com/peasoft/NoMoreWalls/master/list.txt">导入 Clash</a>
       </div>
     </div>
 
     <div class="card">
       <div class="c-top">
-        <span class="c-name">Pawdroid_修正源</span>
-        <span class="c-tag">在线</span>
+        <span class="c-name">全球节点_自动抓取</span>
+        <span class="c-tag active">在线</span>
       </div>
-      <div class="link-box" onclick="copyText('https://raw.githubusercontent.com/Pawdroid/Free-servers/main/sub')">https://raw.githubusercontent.com/Pawdroid/Free-servers/main/sub</div>
+      <div class="link-box" onclick="copyText('https://raw.githubusercontent.com/mfuu/v2ray/master/v2ray')">https://raw.githubusercontent.com/mfuu/v2ray/master/v2ray</div>
       <div class="btn-row">
-        <div class="btn" onclick="copyText('https://raw.githubusercontent.com/Pawdroid/Free-servers/main/sub')">复制链接</div>
-        <a class="btn clash" href="clash://install-config?url=https://raw.githubusercontent.com/Pawdroid/Free-servers/main/sub">导入 Clash</a>
+        <div class="btn" onclick="copyText('https://raw.githubusercontent.com/mfuu/v2ray/master/v2ray')">复制链接</div>
+        <a class="btn clash" href="clash://install-config?url=https://raw.githubusercontent.com/mfuu/v2ray/master/v2ray">导入 Clash</a>
+      </div>
+    </div>
+
+    <div class="card offline">
+      <div class="c-top">
+        <span class="c-name">高速订阅_每日更新</span>
+        <span class="c-tag offline">离线</span>
+      </div>
+      <div class="link-box" onclick="copyText('https://raw.githubusercontent.com/aiboboxx/v2rayfree/main/v2')">https://raw.githubusercontent.com/aiboboxx/v2rayfree/main/v2</div>
+      <div class="btn-row">
+        <div class="btn" onclick="copyText('https://raw.githubusercontent.com/aiboboxx/v2rayfree/main/v2')">复制链接</div>
+        <a class="btn clash" href="clash://install-config?url=https://raw.githubusercontent.com/aiboboxx/v2rayfree/main/v2">导入 Clash</a>
+      </div>
+    </div>
+
+    <div class="card offline">
+      <div class="c-top">
+        <span class="c-name">多国节点_精选合集</span>
+        <span class="c-tag offline">离线</span>
+      </div>
+      <div class="link-box" onclick="copyText('https://raw.githubusercontent.com/barry-far/V2ray-Servers/main/Sub')">https://raw.githubusercontent.com/barry-far/V2ray-Servers/main/Sub</div>
+      <div class="btn-row">
+        <div class="btn" onclick="copyText('https://raw.githubusercontent.com/barry-far/V2ray-Servers/main/Sub')">复制链接</div>
+        <a class="btn clash" href="clash://install-config?url=https://raw.githubusercontent.com/barry-far/V2ray-Servers/main/Sub">导入 Clash</a>
+      </div>
+    </div>
+
+    <div class="card offline">
+      <div class="c-top">
+        <span class="c-name">电报采集_大量节点</span>
+        <span class="c-tag offline">离线</span>
+      </div>
+      <div class="link-box" onclick="copyText('https://raw.githubusercontent.com/yebekhe/TelegramV2rayCollector/main/sub/normal/mix')">https://raw.githubusercontent.com/yebekhe/TelegramV2rayCollector/main/sub/normal/mix</div>
+      <div class="btn-row">
+        <div class="btn" onclick="copyText('https://raw.githubusercontent.com/yebekhe/TelegramV2rayCollector/main/sub/normal/mix')">复制链接</div>
+        <a class="btn clash" href="clash://install-config?url=https://raw.githubusercontent.com/yebekhe/TelegramV2rayCollector/main/sub/normal/mix">导入 Clash</a>
+      </div>
+    </div>
+
+    <div class="card offline">
+      <div class="c-top">
+        <span class="c-name">混合协议_稳定可用</span>
+        <span class="c-tag offline">离线</span>
+      </div>
+      <div class="link-box" onclick="copyText('https://raw.githubusercontent.com/vxiaov/free_proxies/main/subscribe/v2ray.txt')">https://raw.githubusercontent.com/vxiaov/free_proxies/main/subscribe/v2ray.txt</div>
+      <div class="btn-row">
+        <div class="btn" onclick="copyText('https://raw.githubusercontent.com/vxiaov/free_proxies/main/subscribe/v2ray.txt')">复制链接</div>
+        <a class="btn clash" href="clash://install-config?url=https://raw.githubusercontent.com/vxiaov/free_proxies/main/subscribe/v2ray.txt">导入 Clash</a>
       </div>
     </div>
 
     <div class="card">
       <div class="c-top">
-        <span class="c-name">CyanBird_公益池</span>
-        <span class="c-tag">在线</span>
+        <span class="c-name">爬虫聚合_自动更新</span>
+        <span class="c-tag active">在线</span>
       </div>
-      <div class="link-box" onclick="copyText('https://raw.githubusercontent.com/vpei/Free-Node-Merge/main/out/nodes.txt')">https://raw.githubusercontent.com/vpei/Free-Node-Merge/main/out/nodes.txt</div>
+      <div class="link-box" onclick="copyText('https://raw.githubusercontent.com/Leon406/SubCrawler/master/sub/share/vless')">https://raw.githubusercontent.com/Leon406/SubCrawler/master/sub/share/vless</div>
       <div class="btn-row">
-        <div class="btn" onclick="copyText('https://raw.githubusercontent.com/vpei/Free-Node-Merge/main/out/nodes.txt')">复制链接</div>
-        <a class="btn clash" href="clash://install-config?url=https://raw.githubusercontent.com/vpei/Free-Node-Merge/main/out/nodes.txt">导入 Clash</a>
+        <div class="btn" onclick="copyText('https://raw.githubusercontent.com/Leon406/SubCrawler/master/sub/share/vless')">复制链接</div>
+        <a class="btn clash" href="clash://install-config?url=https://raw.githubusercontent.com/Leon406/SubCrawler/master/sub/share/vless">导入 Clash</a>
       </div>
     </div>
 
-    <div class="card">
+    <div class="card offline">
       <div class="c-top">
-        <span class="c-name">Ermaozi_Clash精选</span>
-        <span class="c-tag">在线</span>
+        <span class="c-name">永久免费_持续维护</span>
+        <span class="c-tag offline">离线</span>
       </div>
-      <div class="link-box" onclick="copyText('https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml')">https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml</div>
+      <div class="link-box" onclick="copyText('https://raw.githubusercontent.com/Alvin9999/pac2/master/xray/config.json')">https://raw.githubusercontent.com/Alvin9999/pac2/master/xray/config.json</div>
       <div class="btn-row">
-        <div class="btn" onclick="copyText('https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml')">复制链接</div>
-        <a class="btn clash" href="clash://install-config?url=https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml">导入 Clash</a>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="c-top">
-        <span class="c-name">Mahdi_全球聚合</span>
-        <span class="c-tag">在线</span>
-      </div>
-      <div class="link-box" onclick="copyText('https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/sub/sub_merge.txt')">https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/sub/sub_merge.txt</div>
-      <div class="btn-row">
-        <div class="btn" onclick="copyText('https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/sub/sub_merge.txt')">复制链接</div>
-        <a class="btn clash" href="clash://install-config?url=https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/sub/sub_merge.txt">导入 Clash</a>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="c-top">
-        <span class="c-name">Anaer_高速节点</span>
-        <span class="c-tag">在线</span>
-      </div>
-      <div class="link-box" onclick="copyText('https://raw.githubusercontent.com/anaer/Sub/main/clash.yaml')">https://raw.githubusercontent.com/anaer/Sub/main/clash.yaml</div>
-      <div class="btn-row">
-        <div class="btn" onclick="copyText('https://raw.githubusercontent.com/anaer/Sub/main/clash.yaml')">复制链接</div>
-        <a class="btn clash" href="clash://install-config?url=https://raw.githubusercontent.com/anaer/Sub/main/clash.yaml">导入 Clash</a>
+        <div class="btn" onclick="copyText('https://raw.githubusercontent.com/Alvin9999/pac2/master/xray/config.json')">复制链接</div>
+        <a class="btn clash" href="clash://install-config?url=https://raw.githubusercontent.com/Alvin9999/pac2/master/xray/config.json">导入 Clash</a>
       </div>
     </div>
 
@@ -212,7 +209,6 @@
 
   <a href="portal.html" class="back-btn">返回主控台</a>
 
-  <!-- 回到顶部按钮 -->
   <div class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">&#8593;</div>
 
   <script>
@@ -259,12 +255,10 @@
       setTimeout(()=>t.classList.remove('show'), 2000);
     }
 
-    // --- 搜索过滤 ---
     function filterNodes() {
       const keyword = document.getElementById('searchInput').value.toLowerCase();
       const cards = document.querySelectorAll('#cardGrid .card');
       let visibleCount = 0;
-
       cards.forEach(card => {
         const name = card.querySelector('.c-name').textContent.toLowerCase();
         const link = card.querySelector('.link-box').textContent.toLowerCase();
@@ -272,12 +266,10 @@
         card.style.display = match ? '' : 'none';
         if (match) visibleCount++;
       });
-
       document.getElementById('nodeCount').textContent = visibleCount;
       document.getElementById('noResults').style.display = visibleCount === 0 ? 'block' : 'none';
     }
 
-    // --- 一键复制全部链接 ---
     async function copyAllLinks() {
       const cards = document.querySelectorAll('#cardGrid .card');
       const links = [];
@@ -293,12 +285,6 @@
       setTimeout(() => t.classList.remove('show'), 2000);
     }
 
-    // --- 初始化节点计数 ---
-    const totalNodes = document.querySelectorAll('#cardGrid .card').length;
-    document.getElementById('totalCount').textContent = totalNodes;
-    document.getElementById('nodeCount').textContent = totalNodes;
-
-    // --- 回到顶部按钮 ---
     window.addEventListener('scroll', () => {
       const btn = document.getElementById('scrollTop');
       if (window.scrollY > 300) btn.classList.add('visible');
