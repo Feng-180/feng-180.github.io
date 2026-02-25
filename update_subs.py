@@ -1,35 +1,55 @@
 import datetime
 import os
-import base64
+import sys
+import urllib.request
+import urllib.error
 
 # ================= 配置区域 =================
 SOURCE_FILE = "sources.txt"      # 输入：源文件
 HTML_FILE = "nodes.html"         # 输出1：网页
 TXT_FILE = "sub_all.txt"         # 输出2：纯订阅链接文件
+CHECK_TIMEOUT = 10               # URL 可用性检测超时（秒）
 
 # 默认源 (如果用户没有 sources.txt)
 DEFAULT_SOURCES = """
-V2Ray-Aggregator#https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/sub/sub_merge.txt
-Clash-Yaml-HighSpeed#https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml
-Pawdroid-Base64#https://raw.githubusercontent.com/Pawdroid/Free-servers/main/sub
-Free18-Daily#https://raw.githubusercontent.com/free18/v2ray/main/subscribe
+节点池_多协议聚合#https://raw.githubusercontent.com/peasoft/NoMoreWalls/master/list.txt
+全球节点_自动抓取#https://raw.githubusercontent.com/mfuu/v2ray/master/v2ray
+高速订阅_每日更新#https://raw.githubusercontent.com/aiboboxx/v2rayfree/main/v2
+多国节点_精选合集#https://raw.githubusercontent.com/barry-far/V2ray-Servers/main/Sub
+电报采集_大量节点#https://raw.githubusercontent.com/yebekhe/TelegramV2rayCollector/main/sub/normal/mix
+混合协议_稳定可用#https://raw.githubusercontent.com/vxiaov/free_proxies/main/subscribe/v2ray.txt
+爬虫聚合_自动更新#https://raw.githubusercontent.com/Leon406/SubCrawler/master/sub/share/vless
+永久免费_持续维护#https://raw.githubusercontent.com/Alvin9999/pac2/master/xray/config.json
 """
 # ===========================================
 
-def get_html_template(cards_html, update_time):
+
+def get_html_template(cards_html, update_time, total_count):
     """
-    【赛博矩阵 V2.0】网页模板
+    【赛博矩阵 V3.0】网页模板 - 含搜索、统计、回到顶部
     """
     return f"""<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>风の数据流 | NODE STREAM</title>
+  <meta name="theme-color" content="#05020a">
+  <meta name="description" content="全球节点订阅库 - 实时更新的高速节点列表，支持一键复制和Clash导入。">
+  <meta name="author" content="Feng-180">
+  <meta property="og:title" content="风の数据流 | 节点订阅库">
+  <meta property="og:description" content="全球节点订阅库，Matrix代码雨风格界面。">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="logo.png">
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="apple-touch-icon" href="logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700;900&display=swap" rel="stylesheet">
+  <title>风の数据流 | 节点订阅库</title>
   <style>
-    :root {{ --cyan: #00f2ff; --pink: #ff0055; --void: #05020a; --card-bg: rgba(16, 20, 30, 0.7); --font-code: "Consolas", monospace; }}
+    :root {{ --cyan: #00f2ff; --pink: #ff0055; --void: #05020a; --card-bg: rgba(16, 20, 30, 0.7); --font-code: "Consolas", monospace; --font-main: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; }}
     * {{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }}
-    body {{ margin: 0; background: var(--void); color: #fff; font-family: sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding-bottom: 80px; overflow-x: hidden; }}
+    body {{ margin: 0; background: var(--void); color: #fff; font-family: var(--font-main); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding-bottom: 80px; overflow-x: hidden; }}
     #matrix-canvas {{ position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.3; }}
     
     .header-group {{ width: 90%; max-width: 600px; margin-top: 50px; position: relative; z-index: 2; }}
@@ -37,17 +57,33 @@ def get_html_template(cards_html, update_time):
     .page-title {{ font-size: 24px; margin: 10px 0; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; background: linear-gradient(90deg, #fff, #888); -webkit-background-clip: text; color: transparent; }}
     .update-time {{ font-size: 10px; color: #666; font-family: var(--font-code); margin-bottom: 30px; }}
 
+    .search-box {{ width: 90%; max-width: 600px; z-index: 2; margin-bottom: 15px; position: relative; }}
+    .search-input {{ width: 100%; padding: 12px 15px 12px 40px; background: rgba(16, 20, 30, 0.7); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: var(--cyan); font-family: var(--font-code); font-size: 12px; backdrop-filter: blur(10px); transition: 0.3s; }}
+    .search-input::placeholder {{ color: #555; }}
+    .search-input:focus {{ border-color: var(--cyan); box-shadow: 0 0 15px rgba(0,242,255,0.1); }}
+    .search-icon {{ position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #555; font-size: 14px; pointer-events: none; }}
+
+    .stats-bar {{ width: 90%; max-width: 600px; z-index: 2; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-family: var(--font-code); font-size: 10px; }}
+    .stats-info {{ color: #666; }}
+    .stats-info span {{ color: var(--cyan); }}
+    .btn-copy-all {{ padding: 6px 14px; border: 1px solid #333; border-radius: 4px; color: #888; font-size: 10px; cursor: pointer; transition: 0.3s; background: transparent; font-family: var(--font-code); }}
+    .btn-copy-all:hover {{ border-color: var(--pink); color: var(--pink); background: rgba(255,0,85,0.05); }}
+
     .card-grid {{ width: 90%; max-width: 600px; z-index: 2; display: grid; gap: 15px; }}
     .card {{ background: var(--card-bg); border: 1px solid rgba(255,255,255,0.08); padding: 15px; border-radius: 6px; backdrop-filter: blur(10px); transition: 0.3s; position: relative; overflow: hidden; }}
     .card:hover {{ transform: translateY(-2px); border-color: var(--cyan); box-shadow: 0 5px 20px rgba(0, 242, 255, 0.1); background: rgba(20, 25, 35, 0.9); }}
     .card::before {{ content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--cyan); opacity: 0; transition: 0.3s; }}
     .card:hover::before {{ opacity: 1; }}
+    .card.offline {{ opacity: 0.5; }}
+    .card.offline::before {{ background: var(--pink); }}
 
     .c-top {{ display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }}
     .c-name {{ font-weight: bold; font-size: 14px; }}
     .c-tag {{ font-size: 9px; padding: 2px 5px; background: rgba(255,255,255,0.1); border-radius: 3px; color: #aaa; }}
+    .c-tag.active {{ color: var(--cyan); background: rgba(0,242,255,0.1); }}
+    .c-tag.offline {{ color: var(--pink); background: rgba(255,0,85,0.1); }}
     
-    .link-box {{ font-family: var(--font-code); font-size: 10px; color: #666; background: #000; padding: 8px; border-radius: 4px; border: 1px dashed #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
+    .link-box {{ font-family: var(--font-code); font-size: 10px; color: #666; background: #000; padding: 8px; border-radius: 4px; border: 1px dashed #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }}
     .card:hover .link-box {{ color: var(--cyan); border-color: rgba(0,242,255,0.3); }}
     
     .btn-row {{ margin-top: 10px; display: flex; gap: 10px; }}
@@ -60,23 +96,54 @@ def get_html_template(cards_html, update_time):
 
     #toast {{ position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100%); background: rgba(10,15,20,0.9); border: 1px solid var(--cyan); color: var(--cyan); padding: 10px 20px; border-radius: 4px; font-size: 12px; z-index: 999; opacity: 0; transition: 0.3s; }}
     #toast.show {{ transform: translateX(-50%) translateY(0); opacity: 1; }}
+
+    .scroll-top {{ position: fixed; bottom: 30px; right: 20px; z-index: 100; width: 40px; height: 40px; border-radius: 50%; background: rgba(16,20,30,0.8); border: 1px solid var(--cyan); color: var(--cyan); font-size: 18px; cursor: pointer; display: none; align-items: center; justify-content: center; transition: 0.3s; backdrop-filter: blur(10px); }}
+    .scroll-top:hover {{ background: var(--cyan); color: #000; box-shadow: 0 0 20px var(--cyan); }}
+    .scroll-top.visible {{ display: flex; }}
+
+    .no-results {{ display: none; text-align: center; color: #555; font-family: var(--font-code); font-size: 12px; padding: 40px 0; z-index: 2; }}
+
+    @keyframes cardFadeIn {{ from {{ opacity: 0; transform: translateY(20px); }} to {{ opacity: 1; transform: translateY(0); }} }}
+    .card {{ opacity: 0; animation: cardFadeIn 0.4s ease forwards; }}
+    .card:nth-child(1) {{ animation-delay: 0.05s; }}
+    .card:nth-child(2) {{ animation-delay: 0.1s; }}
+    .card:nth-child(3) {{ animation-delay: 0.15s; }}
+    .card:nth-child(4) {{ animation-delay: 0.2s; }}
+    .card:nth-child(5) {{ animation-delay: 0.25s; }}
+    .card:nth-child(6) {{ animation-delay: 0.3s; }}
+    .card:nth-child(7) {{ animation-delay: 0.35s; }}
+    .card:nth-child(8) {{ animation-delay: 0.4s; }}
   </style>
 </head>
 <body>
   <canvas id="matrix-canvas"></canvas>
-  <div id="toast">LINK COPIED</div>
+  <div id="toast">链接已复制</div>
 
   <div class="header-group">
-    <div class="status-badge">SYSTEM ONLINE</div>
+    <div class="status-badge">系统在线</div>
     <div class="page-title">全球节点订阅库</div>
-    <div class="update-time">LAST SYNC: {update_time}</div>
+    <div class="update-time">最后更新：{update_time}</div>
   </div>
 
-  <div class="card-grid">
+  <div class="search-box">
+    <span class="search-icon">&#9906;</span>
+    <input type="text" class="search-input" id="searchInput" placeholder="搜索节点..." oninput="filterNodes()">
+  </div>
+
+  <div class="stats-bar">
+    <div class="stats-info">节点：<span id="nodeCount">{total_count}</span> / <span id="totalCount">{total_count}</span></div>
+    <button class="btn-copy-all" onclick="copyAllLinks()">复制全部链接</button>
+  </div>
+
+  <div class="card-grid" id="cardGrid">
     {cards_html}
   </div>
 
-  <a href="index.html" class="back-btn">DISCONNECT // 返回</a>
+  <div class="no-results" id="noResults">未找到匹配的节点</div>
+
+  <a href="portal.html" class="back-btn">返回主控台</a>
+
+  <div class="scroll-top" id="scrollTop" onclick="window.scrollTo({{top:0,behavior:'smooth'}})">&#8593;</div>
 
   <script>
     const canvas = document.getElementById('matrix-canvas');
@@ -108,7 +175,7 @@ def get_html_template(cards_html, update_time):
       const t = document.getElementById('toast');
       try {{
         await navigator.clipboard.writeText(text);
-        t.innerText = "COPIED SUCCESSFUL";
+        t.innerText = "复制成功";
       }} catch (err) {{
         const ta = document.createElement("textarea");
         ta.value = text;
@@ -116,27 +183,91 @@ def get_html_template(cards_html, update_time):
         ta.select();
         document.execCommand('copy');
         document.body.removeChild(ta);
-        t.innerText = "COPIED (FALLBACK)";
+        t.innerText = "复制成功（备用方式）";
       }}
       t.classList.add('show');
       setTimeout(()=>t.classList.remove('show'), 2000);
     }}
+
+    function filterNodes() {{
+      const keyword = document.getElementById('searchInput').value.toLowerCase();
+      const cards = document.querySelectorAll('#cardGrid .card');
+      let visibleCount = 0;
+      cards.forEach(card => {{
+        const name = card.querySelector('.c-name').textContent.toLowerCase();
+        const link = card.querySelector('.link-box').textContent.toLowerCase();
+        const match = name.includes(keyword) || link.includes(keyword);
+        card.style.display = match ? '' : 'none';
+        if (match) visibleCount++;
+      }});
+      document.getElementById('nodeCount').textContent = visibleCount;
+      document.getElementById('noResults').style.display = visibleCount === 0 ? 'block' : 'none';
+    }}
+
+    async function copyAllLinks() {{
+      const cards = document.querySelectorAll('#cardGrid .card');
+      const links = [];
+      cards.forEach(card => {{
+        if (card.style.display !== 'none') {{
+          links.push(card.querySelector('.link-box').textContent.trim());
+        }}
+      }});
+      await copyText(links.join('\\n'));
+      const t = document.getElementById('toast');
+      t.innerText = `已复制 ${{links.length}} 条链接`;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2000);
+    }}
+
+    window.addEventListener('scroll', () => {{
+      const btn = document.getElementById('scrollTop');
+      if (window.scrollY > 300) btn.classList.add('visible');
+      else btn.classList.remove('visible');
+    }});
   </script>
 </body>
 </html>
 """
 
+
 def init_sources_if_missing():
     """初始化源文件"""
     if not os.path.exists(SOURCE_FILE):
-        print(f"⚠️ {SOURCE_FILE} 不存在，生成默认源...")
+        print(f"[WARN] {SOURCE_FILE} 不存在，生成默认源...")
         with open(SOURCE_FILE, "w", encoding="utf-8") as f:
             f.write(DEFAULT_SOURCES.strip())
+
+
+def check_url(url):
+    """
+    检测 URL 是否可达
+    返回: (bool, int|str) -> (是否可达, HTTP状态码或错误信息)
+    """
+    try:
+        req = urllib.request.Request(url, method='HEAD')
+        req.add_header('User-Agent', 'Mozilla/5.0 (compatible; NodeChecker/1.0)')
+        with urllib.request.urlopen(req, timeout=CHECK_TIMEOUT) as resp:
+            return True, resp.status
+    except urllib.error.HTTPError as e:
+        # 某些服务器不支持 HEAD，尝试 GET
+        try:
+            req = urllib.request.Request(url)
+            req.add_header('User-Agent', 'Mozilla/5.0 (compatible; NodeChecker/1.0)')
+            with urllib.request.urlopen(req, timeout=CHECK_TIMEOUT) as resp:
+                return True, resp.status
+        except Exception:
+            return False, e.code
+    except urllib.error.URLError as e:
+        return False, str(e.reason)[:30]
+    except Exception as e:
+        return False, str(e)[:30]
+
 
 def process_data():
     """核心处理逻辑"""
     cards_html = ""
     all_urls = []
+    stats = {"total": 0, "active": 0, "offline": 0}
     
     with open(SOURCE_FILE, "r", encoding="utf-8") as f:
         for line_num, line in enumerate(f, 1):
@@ -147,18 +278,43 @@ def process_data():
                 # 解析 Name#URL 或 Name,URL
                 if "#" in line: parts = line.split("#", 1)
                 elif "," in line: parts = line.split(",", 1)
-                else: continue
+                else:
+                    print(f"  [SKIP] 行 {line_num}: 格式无效 -> {line[:50]}")
+                    continue
 
                 name = parts[0].strip()
                 url = parts[1].strip()
-                all_urls.append(url) # 收集所有链接
+                
+                if not url.startswith(("http://", "https://")):
+                    print(f"  [SKIP] 行 {line_num}: 无效URL -> {url[:50]}")
+                    continue
+
+                stats["total"] += 1
+                all_urls.append(url)
+
+                # 检测 URL 可用性
+                print(f"  [{stats['total']}] 检测: {name} ...", end=" ", flush=True)
+                is_active, status = check_url(url)
+                
+                if is_active:
+                    stats["active"] += 1
+                    tag_class = "active"
+                    tag_text = "在线"
+                    card_class = ""
+                    print(f"OK ({status})")
+                else:
+                    stats["offline"] += 1
+                    tag_class = "offline"
+                    tag_text = "离线"
+                    card_class = " offline"
+                    print(f"FAIL ({status})")
 
                 # 生成HTML卡片
                 cards_html += f"""
-    <div class="card">
+    <div class="card{card_class}">
       <div class="c-top">
         <span class="c-name">{name}</span>
-        <span class="c-tag">ACTIVE</span>
+        <span class="c-tag {tag_class}">{tag_text}</span>
       </div>
       <div class="link-box" onclick="copyText('{url}')">{url}</div>
       <div class="btn-row">
@@ -168,29 +324,47 @@ def process_data():
     </div>
 """
             except Exception as e:
-                print(f"❌ 行 {line_num} 错误: {e}")
+                print(f"  [ERROR] 行 {line_num}: {e}")
 
-    return cards_html, all_urls
+    return cards_html, all_urls, stats
+
 
 def main():
+    print("=" * 50)
+    print("  风の数据流 - 节点更新工具 v3.0")
+    print("=" * 50)
+    
     init_sources_if_missing()
     
-    print("🔄 正在提取订阅源...")
-    cards_html, all_urls = process_data()
+    print("\n[STEP 1] 提取并检测订阅源...")
+    cards_html, all_urls, stats = process_data()
+    
+    if stats["total"] == 0:
+        print("\n[ERROR] 未找到任何有效源，请检查 sources.txt")
+        sys.exit(1)
     
     # 1. 生成网页
+    print(f"\n[STEP 2] 生成网页文件...")
     now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    final_html = get_html_template(cards_html, now)
+    final_html = get_html_template(cards_html, now, stats["total"])
     with open(HTML_FILE, "w", encoding="utf-8") as f:
         f.write(final_html)
-    print(f"✅ 网页已生成: {HTML_FILE}")
+    print(f"  -> {HTML_FILE}")
 
     # 2. 生成 sub_all.txt (聚合文件)
-    # 这里我们将所有链接按行写入，用户可以直接复制这个文件的 Raw 链接作为订阅
+    print(f"[STEP 3] 生成聚合订阅文件...")
     with open(TXT_FILE, "w", encoding="utf-8") as f:
         f.write("\n".join(all_urls))
-    print(f"✅ 聚合文件已生成: {TXT_FILE}")
-    print(f"📅 完成时间: {now}")
+    print(f"  -> {TXT_FILE}")
+
+    # 3. 输出统计报告
+    print(f"\n{'=' * 50}")
+    print(f"  完成时间: {now}")
+    print(f"  总节点数: {stats['total']}")
+    print(f"  在线节点: {stats['active']}")
+    print(f"  离线节点: {stats['offline']}")
+    print(f"{'=' * 50}")
+
 
 if __name__ == "__main__":
     main()
