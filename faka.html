@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="风の发卡 - 24小时全自动发卡平台">
+    <title>风の发卡 | 极客数字商城</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: '#0f111a',
+                        card: '#1a1d2d',
+                        accent: '#00f2ff',
+                        pink: '#ff0055',
+                    },
+                    fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+                    animation: {
+                        'fade-in': 'fadeIn 0.3s ease-out',
+                        'slide-up': 'slideUp 0.4s ease-out'
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' }
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0f111a;
+            color: #e2e8f0;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(0, 242, 255, 0.05), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(255, 0, 85, 0.05), transparent 25%);
+        }
+        
+        .glass-panel {
+            background: rgba(26, 29, 45, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .product-card {
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px -10px rgba(0, 242, 255, 0.2);
+            border-color: rgba(0, 242, 255, 0.3);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-accent selection:text-dark custom-scrollbar">
+
+    <!-- 导航栏 -->
+    <nav class="sticky top-0 z-50 glass-panel border-b border-slate-800/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center gap-3 cursor-pointer" onclick="location.reload()">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white shadow-lg shadow-cyan-500/20">
+                        <i class="fa-solid fa-store"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-wider text-white">风の发卡</span>
+                </div>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-8">
+                    <a href="#" class="text-accent flex items-center gap-2 px-3 py-2 text-sm font-medium transition">
+                        <i class="fa-solid fa-house"></i> 首页商城
+                    </a>
+                    <a href="#" onclick="openOrderQuery()" class="text-slate-300 hover:text-white flex items-center gap-2 px-3 py-2 text-sm font-medium transition">
+                        <i class="fa-solid fa-magnifying-glass"></i> 查询订单
+                    </a>
+                    <a href="#" class="text-slate-300 hover:text-white flex items-center gap-2 px-3 py-2 text-sm font-medium transition">
+                        <i class="fa-solid fa-headset"></i> 联系客服
+                    </a>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center">
+                    <button class="text-slate-300 hover:text-white focus:outline-none">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 公告栏 -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+        <div class="glass-panel rounded-xl p-4 flex items-start gap-4 animate-slide-up border-l-4 border-l-accent">
+            <div class="text-accent mt-0.5"><i class="fa-solid fa-bullhorn text-xl"></i></div>
+            <div>
+                <h3 class="font-bold text-white mb-1">站点公告</h3>
+                <p class="text-sm text-slate-400 leading-relaxed">
+                    欢迎来到风的数字商城！本站所有商品 24 小时全自动发货。购买后请妥善保管您的订单号。如遇支付问题或未收到卡密，请凭订单号联系右下角客服。
+                    <span class="text-accent">新到一批优质账号，数量有限，欲购从速！</span>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主体内容 -->
+    <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        
+        <!-- 分类标签 -->
+        <div class="flex space-x-2 overflow-x-auto pb-4 custom-scrollbar mb-6" id="category-tabs">
+            <button class="px-5 py-2 rounded-full bg-accent text-dark font-bold text-sm whitespace-nowrap transition" onclick="filterCategory('all', this)">全部商品</button>
+            <button class="px-5 py-2 rounded-full glass-panel text-slate-300 hover:text-white text-sm whitespace-nowrap transition" onclick="filterCategory('ai', this)">🤖 AI 账号与接口</button>
+            <button class="px-5 py-2 rounded-full glass-panel text-slate-300 hover:text-white text-sm whitespace-nowrap transition" onclick="filterCategory('software', this)">💻 软件激活码</button>
+            <button class="px-5 py-2 rounded-full glass-panel text-slate-300 hover:text-white text-sm whitespace-nowrap transition" onclick="filterCategory('game', this)">🎮 游戏与娱乐</button>
+            <button class="px-5 py-2 rounded-full glass-panel text-slate-300 hover:text-white text-sm whitespace-nowrap transition" onclick="filterCategory('other', this)">📦 综合服务</button>
+        </div>
+
+        <!-- 商品网格 -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="products-grid">
+            <!-- 商品由 JS 渲染 -->
+        </div>
+
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="border-t border-slate-800/50 mt-auto py-8 text-center text-sm text-slate-500">
+        <p>&copy; 2026 风の发卡. All rights reserved.</p>
+        <p class="mt-2 text-xs">Digital Automated Delivery System V2.0</p>
+    </footer>
+
+    <!-- 购买弹窗 (Modal) -->
+    <div id="buy-modal" class="fixed inset-0 z-[100] hidden items-center justify-center">
+        <!-- 背景遮罩 -->
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeBuyModal()"></div>
+        
+        <!-- 弹窗主体 -->
+        <div class="relative bg-card border border-slate-700 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-slide-up m-4">
+            <!-- 头部 -->
+            <div class="bg-slate-800/50 px-6 py-4 border-b border-slate-700 flex justify-between items-center">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-cart-shopping text-accent"></i> 确认订单
+                </h3>
+                <button onclick="closeBuyModal()" class="text-slate-400 hover:text-white transition">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            
+            <!-- 内容 -->
+            <div class="p-6 space-y-5">
+                <!-- 商品信息 -->
+                <div class="flex gap-4 items-center bg-slate-900/50 p-4 rounded-xl border border-slate-700/50">
+                    <div id="modal-icon" class="w-12 h-12 rounded-lg bg-slate-800 flex items-center justify-center text-2xl"></div>
+                    <div>
+                        <div id="modal-title" class="font-bold text-white text-lg">商品名称</div>
+                        <div class="text-xs text-slate-400 mt-1">库存: <span id="modal-stock" class="text-emerald-400 font-mono">100</span> 件</div>
+                    </div>
+                </div>
+
+                <!-- 表单 -->
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">联系邮箱 (接收卡密必填) <span class="text-pink">*</span></label>
+                        <input type="email" id="buyer-email" placeholder="example@qq.com" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent transition" required>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">购买数量 <span class="text-pink">*</span></label>
+                        <div class="flex items-center bg-slate-900 border border-slate-700 rounded-lg w-32 overflow-hidden">
+                            <button onclick="updateQty(-1)" class="w-10 h-10 text-slate-400 hover:bg-slate-800 hover:text-white transition">-</button>
+                            <input type="number" id="buy-qty" value="1" min="1" class="w-12 h-10 bg-transparent text-center text-white focus:outline-none appearance-none font-mono" readonly>
+                            <button onclick="updateQty(1)" class="w-10 h-10 text-slate-400 hover:bg-slate-800 hover:text-white transition">+</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 mb-2 uppercase tracking-wider">支付方式 <span class="text-pink">*</span></label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <label class="cursor-pointer">
+                                <input type="radio" name="pay-method" value="alipay" class="peer sr-only" checked>
+                                <div class="rounded-lg border border-slate-700 bg-slate-900 px-4 py-3 text-center hover:bg-slate-800 peer-checked:border-[#1677ff] peer-checked:bg-[#1677ff]/10 transition">
+                                    <i class="fa-brands fa-alipay text-[#1677ff] text-xl mb-1"></i>
+                                    <div class="text-xs font-bold text-white">支付宝</div>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="pay-method" value="wechat" class="peer sr-only">
+                                <div class="rounded-lg border border-slate-700 bg-slate-900 px-4 py-3 text-center hover:bg-slate-800 peer-checked:border-[#09b653] peer-checked:bg-[#09b653]/10 transition">
+                                    <i class="fa-brands fa-weixin text-[#09b653] text-xl mb-1"></i>
+                                    <div class="text-xs font-bold text-white">微信支付</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 底部结算 -->
+            <div class="bg-slate-900 p-6 border-t border-slate-800 flex items-center justify-between">
+                <div>
+                    <div class="text-xs text-slate-400 mb-1">总计金额</div>
+                    <div class="text-2xl font-bold text-accent font-mono">¥<span id="modal-total">0.00</span></div>
+                </div>
+                <button onclick="submitOrder()" class="bg-accent hover:bg-cyan-400 text-dark font-bold px-8 py-3 rounded-xl shadow-[0_0_20px_rgba(0,242,255,0.3)] transition transform active:scale-95 flex items-center gap-2">
+                    立即支付 <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 查单弹窗 -->
+    <div id="query-modal" class="fixed inset-0 z-[100] hidden items-center justify-center">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeOrderQuery()"></div>
+        <div class="relative bg-card border border-slate-700 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-slide-up m-4">
+            <div class="bg-slate-800/50 px-6 py-4 border-b border-slate-700 flex justify-between items-center">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-magnifying-glass text-accent"></i> 订单查询
+                </h3>
+                <button onclick="closeOrderQuery()" class="text-slate-400 hover:text-white transition">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            <div class="p-6">
+                <p class="text-sm text-slate-400 mb-4">请输入您购买时预留的邮箱账号或订单编号进行查询。</p>
+                <input type="text" placeholder="输入邮箱或订单号..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white focus:border-accent focus:outline-none mb-4">
+                <button onclick="alert('系统演示：暂未查到订单')" class="w-full bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white font-bold px-4 py-3 rounded-xl transition">
+                    开始查询
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 模拟商品数据 ---
+        const products = [
+            { id: 1, cat: 'ai', title: 'ChatGPT Plus 独享账号 (30天)', desc: '官方正版充值，支持改密，包含 GPT-4 访问权限，一人一号极速发货。', price: 145.00, stock: 12, icon: 'fa-robot', color: 'text-emerald-400 bg-emerald-400/10' },
+            { id: 2, cat: 'ai', title: 'OpenAI API 120刀 满额度号', desc: '质保首登，附带API Key，可绑定各类第三方客户端使用，稳定防封。', price: 25.00, stock: 99, icon: 'fa-microchip', color: 'text-blue-400 bg-blue-400/10' },
+            { id: 3, cat: 'software', title: 'JetBrains 全家桶 激活码 (1年)', desc: '个人版授权，支持全系列 IDE，绑定个人邮箱，官方质保一年。', price: 38.00, stock: 45, icon: 'fa-code', color: 'text-purple-400 bg-purple-400/10' },
+            { id: 4, cat: 'software', title: 'Office 365 家庭版拼车 (1年)', desc: '独立 1TB OneDrive 空间，支持5台设备同时在线，正规车发车。', price: 45.00, stock: 6, icon: 'fa-windows', color: 'text-blue-500 bg-blue-500/10' },
+            { id: 5, cat: 'game', title: 'Steam 随机盲盒 (必得大作)', desc: '百分百出价值高于盲盒价格的游戏，欧皇必入，自动发CDK。', price: 9.90, stock: 200, icon: 'fa-steam', color: 'text-slate-100 bg-slate-600/30' },
+            { id: 6, cat: 'game', title: 'GTA 5 豪华版 Epic 账号', desc: '包含完整故事模式及在线模式，带新手起步资金，无封禁记录。', price: 15.00, stock: 23, icon: 'fa-gamepad', color: 'text-orange-400 bg-orange-400/10' },
+            { id: 7, cat: 'other', title: 'GitHub Student Pack 认证', desc: '全球优质开发者福利包，包含各种云服务、域名及软件授权。', price: 29.90, stock: 18, icon: 'fa-github', color: 'text-slate-300 bg-slate-700/30' },
+            { id: 8, cat: 'ai', title: 'Midjourney 会员共享号 (10天)', desc: '标准版共享池，可开启 Fast 模式无限生成，超高性价比。', price: 19.90, stock: 5, icon: 'fa-palette', color: 'text-pink-400 bg-pink-400/10' },
+        ];
+
+        let currentProduct = null;
+        let qty = 1;
+
+        // 渲染商品列表
+        function renderProducts(cat = 'all') {
+            const grid = document.getElementById('products-grid');
+            grid.innerHTML = '';
+            
+            const filtered = cat === 'all' ? products : products.filter(p => p.cat === cat);
+            
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full py-12 text-center text-slate-500"><i class="fa-solid fa-box-open text-4xl mb-3"></i><p>该分类下暂无商品</p></div>`;
+                return;
+            }
+
+            filtered.forEach((p, index) => {
+                const delay = index * 50;
+                grid.innerHTML += `
+                    <div class="glass-panel rounded-2xl p-5 product-card flex flex-col h-full animate-slide-up" style="animation-delay: ${delay}ms; animation-fill-mode: both;">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="w-12 h-12 rounded-xl flex items-center justify-center text-2xl ${p.color}">
+                                <i class="${p.icon.includes('fa-') ? (p.icon.includes('brands') ? 'fa-brands' : 'fa-solid') : 'fa-solid'} ${p.icon}"></i>
+                            </div>
+                            <span class="bg-slate-800/80 text-xs px-2 py-1 rounded-md text-slate-400 border border-slate-700/50">
+                                库存: <span class="text-accent font-mono">${p.stock}</span>
+                            </span>
+                        </div>
+                        <h3 class="font-bold text-lg text-white mb-2 leading-tight">${p.title}</h3>
+                        <p class="text-xs text-slate-400 mb-6 flex-grow leading-relaxed">${p.desc}</p>
+                        
+                        <div class="flex items-center justify-between mt-auto pt-4 border-t border-slate-800/50">
+                            <div class="text-xl font-bold text-white font-mono">¥${p.price.toFixed(2)}</div>
+                            <button onclick="openBuyModal(${p.id})" class="bg-accent/10 hover:bg-accent text-accent hover:text-dark border border-accent/30 hover:border-accent font-bold px-4 py-2 rounded-lg text-sm transition flex items-center gap-2">
+                                购买 <i class="fa-solid fa-cart-shopping"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // 分类切换
+        function filterCategory(cat, btnElement) {
+            // 更新按钮样式
+            const tabs = document.getElementById('category-tabs').children;
+            for(let btn of tabs) {
+                btn.className = "px-5 py-2 rounded-full glass-panel text-slate-300 hover:text-white text-sm whitespace-nowrap transition";
+            }
+            btnElement.className = "px-5 py-2 rounded-full bg-accent text-dark font-bold text-sm whitespace-nowrap transition";
+            
+            renderProducts(cat);
+        }
+
+        // 购买相关逻辑
+        function openBuyModal(id) {
+            currentProduct = products.find(p => p.id === id);
+            if (!currentProduct) return;
+            
+            qty = 1;
+            document.getElementById('buy-qty').value = qty;
+            document.getElementById('modal-title').innerText = currentProduct.title;
+            document.getElementById('modal-stock').innerText = currentProduct.stock;
+            document.getElementById('modal-icon').className = `w-12 h-12 rounded-lg flex items-center justify-center text-2xl ${currentProduct.color}`;
+            document.getElementById('modal-icon').innerHTML = `<i class="fa-solid ${currentProduct.icon}"></i>`;
+            
+            updateTotal();
+            
+            const modal = document.getElementById('buy-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            
+            // 自动聚焦邮箱输入框
+            setTimeout(() => document.getElementById('buyer-email').focus(), 100);
+        }
+
+        function closeBuyModal() {
+            const modal = document.getElementById('buy-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function updateQty(change) {
+            if (!currentProduct) return;
+            
+            let newQty = qty + change;
+            if (newQty < 1) newQty = 1;
+            if (newQty > currentProduct.stock) newQty = currentProduct.stock;
+            
+            qty = newQty;
+            document.getElementById('buy-qty').value = qty;
+            updateTotal();
+        }
+
+        function updateTotal() {
+            const total = (currentProduct.price * qty).toFixed(2);
+            document.getElementById('modal-total').innerText = total;
+        }
+
+        function submitOrder() {
+            const email = document.getElementById('buyer-email').value;
+            if (!email || !email.includes('@')) {
+                alert('请填写正确的接收邮箱！');
+                return;
+            }
+            
+            const method = document.querySelector('input[name="pay-method"]:checked').value;
+            const btn = event.currentTarget;
+            
+            // 模拟加载状态
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> 创建订单中...`;
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                alert(`模拟演示：订单创建成功！\n商品：${currentProduct.title}\n数量：${qty}\n总价：¥${(currentProduct.price * qty).toFixed(2)}\n接收邮箱：${email}\n支付方式：${method === 'alipay' ? '支付宝' : '微信'}`);
+                
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
+                closeBuyModal();
+            }, 800);
+        }
+
+        // 查询订单逻辑
+        function openOrderQuery() {
+            const modal = document.getElementById('query-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeOrderQuery() {
+            const modal = document.getElementById('query-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // 初始化
+        window.onload = () => {
+            renderProducts('all');
+        };
+    </script>
+</body>
+</html>
