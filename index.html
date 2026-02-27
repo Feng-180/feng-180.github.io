@@ -18,10 +18,26 @@
     <style>
         :root {
             --bg: #000000;
+            --bg-secondary: #0a0a0a;
             --text: #f5f5f7;
             --sub-text: #86868b;
             --accent: #00f2ff;
+            --accent-secondary: #ff0055;
             --transition: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --card-bg: rgba(20, 20, 20, 0.8);
+        }
+
+        [data-theme="light"] {
+            --bg: #f5f5f7;
+            --bg-secondary: #ffffff;
+            --text: #1d1d1f;
+            --sub-text: #6e6e73;
+            --accent: #007aff;
+            --card-bg: rgba(255, 255, 255, 0.9);
+        }
+
+        * {
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         body {
@@ -36,10 +52,69 @@
             height: 100vh;
             overflow: hidden;
             user-select: none;
-            transition: opacity 0.5s ease;
+            transition: opacity 0.5s ease, background-color 0.3s ease;
+        }
+
+        /* Loading state */
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .loading-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--card-bg);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
         #bg-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+        /* Dark/Light mode toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            border-color: var(--accent);
+        }
+
+        .theme-toggle .sun { display: none; }
+        .theme-toggle .moon { display: block; }
+        [data-theme="light"] .theme-toggle .sun { display: block; }
+        [data-theme="light"] .theme-toggle .moon { display: none; }
 
         #clock {
             font-size: 15vw;
@@ -50,6 +125,11 @@
             text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
             position: relative; z-index: 1;
             animation: breathGlow 4s ease-in-out infinite;
+            transition: text-shadow 0.3s ease;
+        }
+
+        [data-theme="light"] #clock {
+            text-shadow: 0 0 20px rgba(0, 122, 255, 0.2);
         }
 
         .meta-group {
@@ -68,8 +148,9 @@
 
         .motto {
             font-size: 0.9rem;
-            color: #444;
+            color: var(--sub-text);
             font-style: normal;
+            opacity: 0.6;
         }
 
         .trigger-area {
@@ -93,6 +174,10 @@
             transition: all 0.3s var(--transition);
         }
 
+        [data-theme="light"] .secret-line {
+            background: #ccc;
+        }
+
         .trigger-area:active .secret-line {
             background: #666;
             width: 60px;
@@ -113,7 +198,8 @@
             position: fixed;
             bottom: 15px;
             font-size: 10px;
-            color: #222;
+            color: var(--sub-text);
+            opacity: 0.5;
             pointer-events: none;
         }
 
@@ -142,10 +228,22 @@
 
         @media (max-width: 600px) {
             #clock { font-size: 20vw; }
+            .theme-toggle { top: 15px; right: 15px; width: 36px; height: 36px; }
         }
     </style>
 </head>
 <body>
+
+    <!-- Loading State -->
+    <div class="loading-overlay" id="loading">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Theme Toggle -->
+    <button class="theme-toggle" id="themeToggle" aria-label="切换主题">
+        <span class="moon">🌙</span>
+        <span class="sun">☀️</span>
+    </button>
 
     <canvas id="bg-canvas"></canvas>
 
@@ -163,6 +261,25 @@
     <div id="tips">风の魔法禁书录</div>
 
     <script>
+        // Theme Toggle Functionality
+        const themeToggle = document.getElementById('themeToggle');
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        });
+
+        // Hide loading after page loads
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loading').classList.add('hidden');
+            }, 800);
+        });
+
         const clockEl = document.getElementById('clock');
         const dateEl = document.getElementById('date');
         const dayNames = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
@@ -210,7 +327,7 @@
         function activatePortal() {
             if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
             document.body.classList.add('glitch-mode');
-            document.body.style.backgroundColor = '#111';
+            document.body.style.backgroundColor = document.documentElement.getAttribute('data-theme') === 'light' ? '#fff' : '#111';
             clockEl.style.color = '#00f2ff';
             clockEl.innerText = "验证通过";
             dateEl.innerText = "正在跳转...";
@@ -222,38 +339,103 @@
             }, 1200);
         }
 
+        // Enhanced Particle Animation with Canvas
         const cvs = document.getElementById('bg-canvas'), ctx = cvs.getContext('2d');
         let w, h, particles = [];
+        
+        function getParticleColor() {
+            const theme = document.documentElement.getAttribute('data-theme') || 'dark';
+            if (theme === 'light') {
+                return ['#007aff', '#34c759', '#ff9500', '#ff3b30'];
+            }
+            return ['#00f2ff', '#ff0055', '#a855f7', '#00ff88'];
+        }
+
         function initParticles() {
             w = cvs.width = window.innerWidth; h = cvs.height = window.innerHeight;
             particles = [];
-            const cnt = w < 600 ? 25 : 50;
+            const cnt = w < 600 ? 30 : 60;
+            const colors = getParticleColor();
             for(let i=0; i<cnt; i++) {
                 particles.push({
-                    x: Math.random()*w, y: Math.random()*h,
-                    vx: (Math.random()-0.5)*0.3, vy: (Math.random()-0.5)*0.3,
-                    size: Math.random()*1.2
+                    x: Math.random()*w, 
+                    y: Math.random()*h,
+                    vx: (Math.random()-0.5) * 0.4,
+                    vy: (Math.random()-0.5) * 0.4,
+                    size: Math.random() * 1.5 + 0.5,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    pulse: Math.random() * Math.PI * 2,
+                    pulseSpeed: Math.random() * 0.02 + 0.01
                 });
             }
         }
+
         function drawParticles() {
+            const theme = document.documentElement.getAttribute('data-theme') || 'dark';
+            const bgAlpha = theme === 'light' ? 0.02 : 0.03;
+            
             ctx.clearRect(0, 0, w, h);
+            
+            // Draw background gradient
+            const gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(w, h));
+            if (theme === 'light') {
+                gradient.addColorStop(0, 'rgba(0, 122, 255, 0.05)');
+                gradient.addColorStop(1, 'transparent');
+            } else {
+                gradient.addColorStop(0, 'rgba(0, 242, 255, 0.03)');
+                gradient.addColorStop(1, 'transparent');
+            }
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, w, h);
+
             particles.forEach((p, i) => {
-                p.x += p.vx; p.y += p.vy;
+                // Update pulse
+                p.pulse += p.pulseSpeed;
+                const sizeMultiplier = 1 + Math.sin(p.pulse) * 0.3;
+                
+                p.x += p.vx; 
+                p.y += p.vy;
                 if(p.x < 0 || p.x > w) p.vx *= -1;
                 if(p.y < 0 || p.y > h) p.vy *= -1;
-                ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.3)'; ctx.fill();
+                
+                // Draw particle with glow
+                ctx.beginPath(); 
+                ctx.arc(p.x, p.y, p.size * sizeMultiplier, 0, Math.PI*2);
+                ctx.fillStyle = p.color; 
+                ctx.globalAlpha = 0.6; 
+                ctx.fill();
+                
+                // Glow effect
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size * sizeMultiplier * 2, 0, Math.PI*2);
+                ctx.fillStyle = p.color;
+                ctx.globalAlpha = 0.1;
+                ctx.fill();
+                
+                ctx.globalAlpha = 1;
+                
+                // Draw connections
                 for(let j=i+1; j<particles.length; j++) {
                     let p2 = particles[j], dist = Math.hypot(p.x-p2.x, p.y-p2.y);
-                    if(dist < 120) {
-                        ctx.beginPath(); ctx.strokeStyle = `rgba(255, 255, 255, ${0.08 * (1 - dist/120)})`;
-                        ctx.lineWidth = 0.3; ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
+                    if(dist < 150) {
+                        ctx.beginPath(); 
+                        const alpha = 0.1 * (1 - dist/150);
+                        ctx.strokeStyle = theme === 'light' 
+                            ? `rgba(0, 122, 255, ${alpha})`
+                            : `rgba(0, 242, 255, ${alpha})`;
+                        ctx.lineWidth = 0.3; 
+                        ctx.moveTo(p.x, p.y); 
+                        ctx.lineTo(p2.x, p2.y); 
+                        ctx.stroke();
                     }
                 }
             });
             requestAnimationFrame(drawParticles);
         }
+
+        // Re-init particles when theme changes
+        themeToggle.addEventListener('click', initParticles);
+        
         window.addEventListener('resize', initParticles);
         initParticles(); drawParticles();
     </script>

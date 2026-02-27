@@ -9,10 +9,25 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700;900&display=swap" rel="stylesheet">
   <title>404 | 页面丢失</title>
   <style>
-    :root { --cyan: #00f2ff; --pink: #ff0055; --void: #05020a; }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { 
+        --cyan: #00f2ff; 
+        --pink: #ff0055; 
+        --void: #05020a;
+        --void-light: #f5f5f7;
+        --text-light: #1d1d1f;
+        --card-bg: rgba(16, 20, 30, 0.7);
+        --card-bg-light: rgba(255, 255, 255, 0.9);
+    }
+    
+    [data-theme="light"] {
+        --void: #f5f5f7;
+        --card-bg: rgba(255, 255, 255, 0.9);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; transition: background-color 0.3s ease; }
     body {
       background: var(--void); color: #fff;
+      [data-theme="light"] & { color: var(--text-light); }
       font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
       min-height: 100vh; display: flex; flex-direction: column;
       align-items: center; justify-content: center;
@@ -72,6 +87,7 @@
 
     .terminal-box {
       background: rgba(0,0,0,0.5); border: 1px solid #222;
+      [data-theme="light"] & { background: rgba(0,0,0,0.05); border-color: #ddd; }
       border-radius: 6px; padding: 20px; text-align: left;
       margin-bottom: 30px; font-size: 12px; line-height: 2;
       font-family: "Consolas", monospace;
@@ -109,6 +125,28 @@
       margin-top: 40px; font-size: 10px; color: #333;
       letter-spacing: 2px;
     }
+    
+    /* Loading state */
+    .loading-overlay {
+        position: fixed;
+        inset: 0;
+        background: var(--void);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+    .loading-overlay.hidden { opacity: 0; visibility: hidden; }
+    .loader {
+        width: 50px;
+        height: 50px;
+        border: 3px solid var(--card-bg);
+        border-top-color: var(--cyan);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
     @keyframes glitch-1 {
       0% { clip-path: inset(40% 0 61% 0); transform: translate(-2px, -1px); }
@@ -139,6 +177,11 @@
 </head>
 <body>
 
+    <!-- Loading State -->
+    <div class="loading-overlay" id="loading">
+        <div class="loader"></div>
+    </div>
+
   <canvas id="bg-canvas"></canvas>
 
   <div class="container">
@@ -164,42 +207,103 @@
   </div>
 
   <script>
-    const cvs = document.getElementById('bg-canvas'), ctx = cvs.getContext('2d');
-    let w, h, particles = [];
-    function init() {
-      w = cvs.width = window.innerWidth; h = cvs.height = window.innerHeight;
-      particles = [];
-      const cnt = w < 600 ? 30 : 60;
-      for(let i = 0; i < cnt; i++) {
-        particles.push({
-          x: Math.random()*w, y: Math.random()*h,
-          vx: (Math.random()-0.5)*0.4, vy: (Math.random()-0.5)*0.4,
-          size: Math.random()*1.2,
-          color: Math.random() > 0.5 ? '#00f2ff' : '#ff0055'
+        // Apply saved theme
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+
+        // Hide loading after page loads
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loading').classList.add('hidden');
+            }, 600);
         });
-      }
-    }
-    function draw() {
-      ctx.clearRect(0, 0, w, h);
-      particles.forEach((p, i) => {
-        p.x += p.vx; p.y += p.vy;
-        if(p.x < 0 || p.x > w) p.vx *= -1;
-        if(p.y < 0 || p.y > h) p.vy *= -1;
-        ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
-        ctx.fillStyle = p.color; ctx.globalAlpha = 0.4; ctx.fill();
-        for(let j = i+1; j < particles.length; j++) {
-          let p2 = particles[j], dist = Math.hypot(p.x-p2.x, p.y-p2.y);
-          if(dist < 100) {
-            ctx.beginPath(); ctx.strokeStyle = `rgba(0, 242, 255, ${0.1 * (1-dist/100)})`;
-            ctx.lineWidth = 0.3; ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
-          }
+
+        // Enhanced Particle Animation with theme support
+        const cvs = document.getElementById('bg-canvas'), ctx = cvs.getContext('2d');
+        let w, h, particles = [];
+        
+        function getThemeColors() {
+            const theme = document.documentElement.getAttribute('data-theme') || 'dark';
+            if (theme === 'light') {
+                return { primary: '#007aff', secondary: '#34c759', bg: 'rgba(0, 122, 255, 0.05)' };
+            }
+            return { primary: '#00f2ff', secondary: '#ff0055', bg: 'rgba(0, 242, 255, 0.03)' };
         }
-      });
-      ctx.globalAlpha = 1;
-      requestAnimationFrame(draw);
-    }
-    window.addEventListener('resize', init);
-    init(); draw();
-  </script>
+
+        function init() {
+            w = cvs.width = window.innerWidth; h = cvs.height = window.innerHeight;
+            particles = [];
+            const cnt = w < 600 ? 30 : 60;
+            const colors = getThemeColors();
+            for(let i = 0; i < cnt; i++) {
+                particles.push({
+                    x: Math.random()*w, y: Math.random()*h,
+                    vx: (Math.random()-0.5)*0.4, vy: (Math.random()-0.5)*0.4,
+                    size: Math.random()*1.2 + 0.5,
+                    color: Math.random() > 0.5 ? colors.primary : colors.secondary,
+                    pulse: Math.random() * Math.PI * 2,
+                    pulseSpeed: Math.random() * 0.02 + 0.01
+                });
+            }
+        }
+
+        function draw() {
+            const colors = getThemeColors();
+            ctx.clearRect(0, 0, w, h);
+            
+            // Background gradient
+            const gradient = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, Math.max(w, h));
+            gradient.addColorStop(0, colors.bg);
+            gradient.addColorStop(1, 'transparent');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, w, h);
+
+            particles.forEach((p, i) => {
+                p.pulse += p.pulseSpeed;
+                const sizeMultiplier = 1 + Math.sin(p.pulse) * 0.3;
+                
+                p.x += p.vx; p.y += p.vy;
+                if(p.x < 0 || p.x > w) p.vx *= -1;
+                if(p.y < 0 || p.y > h) p.vy *= -1;
+                
+                // Draw glow
+                ctx.beginPath(); 
+                ctx.arc(p.x, p.y, p.size * sizeMultiplier * 2, 0, Math.PI*2);
+                ctx.fillStyle = p.color;
+                ctx.globalAlpha = 0.1;
+                ctx.fill();
+                
+                // Draw particle
+                ctx.beginPath(); 
+                ctx.arc(p.x, p.y, p.size * sizeMultiplier, 0, Math.PI*2);
+                ctx.fillStyle = p.color; 
+                ctx.globalAlpha = 0.5; 
+                ctx.fill();
+                
+                ctx.globalAlpha = 1;
+                
+                // Draw connections
+                for(let j = i+1; j < particles.length; j++) {
+                    let p2 = particles[j], dist = Math.hypot(p.x-p2.x, p.y-p2.y);
+                    if(dist < 100) {
+                        ctx.beginPath(); 
+                        const alpha = 0.1 * (1-dist/100);
+                        ctx.strokeStyle = colors.primary === '#007aff' 
+                            ? `rgba(0, 122, 255, ${alpha})`
+                            : `rgba(0, 242, 255, ${alpha})`;
+                        ctx.lineWidth = 0.3; 
+                        ctx.moveTo(p.x, p.y); 
+                        ctx.lineTo(p2.x, p2.y); 
+                        ctx.stroke();
+                    }
+                }
+            });
+            ctx.globalAlpha = 1;
+            requestAnimationFrame(draw);
+        }
+        
+        window.addEventListener('resize', init);
+        init(); draw();
+    </script>
 </body>
 </html>
