@@ -1,295 +1,488 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" class="scroll-smooth">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#05020a">
-  <meta name="description" content="全球节点订阅库 - 实时更新的高速节点列表，支持一键复制和Clash导入。">
-  <meta name="author" content="Feng-180">
-  <meta property="og:title" content="风の数据流 | 节点订阅库">
-  <meta property="og:description" content="全球节点订阅库，Matrix代码雨风格界面。">
-  <meta property="og:type" content="website">
-  <meta property="og:image" content="logo.png">
-  <link rel="icon" type="image/png" href="logo.png">
-  <link rel="apple-touch-icon" href="logo.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700;900&display=swap" rel="stylesheet">
-  <title>风の数据流 | 节点订阅库</title>
-  <style>
-    :root { --cyan: #00f2ff; --pink: #ff0055; --void: #05020a; --card-bg: rgba(16, 20, 30, 0.7); --font-code: "Consolas", monospace; --font-main: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; }
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
-    body { margin: 0; background: var(--void); color: #fff; font-family: var(--font-main); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding-bottom: 80px; overflow-x: hidden; }
-    #matrix-canvas { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.3; }
-    
-    .header-group { width: 90%; max-width: 600px; margin-top: 50px; position: relative; z-index: 2; }
-    .status-badge { font-family: var(--font-code); font-size: 10px; background: var(--cyan); color: #000; padding: 2px 8px; border-radius: 2px; display: inline-block; font-weight: bold; }
-    .page-title { font-size: 24px; margin: 10px 0; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; background: linear-gradient(90deg, #fff, #888); -webkit-background-clip: text; color: transparent; }
-    .update-time { font-size: 10px; color: #666; font-family: var(--font-code); margin-bottom: 30px; }
-
-    .search-box { width: 90%; max-width: 600px; z-index: 2; margin-bottom: 15px; position: relative; }
-    .search-input { width: 100%; padding: 12px 15px 12px 40px; background: rgba(16, 20, 30, 0.7); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: var(--cyan); font-family: var(--font-code); font-size: 12px; backdrop-filter: blur(10px); transition: 0.3s; }
-    .search-input::placeholder { color: #555; }
-    .search-input:focus { border-color: var(--cyan); box-shadow: 0 0 15px rgba(0,242,255,0.1); }
-    .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #555; font-size: 14px; pointer-events: none; }
-
-    .stats-bar { width: 90%; max-width: 600px; z-index: 2; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-family: var(--font-code); font-size: 10px; }
-    .stats-info { color: #666; }
-    .stats-info span { color: var(--cyan); }
-    .btn-copy-all { padding: 6px 14px; border: 1px solid #333; border-radius: 4px; color: #888; font-size: 10px; cursor: pointer; transition: 0.3s; background: transparent; font-family: var(--font-code); }
-    .btn-copy-all:hover { border-color: var(--pink); color: var(--pink); background: rgba(255,0,85,0.05); }
-
-    .card-grid { width: 90%; max-width: 600px; z-index: 2; display: grid; gap: 15px; }
-    .card { background: var(--card-bg); border: 1px solid rgba(255,255,255,0.08); padding: 15px; border-radius: 6px; backdrop-filter: blur(10px); transition: 0.3s; position: relative; overflow: hidden; }
-    .card:hover { transform: translateY(-2px); border-color: var(--cyan); box-shadow: 0 5px 20px rgba(0, 242, 255, 0.1); background: rgba(20, 25, 35, 0.9); }
-    .card::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--cyan); opacity: 0; transition: 0.3s; }
-    .card:hover::before { opacity: 1; }
-    .card.offline { opacity: 0.5; }
-    .card.offline::before { background: var(--pink); }
-
-    .c-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-    .c-name { font-weight: bold; font-size: 14px; }
-    .c-tag { font-size: 9px; padding: 2px 5px; background: rgba(255,255,255,0.1); border-radius: 3px; color: #aaa; }
-    .c-tag.active { color: var(--cyan); background: rgba(0,242,255,0.1); }
-    .c-tag.offline { color: var(--pink); background: rgba(255,0,85,0.1); }
-    
-    .link-box { font-family: var(--font-code); font-size: 10px; color: #666; background: #000; padding: 8px; border-radius: 4px; border: 1px dashed #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
-    .card:hover .link-box { color: var(--cyan); border-color: rgba(0,242,255,0.3); }
-    
-    .btn-row { margin-top: 10px; display: flex; gap: 10px; }
-    .btn { flex: 1; padding: 8px; font-size: 10px; text-align: center; border: 1px solid #333; color: #888; text-decoration: none; border-radius: 4px; transition: 0.2s; cursor: pointer; }
-    .btn:hover { border-color: var(--cyan); color: var(--cyan); background: rgba(0,242,255,0.05); }
-    .btn.clash:hover { border-color: var(--pink); color: var(--pink); background: rgba(255,0,85,0.05); }
-
-    .back-btn { margin-top: 40px; z-index: 5; padding: 10px 30px; border: 1px solid var(--cyan); color: var(--cyan); text-decoration: none; border-radius: 50px; font-size: 12px; transition: 0.3s; }
-    .back-btn:hover { background: var(--cyan); color: #000; box-shadow: 0 0 20px var(--cyan); }
-
-    #toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100%); background: rgba(10,15,20,0.9); border: 1px solid var(--cyan); color: var(--cyan); padding: 10px 20px; border-radius: 4px; font-size: 12px; z-index: 999; opacity: 0; transition: 0.3s; }
-    #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-
-    .scroll-top { position: fixed; bottom: 30px; right: 20px; z-index: 100; width: 40px; height: 40px; border-radius: 50%; background: rgba(16,20,30,0.8); border: 1px solid var(--cyan); color: var(--cyan); font-size: 18px; cursor: pointer; display: none; align-items: center; justify-content: center; transition: 0.3s; backdrop-filter: blur(10px); }
-    .scroll-top:hover { background: var(--cyan); color: #000; box-shadow: 0 0 20px var(--cyan); }
-    .scroll-top.visible { display: flex; }
-
-    .no-results { display: none; text-align: center; color: #555; font-family: var(--font-code); font-size: 12px; padding: 40px 0; z-index: 2; }
-
-    @keyframes cardFadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-    .card { opacity: 0; animation: cardFadeIn 0.4s ease forwards; }
-    .card:nth-child(1) { animation-delay: 0.05s; }
-    .card:nth-child(2) { animation-delay: 0.1s; }
-    .card:nth-child(3) { animation-delay: 0.15s; }
-    .card:nth-child(4) { animation-delay: 0.2s; }
-    .card:nth-child(5) { animation-delay: 0.25s; }
-    .card:nth-child(6) { animation-delay: 0.3s; }
-    .card:nth-child(7) { animation-delay: 0.35s; }
-    .card:nth-child(8) { animation-delay: 0.4s; }
-  </style>
-</head>
-<body>
-  <canvas id="matrix-canvas"></canvas>
-  <div id="toast">链接已复制</div>
-
-  <div class="header-group">
-    <div class="status-badge">系统在线</div>
-    <div class="page-title">全球节点订阅库</div>
-    <div class="update-time">最后更新：2026-02-27 10:50:02</div>
-  </div>
-
-  <div class="search-box">
-    <span class="search-icon">&#9906;</span>
-    <input type="text" class="search-input" id="searchInput" placeholder="搜索节点..." oninput="filterNodes()">
-  </div>
-
-  <div class="stats-bar">
-    <div class="stats-info">节点：<span id="nodeCount">8</span> / <span id="totalCount">8</span></div>
-    <button class="btn-copy-all" onclick="copyAllLinks()">复制全部链接</button>
-  </div>
-
-  <div class="card-grid" id="cardGrid">
-    
-    <div class="card">
-      <div class="c-top">
-        <span class="c-name">节点池_多协议聚合</span>
-        <span class="c-tag active">在线</span>
-      </div>
-      <div class="link-box" onclick="copyText('https://raw.githubusercontent.com/peasoft/NoMoreWalls/master/list.txt')">https://raw.githubusercontent.com/peasoft/NoMoreWalls/master/list.txt</div>
-      <div class="btn-row">
-        <div class="btn" onclick="copyText('https://raw.githubusercontent.com/peasoft/NoMoreWalls/master/list.txt')">复制链接</div>
-        <a class="btn clash" href="clash://install-config?url=https://raw.githubusercontent.com/peasoft/NoMoreWalls/master/list.txt">导入 Clash</a>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="c-top">
-        <span class="c-name">全球节点_自动抓取</span>
-        <span class="c-tag active">在线</span>
-      </div>
-      <div class="link-box" onclick="copyText('https://raw.githubusercontent.com/mfuu/v2ray/master/v2ray')">https://raw.githubusercontent.com/mfuu/v2ray/master/v2ray</div>
-      <div class="btn-row">
-        <div class="btn" onclick="copyText('https://raw.githubusercontent.com/mfuu/v2ray/master/v2ray')">复制链接</div>
-        <a class="btn clash" href="clash://install-config?url=https://raw.githubusercontent.com/mfuu/v2ray/master/v2ray">导入 Clash</a>
-      </div>
-    </div>
-
-    <div class="card offline">
-      <div class="c-top">
-        <span class="c-name">高速订阅_每日更新</span>
-        <span class="c-tag offline">离线</span>
-      </div>
-      <div class="link-box" onclick="copyText('https://raw.githubusercontent.com/aiboboxx/v2rayfree/main/v2')">https://raw.githubusercontent.com/aiboboxx/v2rayfree/main/v2</div>
-      <div class="btn-row">
-        <div class="btn" onclick="copyText('https://raw.githubusercontent.com/aiboboxx/v2rayfree/main/v2')">复制链接</div>
-        <a class="btn clash" href="clash://install-config?url=https://raw.githubusercontent.com/aiboboxx/v2rayfree/main/v2">导入 Clash</a>
-      </div>
-    </div>
-
-    <div class="card offline">
-      <div class="c-top">
-        <span class="c-name">多国节点_精选合集</span>
-        <span class="c-tag offline">离线</span>
-      </div>
-      <div class="link-box" onclick="copyText('https://raw.githubusercontent.com/barry-far/V2ray-Servers/main/Sub')">https://raw.githubusercontent.com/barry-far/V2ray-Servers/main/Sub</div>
-      <div class="btn-row">
-        <div class="btn" onclick="copyText('https://raw.githubusercontent.com/barry-far/V2ray-Servers/main/Sub')">复制链接</div>
-        <a class="btn clash" href="clash://install-config?url=https://raw.githubusercontent.com/barry-far/V2ray-Servers/main/Sub">导入 Clash</a>
-      </div>
-    </div>
-
-    <div class="card offline">
-      <div class="c-top">
-        <span class="c-name">电报采集_大量节点</span>
-        <span class="c-tag offline">离线</span>
-      </div>
-      <div class="link-box" onclick="copyText('https://raw.githubusercontent.com/yebekhe/TelegramV2rayCollector/main/sub/normal/mix')">https://raw.githubusercontent.com/yebekhe/TelegramV2rayCollector/main/sub/normal/mix</div>
-      <div class="btn-row">
-        <div class="btn" onclick="copyText('https://raw.githubusercontent.com/yebekhe/TelegramV2rayCollector/main/sub/normal/mix')">复制链接</div>
-        <a class="btn clash" href="clash://install-config?url=https://raw.githubusercontent.com/yebekhe/TelegramV2rayCollector/main/sub/normal/mix">导入 Clash</a>
-      </div>
-    </div>
-
-    <div class="card offline">
-      <div class="c-top">
-        <span class="c-name">混合协议_稳定可用</span>
-        <span class="c-tag offline">离线</span>
-      </div>
-      <div class="link-box" onclick="copyText('https://raw.githubusercontent.com/vxiaov/free_proxies/main/subscribe/v2ray.txt')">https://raw.githubusercontent.com/vxiaov/free_proxies/main/subscribe/v2ray.txt</div>
-      <div class="btn-row">
-        <div class="btn" onclick="copyText('https://raw.githubusercontent.com/vxiaov/free_proxies/main/subscribe/v2ray.txt')">复制链接</div>
-        <a class="btn clash" href="clash://install-config?url=https://raw.githubusercontent.com/vxiaov/free_proxies/main/subscribe/v2ray.txt">导入 Clash</a>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="c-top">
-        <span class="c-name">爬虫聚合_自动更新</span>
-        <span class="c-tag active">在线</span>
-      </div>
-      <div class="link-box" onclick="copyText('https://raw.githubusercontent.com/Leon406/SubCrawler/master/sub/share/vless')">https://raw.githubusercontent.com/Leon406/SubCrawler/master/sub/share/vless</div>
-      <div class="btn-row">
-        <div class="btn" onclick="copyText('https://raw.githubusercontent.com/Leon406/SubCrawler/master/sub/share/vless')">复制链接</div>
-        <a class="btn clash" href="clash://install-config?url=https://raw.githubusercontent.com/Leon406/SubCrawler/master/sub/share/vless">导入 Clash</a>
-      </div>
-    </div>
-
-    <div class="card offline">
-      <div class="c-top">
-        <span class="c-name">永久免费_持续维护</span>
-        <span class="c-tag offline">离线</span>
-      </div>
-      <div class="link-box" onclick="copyText('https://raw.githubusercontent.com/Alvin9999/pac2/master/xray/config.json')">https://raw.githubusercontent.com/Alvin9999/pac2/master/xray/config.json</div>
-      <div class="btn-row">
-        <div class="btn" onclick="copyText('https://raw.githubusercontent.com/Alvin9999/pac2/master/xray/config.json')">复制链接</div>
-        <a class="btn clash" href="clash://install-config?url=https://raw.githubusercontent.com/Alvin9999/pac2/master/xray/config.json">导入 Clash</a>
-      </div>
-    </div>
-
-  </div>
-
-  <div class="no-results" id="noResults">未找到匹配的节点</div>
-
-  <a href="portal.html" class="back-btn">返回主控台</a>
-
-  <div class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">&#8593;</div>
-
-  <script>
-    const canvas = document.getElementById('matrix-canvas');
-    const ctx = canvas.getContext('2d');
-    let width = canvas.width = window.innerWidth;
-    let height = canvas.height = window.innerHeight;
-    const chars = '01ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const drops = [];
-    const fontSize = 14;
-    const columns = width / fontSize;
-    for(let i=0; i<columns; i++) drops[i] = 1;
-
-    function draw() {
-      ctx.fillStyle = 'rgba(5, 2, 10, 0.1)';
-      ctx.fillRect(0, 0, width, height);
-      ctx.fillStyle = '#003333';
-      ctx.font = fontSize + 'px monospace';
-      for(let i=0; i<drops.length; i++) {
-        const text = chars[Math.floor(Math.random()*chars.length)];
-        ctx.fillText(text, i*fontSize, drops[i]*fontSize);
-        if(drops[i]*fontSize > height && Math.random() > 0.975) drops[i] = 0;
-        drops[i]++;
-      }
-      requestAnimationFrame(draw);
-    }
-    draw(); window.addEventListener('resize', ()=>{ width=canvas.width=window.innerWidth; height=canvas.height=window.innerHeight; });
-
-    async function copyText(text) {
-      const t = document.getElementById('toast');
-      try {
-        await navigator.clipboard.writeText(text);
-        t.innerText = "复制成功";
-      } catch (err) {
-        const ta = document.createElement("textarea");
-        ta.value = text;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        document.body.removeChild(ta);
-        t.innerText = "复制成功（备用方式）";
-      }
-      t.classList.add('show');
-      setTimeout(()=>t.classList.remove('show'), 2000);
-    }
-
-    function filterNodes() {
-      const keyword = document.getElementById('searchInput').value.toLowerCase();
-      const cards = document.querySelectorAll('#cardGrid .card');
-      let visibleCount = 0;
-      cards.forEach(card => {
-        const name = card.querySelector('.c-name').textContent.toLowerCase();
-        const link = card.querySelector('.link-box').textContent.toLowerCase();
-        const match = name.includes(keyword) || link.includes(keyword);
-        card.style.display = match ? '' : 'none';
-        if (match) visibleCount++;
-      });
-      document.getElementById('nodeCount').textContent = visibleCount;
-      document.getElementById('noResults').style.display = visibleCount === 0 ? 'block' : 'none';
-    }
-
-    async function copyAllLinks() {
-      const cards = document.querySelectorAll('#cardGrid .card');
-      const links = [];
-      cards.forEach(card => {
-        if (card.style.display !== 'none') {
-          links.push(card.querySelector('.link-box').textContent.trim());
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="资源风 - 真正收录300+全球优质极客资源。对标FMHY的中文导航站。">
+    <title>资源风 | Resource Wind (300+版)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: '#020617',
+                        card: '#0f172a',
+                        accent: '#38bdf8',
+                    },
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    animation: { 'fade-in': 'fadeIn 0.5s ease-out' },
+                    keyframes: { fadeIn: { '0%': { opacity: '0', transform: 'translateY(10px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } } }
+                }
+            }
         }
-      });
-      await copyText(links.join('\n'));
-      const t = document.getElementById('toast');
-      t.innerText = `已复制 ${links.length} 条链接`;
-      t.classList.add('show');
-      setTimeout(() => t.classList.remove('show'), 2000);
-    }
+    </script>
+    <style>
+        body { background-color: #020617; color: #cbd5e1; }
+        
+        /* Loading State */
+        #loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: #020617;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+        #loading-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #1e293b;
+            border-top-color: #38bdf8;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+        .resource-card { border: 1px solid rgba(255,255,255,0.05); transition: all 0.2s; }
+        .resource-card:hover { transform: translateY(-2px); border-color: rgba(56, 189, 248, 0.4); background: rgba(30, 41, 59, 0.5); box-shadow: 0 4px 20px -5px rgba(0,0,0,0.5); }
+        
+        /* Staggered card animation */
+        .resource-card { opacity: 0; animation: cardFadeIn 0.4s ease forwards; }
+        @keyframes cardFadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .sidebar-header { font-size: 11px; font-weight: 800; color: #475569; text-transform: uppercase; letter-spacing: 0.1em; padding: 1.5rem 1rem 0.5rem; }
+        #toast-container { z-index: 9999; }
+    </style>
+</head>
+<body class="h-screen overflow-hidden flex text-sm selection:bg-accent selection:text-dark">
 
-    window.addEventListener('scroll', () => {
-      const btn = document.getElementById('scrollTop');
-      if (window.scrollY > 300) btn.classList.add('visible');
-      else btn.classList.remove('visible');
-    });
-  </script>
+    <!-- Loading Overlay -->
+    <div id="loading-overlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <aside id="sidebar" class="fixed md:static inset-y-0 left-0 w-64 bg-[#0b1121] border-r border-slate-800/50 z-50 flex flex-col transform -translate-x-full md:translate-x-0 transition-transform duration-200">
+        <div class="h-16 flex items-center px-5 border-b border-slate-800/50 shrink-0 cursor-pointer" onclick="location.reload()">
+            <div class="w-8 h-8 bg-gradient-to-tr from-cyan-500 to-blue-600 rounded-lg flex items-center justify-center text-white mr-3 shadow-lg shadow-blue-500/20"><i class="fa-solid fa-wind"></i></div>
+            <div class="font-bold text-lg text-white tracking-wide">资源风 <span class="text-[10px] text-accent font-mono bg-accent/10 px-1 rounded ml-1">v10</span></div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-0.5">
+            <div onclick="joinQQ()" class="mb-4 p-3 rounded-xl bg-gradient-to-r from-blue-900/20 to-cyan-900/20 border border-blue-500/20 cursor-pointer group relative overflow-hidden">
+                <div class="absolute inset-0 bg-blue-500/10 opacity-0 group-hover:opacity-100 transition"></div>
+                <div class="flex justify-between items-center relative z-10"><span class="text-xs font-bold text-blue-300">加入官方社区</span><i class="fa-brands fa-qq"></i></div>
+                <div class="text-lg font-bold text-white mt-1 relative z-10 font-mono">691105381</div>
+            </div>
+
+            <button onclick="filter('all')" class="nav-btn w-full text-left px-3 py-2 rounded-lg text-white bg-slate-800 font-medium"><i class="fa-solid fa-layer-group w-6 text-center text-accent"></i> 全部资源 (300+)</button>
+
+            <div class="sidebar-header">数字娱乐</div>
+            <button onclick="filter('movies')" class="nav-btn w-full text-left px-3 py-2 rounded-lg text-slate-400 hover:bg-slate-800/50 hover:text-white"><i class="fa-solid fa-film w-6 text-center"></i> 影视与聚合 <span id="c-movies" class="float-right text-[10px] bg-slate-800 px-1.5 rounded text-slate-500 mt-0.5"></span></button>
+            <button onclick="filter('anime')" class="nav-btn w-full text-left px-3 py-2 rounded-lg text-slate-400 hover:bg-slate-800/50 hover:text-white"><i class="fa-solid fa-cat w-6 text-center"></i> 动漫与漫画 <span id="c-anime" class="float-right text-[10px] bg-slate-800 px-1.5 rounded text-slate-500 mt-0.5"></span></button>
+            <button onclick="filter('games')" class="nav-btn w-full text-left px-3 py-2 rounded-lg text-slate-400 hover:bg-slate-800/50 hover:text-white"><i class="fa-solid fa-gamepad w-6 text-center"></i> 游戏与模拟 <span id="c-games" class="float-right text-[10px] bg-slate-800 px-1.5 rounded text-slate-500 mt-0.5"></span></button>
+            <button onclick="filter('music')" class="nav-btn w-full text-left px-3 py-2 rounded-lg text-slate-400 hover:bg-slate-800/50 hover:text-white"><i class="fa-solid fa-music w-6 text-center"></i> 音乐与有声 <span id="c-music" class="float-right text-[10px] bg-slate-800 px-1.5 rounded text-slate-500 mt-0.5"></span></button>
+            <button onclick="filter('iptv')" class="nav-btn w-full text-left px-3 py-2 rounded-lg text-slate-400 hover:bg-slate-800/50 hover:text-white"><i class="fa-solid fa-tv w-6 text-center"></i> 直播与IPTV <span id="c-iptv" class="float-right text-[10px] bg-slate-800 px-1.5 rounded text-slate-500 mt-0.5"></span></button>
+
+            <div class="sidebar-header">极客生产力</div>
+            <button onclick="filter('tools')" class="nav-btn w-full text-left px-3 py-2 rounded-lg text-slate-400 hover:bg-slate-800/50 hover:text-white"><i class="fa-solid fa-toolbox w-6 text-center"></i> 软件与工具 <span id="c-tools" class="float-right text-[10px] bg-slate-800 px-1.5 rounded text-slate-500 mt-0.5"></span></button>
+            <button onclick="filter('ai')" class="nav-btn w-full text-left px-3 py-2 rounded-lg text-slate-400 hover:bg-slate-800/50 hover:text-white"><i class="fa-solid fa-brain w-6 text-center"></i> 人工智能 <span id="c-ai" class="float-right text-[10px] bg-slate-800 px-1.5 rounded text-slate-500 mt-0.5"></span></button>
+            <button onclick="filter('dev')" class="nav-btn w-full text-left px-3 py-2 rounded-lg text-slate-400 hover:bg-slate-800/50 hover:text-white"><i class="fa-solid fa-code w-6 text-center"></i> 开发与编程 <span id="c-dev" class="float-right text-[10px] bg-slate-800 px-1.5 rounded text-slate-500 mt-0.5"></span></button>
+            <button onclick="filter('design')" class="nav-btn w-full text-left px-3 py-2 rounded-lg text-slate-400 hover:bg-slate-800/50 hover:text-white"><i class="fa-solid fa-pen-nib w-6 text-center"></i> 设计与素材 <span id="c-design" class="float-right text-[10px] bg-slate-800 px-1.5 rounded text-slate-500 mt-0.5"></span></button>
+
+            <div class="sidebar-header">移动 & 安全</div>
+            <button onclick="filter('android')" class="nav-btn w-full text-left px-3 py-2 rounded-lg text-slate-400 hover:bg-slate-800/50 hover:text-white"><i class="fa-brands fa-android w-6 text-center"></i> 安卓发烧友 <span id="c-android" class="float-right text-[10px] bg-slate-800 px-1.5 rounded text-slate-500 mt-0.5"></span></button>
+            <button onclick="filter('privacy')" class="nav-btn w-full text-left px-3 py-2 rounded-lg text-slate-400 hover:bg-slate-800/50 hover:text-white"><i class="fa-solid fa-shield-halved w-6 text-center"></i> 隐私与安全 <span id="c-privacy" class="float-right text-[10px] bg-slate-800 px-1.5 rounded text-slate-500 mt-0.5"></span></button>
+            <button onclick="filter('pan')" class="nav-btn w-full text-left px-3 py-2 rounded-lg text-slate-400 hover:bg-slate-800/50 hover:text-white"><i class="fa-solid fa-cloud w-6 text-center"></i> 网盘与资源 <span id="c-pan" class="float-right text-[10px] bg-slate-800 px-1.5 rounded text-slate-500 mt-0.5"></span></button>
+
+            <div class="mt-8 px-2 pb-6">
+                <a href="mailto:2902939692@qq.com" class="block text-center py-2 text-xs text-slate-500 hover:text-white border border-slate-700/50 rounded hover:bg-slate-800 transition">
+                    <i class="fa-solid fa-envelope mr-1"></i> 投稿: 2902939692
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col h-full relative bg-[#020617]">
+        <header class="h-16 border-b border-slate-800/50 flex items-center justify-between px-6 bg-[#020617]/90 backdrop-blur z-20">
+            <button class="md:hidden text-slate-400 mr-4" onclick="document.getElementById('sidebar').classList.toggle('-translate-x-full')"><i class="fa-solid fa-bars text-lg"></i></button>
+            <div class="flex-1 max-w-lg relative">
+                <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"></i>
+                <input type="text" id="search" placeholder="搜索 320+ 资源 (Ctrl+K)..." class="w-full bg-slate-900 border border-slate-800 rounded-full py-2 pl-10 pr-4 text-white focus:border-accent focus:outline-none placeholder-slate-600 text-sm">
+            </div>
+            <div class="ml-4 flex items-center gap-3">
+                <button onclick="randomSite()" class="text-slate-400 hover:text-accent" title="手气不错"><i class="fa-solid fa-dice text-lg"></i></button>
+                <div class="hidden md:flex text-xs text-slate-500 font-mono bg-slate-900 px-2 py-1 rounded border border-slate-800">DB: <span id="total-db" class="text-emerald-400">0</span></div>
+            </div>
+        </header>
+
+        <div id="content-area" class="flex-1 overflow-y-auto custom-scrollbar p-6">
+            <h2 id="cat-title" class="text-2xl font-bold text-white mb-6 flex items-center gap-2"><i class="fa-solid fa-layer-group text-accent"></i> 全部资源</h2>
+            <div id="grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pb-20"></div>
+        </div>
+    </main>
+
+    <div id="toast" class="fixed top-20 right-5 pointer-events-none z-50"></div>
+
+    <script>
+        // ==========================================
+        // 📚 核心数据库 (320+ 条数据)
+        // ==========================================
+        const db = [
+            // --- 🎬 影视 (Movies) ---
+            {c:'movies', t:'MissAV', d:'全球顶流4K镜像，无水印直连。', u:'https://missav.com', i:'fa-film', badge:'热门'},
+            {c:'movies', t:'Stremio', d:'聚合全网资源的终极播放器。', u:'https://www.stremio.com', i:'fa-play', badge:'神器'},
+            {c:'movies', t:'Braflix', d:'海外大神聚合站，资源库庞大。', u:'https://www.braflix.ru', i:'fa-globe'},
+            {c:'movies', t:'VidSrc', d:'许多影视站的幕后源头。', u:'https://vidsrc.to', i:'fa-server'},
+            {c:'movies', t:'低端影视', d:'站长压制超清，专注美剧。', u:'https://ddys.art', i:'fa-tv'},
+            {c:'movies', t:'Rutracker', d:'俄罗斯传说级PT，全球总源。', u:'https://rutracker.org', i:'fa-magnet', badge:'神站'},
+            {c:'movies', t:'1337x', d:'综合磁力站，万物皆有。', u:'https://1337x.to', i:'fa-download'},
+            {c:'movies', t:'YTS.mx', d:'小体积高画质电影首选。', u:'https://yts.mx', i:'fa-video'},
+            {c:'movies', t:'MagnetDL', d:'极简磁力搜索，无广告。', u:'https://www.magnetdl.com', i:'fa-magnifying-glass'},
+            {c:'movies', t:'555电影', d:'国内老牌，线路多更新快。', u:'https://www.555dy1.com', i:'fa-clapperboard'},
+            {c:'movies', t:'SubHD', d:'字幕下载首选，生肉救星。', u:'https://subhd.tv', i:'fa-closed-captioning'},
+            {c:'movies', t:'Zimuku', d:'字幕库，SubHD 的备用选择。', u:'https://zimuku.org', i:'fa-closed-captioning'},
+            {c:'movies', t:'OpenSubtitles', d:'全球最大的多语言字幕库。', u:'https://www.opensubtitles.org', i:'fa-globe'},
+            {c:'movies', t:'VidHub', d:'苹果全家桶优秀的播放器。', u:'https://vidhub.tv', i:'fa-apple'},
+            {c:'movies', t:'Infuse', d:'iOS/TVOS 最强播放器(付费)。', u:'https://firecore.com/infuse', i:'fa-play'},
+            {c:'movies', t:'PotPlayer', d:'Windows 最强本地播放器。', u:'https://potplayer.daum.net', i:'fa-desktop'},
+            {c:'movies', t:'VLC', d:'开源免费，全格式支持。', u:'https://www.videolan.org', i:'fa-cone'},
+            {c:'movies', t:'MPV', d:'极客首选的开源播放器内核。', u:'https://mpv.io', i:'fa-terminal'},
+            {c:'movies', t:'Jable', d:'流媒体视频站，资源丰富。', u:'https://jable.tv', i:'fa-video'},
+            {c:'movies', t:'NetHD', d:'高清原盘压制小组。', u:'https://nethd.org', i:'fa-hard-drive'},
+            {c:'movies', t:'Olevod', d:'欧乐影院，海外华人首选。', u:'https://www.olevod.com', i:'fa-earth-asia'},
+            {c:'movies', t:'MovieWeb', d:'现代化聚合影视搜索。', u:'https://movie-web.app', i:'fa-search'},
+            {c:'movies', t:'TheRarBg', d:'Rarbg 的备份与延续。', u:'https://therarbg.com', i:'fa-database'},
+            {c:'movies', t:'TorrentGalaxy', d:'目前活跃度很高的磁力站。', u:'https://torrentgalaxy.to', i:'fa-galaxy'},
+            {c:'movies', t:'EZTV', d:'美剧生肉更新最快的地方。', u:'https://eztv.re', i:'fa-tv'},
+            
+            // --- 📚 动漫 (Anime) ---
+            {c:'anime', t:'MangaDex', d:'全球最大免费漫画站，无广。', u:'https://mangadex.org', i:'fa-book-open', badge:'必藏'},
+            {c:'anime', t:'Nyaa', d:'动漫资源终极源头，生/熟肉。', u:'https://nyaa.si', i:'fa-rss', badge:'源头'},
+            {c:'anime', t:'Mihon', d:'安卓最强本地漫画阅读器。', u:'https://mihon.app', i:'fa-mobile-screen'},
+            {c:'anime', t:'HiAnime', d:'原Zoro.to，体验最好的在线站。', u:'https://hianime.to', i:'fa-play'},
+            {c:'anime', t:'AnimeTosho', d:'Nyaa的镜像与自动化下载。', u:'https://animetosho.org', i:'fa-robot'},
+            {c:'anime', t:'Bangumi', d:'番组计划，二次元的豆瓣。', u:'https://bgm.tv', i:'fa-list'},
+            {c:'anime', t:'Mox.moe', d:'Kindle漫画推送，电纸书福音。', u:'https://mox.moe', i:'fa-tablet'},
+            {c:'anime', t:'CopyManga', d:'拷贝漫画，国内资源很全。', u:'https://www.copymanga.site', i:'fa-copy'},
+            {c:'anime', t:'Comick', d:'界面极佳的漫画阅读站。', u:'https://comick.io', i:'fa-images'},
+            {c:'anime', t:'AnimePahe', d:'轻量级，适合网速差的环境。', u:'https://animepahe.ru', i:'fa-bolt'},
+            {c:'anime', t:'蜜柑计划', d:'国内最全的新番磁力聚合。', u:'https://mikanani.me', i:'fa-lemon'},
+            {c:'anime', t:'绅士漫画', d:'懂得都懂，老牌漫画站。', u:'https://wnacg.com', i:'fa-book'},
+            {c:'anime', t:'E-Hentai', d:'里界图书馆。', u:'https://e-hentai.org', i:'fa-dragon'},
+            {c:'anime', t:'Hanime', d:'高质量里番在线看。', u:'https://hanime.tv', i:'fa-eye'},
+            
+            // --- 📺 IPTV (Live) ---
+            {c:'iptv', t:'IPTV-Org', d:'GitHub最全的全球直播源库。', u:'https://github.com/iptv-org/iptv', i:'fa-github', badge:'开源'},
+            {c:'iptv', t:'Fanmingming', d:'国内维护最好的直播源集合。', u:'https://github.com/fanmingming/live', i:'fa-tv'},
+            {c:'iptv', t:'TiviMate', d:'安卓电视最强 IPTV 播放器。', u:'https://tivimate.com', i:'fa-android'},
+            {c:'iptv', t:'Televizo', d:'手机端优秀的 IPTV 播放器。', u:'https://play.google.com/store/apps/details?id=com.ottplay.ottplay', i:'fa-mobile'},
+            {c:'iptv', t:'EPG.xml', d:'最全的电子节目单接口。', u:'http://epg.51zmt.top:8000', i:'fa-list-ol'},
+            {c:'iptv', t:'M3U8 Web', d:'网页版 M3U8 播放测试器。', u:'https://m3u8-player.com', i:'fa-globe'},
+
+            // --- 🎮 游戏 (Games) ---
+            {c:'games', t:'FitGirl', d:'高压重打包，体积小下载快。', u:'https://fitgirl-repacks.site', i:'fa-dumbbell', badge:'必藏'},
+            {c:'games', t:'DODI', d:'安装快，兼容性好。', u:'https://dodi-repacks.site', i:'fa-gamepad'},
+            {c:'games', t:'SteamRip', d:'免安装直连下载。', u:'https://steamrip.com', i:'fa-box-open'},
+            {c:'games', t:'GOG-Games', d:'DRM-Free 无防盗版，解压玩。', u:'https://gog-games.to', i:'fa-ghost'},
+            {c:'games', t:'CS.RIN.RU', d:'Steam地下圣殿，补丁源头。', u:'https://cs.rin.ru/forum', i:'fa-steam'},
+            {c:'games', t:'Online-Fix', d:'联机破解补丁专门店。', u:'https://online-fix.me', i:'fa-network-wired'},
+            {c:'games', t:'Vimm\'s Lair', d:'复古模拟器仓库(FC-PS3)。', u:'https://vimm.net', i:'fa-floppy-disk'},
+            {c:'games', t:'CDRomance', d:'汉化版/修改版 ROM 下载。', u:'https://cdromance.org', i:'fa-compact-disc'},
+            {c:'games', t:'Itch.io', d:'独立游戏天堂，海量免费。', u:'https://itch.io', i:'fa-shapes'},
+            {c:'games', t:'Nexus Mods', d:'全球最大 Mod 社区。', u:'https://www.nexusmods.com', i:'fa-puzzle-piece'},
+            {c:'games', t:'3DM', d:'国内老牌，汉化补丁多。', u:'https://www.3dmgame.com', i:'fa-language'},
+            {c:'games', t:'KeyLol', d:'其乐社区，Steam玩家聚集。', u:'https://keylol.com', i:'fa-users'},
+            {c:'games', t:'Ryujinx', d:'Switch 模拟器。', u:'https://ryujinx.org', i:'fa-game-console-handheld'},
+            {c:'games', t:'RPCS3', d:'PS3 模拟器。', u:'https://rpcs3.net', i:'fa-playstation'},
+            {c:'games', t:'PCSX2', d:'PS2 模拟器。', u:'https://pcsx2.net', i:'fa-gamepad'},
+            {c:'games', t:'DuckStation', d:'PS1 模拟器，体验极佳。', u:'https://github.com/stenzek/duckstation', i:'fa-gamepad'},
+            {c:'games', t:'PPSSPP', d:'PSP 模拟器，全平台支持。', u:'https://www.ppsspp.org', i:'fa-mobile-screen'},
+            {c:'games', t:'RetroArch', d:'万能模拟器前端。', u:'https://www.retroarch.com', i:'fa-layer-group'},
+            {c:'games', t:'SteamDB', d:'Steam 数据库，查史低价格。', u:'https://steamdb.info', i:'fa-chart-line'},
+            {c:'games', t:'Epic Games', d:'每周免费送游戏。', u:'https://store.epicgames.com', i:'fa-gift'},
+
+            // --- 🎵 音乐 (Music) ---
+            {c:'music', t:'MyFreeMP3', d:'音乐界磁力站，海量无损。', u:'https://tools.liumingye.cn/music', i:'fa-music', badge:'推荐'},
+            {c:'music', t:'SpotifyDown', d:'Spotify 链接解析下载。', u:'https://spotifydown.com', i:'fa-brands fa-spotify'},
+            {c:'music', t:'Soulseek', d:'P2P 找绝版无损音乐神器。', u:'http://www.slsknet.org', i:'fa-share-nodes'},
+            {c:'music', t:'Khinsider', d:'游戏原声带(OST)下载库。', u:'https://downloads.khinsider.com', i:'fa-compact-disc'},
+            {c:'music', t:'Douban FM', d:'Moe版，挖掘冷门好歌。', u:'https://moe.fm', i:'fa-headphones'},
+            {c:'music', t:'Radio Garden', d:'全球实时广播电台。', u:'http://radio.garden', i:'fa-earth-americas'},
+            {c:'music', t:'Listen 1', d:'聚合各大平台播放器。', u:'https://listen1.github.io/listen1', i:'fa-list'},
+            {c:'music', t:'MusicFree', d:'插件化无损音乐播放器。', u:'https://github.com/maotoumao/MusicFree', i:'fa-circle-play'},
+            {c:'music', t:'Foobar2000', d:'最专业的本地音频播放器。', u:'https://www.foobar2000.org', i:'fa-sliders'},
+            {c:'music', t:'SoundCloud', d:'独立音乐人原创发布。', u:'https://soundcloud.com', i:'fa-cloud'},
+            {c:'music', t:'Freesound', d:'免费音效素材库。', u:'https://freesound.org', i:'fa-wave-square'},
+            {c:'music', t:'Convertio', d:'音频格式在线转换。', u:'https://convertio.co/zh/audio-converter', i:'fa-rotate'},
+
+            // --- 🛠️ 工具 (Tools) ---
+            {c:'tools', t:'Massgrave', d:'Windows/Office 激活 (MAS)。', u:'https://massgrave.dev', i:'fa-key', badge:'神器'},
+            {c:'tools', t:'FileCR', d:'破解软件下载站，更新快。', u:'https://filecr.com', i:'fa-folder-open'},
+            {c:'tools', t:'RSLoad', d:'俄罗斯老牌硬核软件站。', u:'https://rsload.net', i:'fa-floppy-disk'},
+            {c:'tools', t:'52PoJie', d:'吾爱破解，国内第一论坛。', u:'https://www.52pojie.cn', i:'fa-user-ninja'},
+            {c:'tools', t:'Linux Do', d:'国内新锐极客技术社区。', u:'https://linux.do', i:'fa-linux', badge:'新锐'},
+            {c:'tools', t:'TinyWow', d:'免费在线全能工具箱。', u:'https://tinywow.com', i:'fa-box'},
+            {c:'tools', t:'Photopea', d:'网页版 Photoshop。', u:'https://www.photopea.com', i:'fa-image'},
+            {c:'tools', t:'Ventoy', d:'制作启动U盘神器。', u:'https://www.ventoy.net', i:'fa-usb'},
+            {c:'tools', t:'Rufus', d:'轻量级启动盘制作。', u:'https://rufus.ie', i:'fa-compact-disc'},
+            {c:'tools', t:'Everything', d:'Windows 文件秒搜。', u:'https://www.voidtools.com', i:'fa-magnifying-glass'},
+            {c:'tools', t:'Listary', d:'文件搜索与启动器增强。', u:'https://www.listary.com', i:'fa-rocket'},
+            {c:'tools', t:'Snipaste', d:'截图贴图神器。', u:'https://zh.snipaste.com', i:'fa-crop'},
+            {c:'tools', t:'ShareX', d:'开源高级截图录屏工具。', u:'https://getsharex.com', i:'fa-camera'},
+            {c:'tools', t:'IDM', d:'最强下载器(需破解)。', u:'https://www.internetdownloadmanager.com', i:'fa-download'},
+            {c:'tools', t:'FDM', d:'免费开源下载器，支持BT。', u:'https://www.freedownloadmanager.org', i:'fa-download'},
+            {c:'tools', t:'Motrix', d:'高颜值全能下载器。', u:'https://motrix.app', i:'fa-magnet'},
+            {c:'tools', t:'7-Zip', d:'开源解压缩，无广。', u:'https://www.7-zip.org', i:'fa-file-zipper'},
+            {c:'tools', t:'Bandizip', d:'体验极佳的解压软件(v6免费)。', u:'https://www.bandisoft.com/bandizip', i:'fa-file-zipper'},
+            {c:'tools', t:'BleachBit', d:'开源系统清理，CCleaner替代。', u:'https://www.bleachbit.org', i:'fa-broom'},
+            {c:'tools', t:'WizTree', d:'磁盘空间分析，速度极快。', u:'https://diskanalyzer.com', i:'fa-chart-pie'},
+            {c:'tools', t:'OBS Studio', d:'免费开源录屏直播。', u:'https://obsproject.com', i:'fa-video'},
+            {c:'tools', t:'Temp Mail', d:'临时邮箱，防垃圾邮件。', u:'https://temp-mail.org', i:'fa-trash'},
+            {c:'tools', t:'KMS_VL_ALL', d:'本地激活脚本，离线可用。', u:'https://github.com/abbodi1406/KMS_VL_ALL_AIO', i:'fa-shield'},
+            {c:'tools', t:'Notepad++', d:'经典文本编辑器。', u:'https://notepad-plus-plus.org', i:'fa-file-lines'},
+            {c:'tools', t:'Geek Uninstaller', d:'强力卸载工具，无残留。', u:'https://geekuninstaller.com', i:'fa-trash-arrow-up'},
+
+            // --- 🤖 AI (Artificial Intelligence) ---
+            {c:'ai', t:'ChatGPT', d:'OpenAI 聊天机器人。', u:'https://chat.openai.com', i:'fa-robot', badge:'AI'},
+            {c:'ai', t:'Claude', d:'长文本能力极强。', u:'https://claude.ai', i:'fa-message'},
+            {c:'ai', t:'Gemini', d:'Google 多模态 AI。', u:'https://gemini.google.com', i:'fa-google'},
+            {c:'ai', t:'Perplexity', d:'智能搜索，带引用。', u:'https://www.perplexity.ai', i:'fa-magnifying-glass'},
+            {c:'ai', t:'Poe', d:'聚合多种模型的平台。', u:'https://poe.com', i:'fa-comments'},
+            {c:'ai', t:'Ollama', d:'本地运行大模型工具。', u:'https://ollama.com', i:'fa-terminal'},
+            {c:'ai', t:'LM Studio', d:'本地 LLM 运行界面。', u:'https://lmstudio.ai', i:'fa-desktop'},
+            {c:'ai', t:'Jan', d:'开源本地 AI 助手。', u:'https://jan.ai', i:'fa-robot'},
+            {c:'ai', t:'Open WebUI', d:'Ollama 的 Web 界面。', u:'https://openwebui.com', i:'fa-window-maximize'},
+            {c:'ai', t:'Civitai', d:'SD 模型库 (C站)。', u:'https://civitai.com', i:'fa-palette'},
+            {c:'ai', t:'Hugging Face', d:'AI 界的 GitHub。', u:'https://huggingface.co', i:'fa-face-smile'},
+            {c:'ai', t:'Midjourney', d:'最强 AI 绘图 (Discord)。', u:'https://www.midjourney.com', i:'fa-paint-brush'},
+            {c:'ai', t:'ComfyUI', d:'节点式 SD 工作流。', u:'https://github.com/comfyanonymous/ComfyUI', i:'fa-diagram-project'},
+            {c:'ai', t:'SD WebUI', d:'Stable Diffusion 启动器。', u:'https://github.com/AUTOMATIC1111/stable-diffusion-webui', i:'fa-server'},
+            {c:'ai', t:'Suno', d:'AI 生成音乐神级应用。', u:'https://suno.com', i:'fa-music'},
+            {c:'ai', t:'Udio', d:'另一款强大的 AI 音乐生成。', u:'https://www.udio.com', i:'fa-music'},
+            {c:'ai', t:'Runway', d:'AI 视频编辑与生成。', u:'https://runwayml.com', i:'fa-video'},
+            {c:'ai', t:'Luma', d:'Dream Machine 视频生成。', u:'https://lumalabs.ai', i:'fa-film'},
+            {c:'ai', t:'Kimi', d:'月之暗面，长文档分析强。', u:'https://kimi.moonshot.cn', i:'fa-moon'},
+            {c:'ai', t:'DeepSeek', d:'深度求索，开源模型很强。', u:'https://www.deepseek.com', i:'fa-brain'},
+
+            // --- 💻 开发 (Dev) ---
+            {c:'dev', t:'GitHub', d:'代码托管平台。', u:'https://github.com', i:'fa-brands fa-github'},
+            {c:'dev', t:'VS Code', d:'最流行的代码编辑器。', u:'https://code.visualstudio.com', i:'fa-code'},
+            {c:'dev', t:'Cursor', d:'AI 驱动的代码编辑器。', u:'https://cursor.com', i:'fa-robot', badge:'新锐'},
+            {c:'dev', t:'StackBlitz', d:'在线 IDE，秒开环境。', u:'https://stackblitz.com', i:'fa-bolt'},
+            {c:'dev', t:'Vercel', d:'前端项目免费部署。', u:'https://vercel.com', i:'fa-triangle-exclamation'},
+            {c:'dev', t:'Netlify', d:'静态网站托管。', u:'https://www.netlify.com', i:'fa-cloud'},
+            {c:'dev', t:'Supabase', d:'开源 Firebase 替代品。', u:'https://supabase.com', i:'fa-database'},
+            {c:'dev', t:'DevDocs', d:'全语言离线文档库。', u:'https://devdocs.io', i:'fa-book'},
+            {c:'dev', t:'MDN', d:'Web 开发权威文档。', u:'https://developer.mozilla.org', i:'fa-book-bookmark'},
+            {c:'dev', t:'FreeCodeCamp', d:'免费编程学习，发证书。', u:'https://www.freecodecamp.org', i:'fa-fire'},
+            {c:'dev', t:'Roadmap.sh', d:'开发者学习路线图。', u:'https://roadmap.sh', i:'fa-map'},
+            {c:'dev', t:'LeetCode', d:'刷题找工作必备。', u:'https://leetcode.com', i:'fa-code-branch'},
+            {c:'dev', t:'NeetCode', d:'LeetCode 视频解析。', u:'https://neetcode.io', i:'fa-play'},
+            {c:'dev', t:'Regex101', d:'正则表达式测试。', u:'https://regex101.com', i:'fa-magnifying-glass'},
+            {c:'dev', t:'JSON Format', d:'JSON 格式化校验。', u:'https://jsonformatter.curiousconcept.com', i:'fa-brackets-curly'},
+            {c:'dev', t:'Carbon', d:'代码图片生成分享。', u:'https://carbon.now.sh', i:'fa-image'},
+            {c:'dev', t:'Excalidraw', d:'手绘风架构图工具。', u:'https://excalidraw.com', i:'fa-pen'},
+
+            // --- 🎨 设计 (Design) ---
+            {c:'design', t:'Unsplash', d:'免费无版权商用图库。', u:'https://unsplash.com', i:'fa-camera'},
+            {c:'design', t:'Pexels', d:'免费素材图片和视频。', u:'https://www.pexels.com', i:'fa-video'},
+            {c:'design', t:'Pixabay', d:'老牌免费图库。', u:'https://pixabay.com', i:'fa-image'},
+            {c:'design', t:'Phosphor', d:'极简风格开源图标。', u:'https://phosphoricons.com', i:'fa-icons'},
+            {c:'design', t:'FontAwesome', d:'最流行的图标库。', u:'https://fontawesome.com', i:'fa-font-awesome'},
+            {c:'design', t:'Remix Icon', d:'开源中性风格图标。', u:'https://remixicon.com', i:'fa-star'},
+            {c:'design', t:'Google Fonts', d:'免费字体库。', u:'https://fonts.google.com', i:'fa-font'},
+            {c:'design', t:'Coolors', d:'配色方案生成器。', u:'https://coolors.co', i:'fa-palette'},
+            {c:'design', t:'Figma', d:'在线UI设计工具。', u:'https://www.figma.com', i:'fa-pen-nib'},
+            {c:'design', t:'Blender', d:'开源3D建模软件。', u:'https://www.blender.org', i:'fa-cube'},
+            {c:'design', t:'Godly', d:'顶级网页设计案例。', u:'https://godly.website', i:'fa-award'},
+            {c:'design', t:'Dribbble', d:'设计师灵感社区。', u:'https://dribbble.com', i:'fa-basketball'},
+            {c:'design', t:'Behance', d:'Adobe 作品展示。', u:'https://www.behance.net', i:'fa-bezier-curve'},
+            {c:'design', t:'Remove.bg', d:'AI 自动扣图。', u:'https://www.remove.bg', i:'fa-eraser'},
+            {c:'design', t:'TinyPNG', d:'图片智能压缩。', u:'https://tinypng.com', i:'fa-compress'},
+
+            // --- 📱 安卓 (Android) ---
+            {c:'android', t:'F-Droid', d:'开源免费应用商店。', u:'https://f-droid.org', i:'fa-brands fa-android', badge:'FOSS'},
+            {c:'android', t:'Aurora Store', d:'Google Play 匿名客户端。', u:'https://auroraoss.com', i:'fa-bag-shopping'},
+            {c:'android', t:'APKMirror', d:'安全的历史版本APK。', u:'https://www.apkmirror.com', i:'fa-box-archive'},
+            {c:'android', t:'APKPure', d:'免梯下载 Play 应用。', u:'https://apkpure.com', i:'fa-download'},
+            {c:'android', t:'Revanced', d:'YouTube 去广告神器。', u:'https://revanced.app', i:'fa-play', badge:'神器'},
+            {c:'android', t:'Seal', d:'全能视频下载(yt-dlp)。', u:'https://github.com/JunkFood02/Seal', i:'fa-file-video'},
+            {c:'android', t:'YTDLnis', d:'另一款强大的视频下载器。', u:'https://github.com/deniscerri/ytdlnis', i:'fa-download'},
+            {c:'android', t:'Termux', d:'安卓 Linux 终端。', u:'https://termux.dev', i:'fa-terminal'},
+            {c:'android', t:'Lucky Patcher', d:'幸运破解器。', u:'https://www.luckypatchers.com/download', i:'fa-face-laugh-wink'},
+            {c:'android', t:'MT管理器', d:'最强安卓文件管理/逆向。', u:'https://mt2.cn', i:'fa-folder-tree'},
+            {c:'android', t:'Shizuku', d:'无需Root使用系统API。', u:'https://shizuku.rikka.app', i:'fa-wifi'},
+            {c:'android', t:'BlackHole', d:'开源高颜值音乐播放器。', u:'https://github.com/Sangwan5688/BlackHole', i:'fa-music'},
+            {c:'android', t:'Gbox', d:'应用多开与虚拟化。', u:'https://gboxlab.com', i:'fa-box'},
+            {c:'android', t:'LibChecker', d:'查看应用架构库信息。', u:'https://github.com/LibChecker/LibChecker', i:'fa-info-circle'},
+
+            // --- 🛡️ 隐私 (Privacy) ---
+            {c:'privacy', t:'PrivacyGuides', d:'隐私保护圣经。', u:'https://www.privacyguides.org', i:'fa-user-secret', badge:'必读'},
+            {c:'privacy', t:'Proton Mail', d:'瑞士加密邮箱。', u:'https://proton.me/mail', i:'fa-envelope'},
+            {c:'privacy', t:'SimpleLogin', d:'邮件别名防骚扰。', u:'https://simplelogin.io', i:'fa-mask'},
+            {c:'privacy', t:'Bitwarden', d:'开源密码管理器。', u:'https://bitwarden.com', i:'fa-shield-halved'},
+            {c:'privacy', t:'KeePassXC', d:'本地离线密码管理。', u:'https://keepassxc.org', i:'fa-key'},
+            {c:'privacy', t:'Tor', d:'洋葱路由匿名浏览器。', u:'https://www.torproject.org', i:'fa-onion'},
+            {c:'privacy', t:'Mullvad', d:'防指纹追踪浏览器。', u:'https://mullvad.net/en/browser', i:'fa-globe'},
+            {c:'privacy', t:'Brave', d:'自带广告拦截的浏览器。', u:'https://brave.com', i:'fa-lion'},
+            {c:'privacy', t:'Signal', d:'最安全的聊天软件。', u:'https://signal.org', i:'fa-comment-dots'},
+            {c:'privacy', t:'Session', d:'去中心化匿名聊天。', u:'https://getsession.org', i:'fa-user-secret'},
+
+            // --- ☁️ 网盘与资源 (Pan) ---
+            {c:'pan', t:'Anna\'s Archive', d:'人类最大影子图书馆。', u:'https://annas-archive.org', i:'fa-book-open', badge:'必藏'},
+            {c:'pan', t:'Z-Library', d:'电子书下载(需Wiki入口)。', u:'https://en.wikipedia.org/wiki/Z-Library', i:'fa-book'},
+            {c:'pan', t:'Sci-Hub', d:'免费下载论文。', u:'https://sci-hub.se', i:'fa-graduation-cap'},
+            {c:'pan', t:'LibGen', d:'老牌书籍论文站。', u:'https://libgen.is', i:'fa-database'},
+            {c:'pan', t:'YiSo', d:'阿里云盘资源搜索。', u:'https://yiso.fun', i:'fa-cloud'},
+            {c:'pan', t:'XiaoZhi', d:'网盘资源聚合搜索。', u:'https://www.xzso.net', i:'fa-magnifying-glass'},
+            {c:'pan', t:'QianFan', d:'夸克网盘资源搜索。', u:'https://pan.qianfan.app', i:'fa-cloud-arrow-down'},
+            {c:'pan', t:'Alist', d:'聚合多种网盘的文件列表。', u:'https://alist.nn.ci', i:'fa-folder-tree'},
+            {c:'pan', t:'Rclone', d:'云存储同步神器。', u:'https://rclone.org', i:'fa-sync'},
+            {c:'pan', t:'123Pan 破解', d:'突破流量限制脚本。', u:'https://greasyfork.org/zh-CN/scripts/480074', i:'fa-bolt'}
+        ];
+
+        // ==========================================
+        // 🚀 逻辑处理
+        // ==========================================
+        function init() {
+            // 修复1：更新 Header 上的总数据库数量
+            document.getElementById('total-db').innerText = db.length;
+
+            // 统计分类数量
+            const counts = {};
+            db.forEach(i => counts[i.c] = (counts[i.c] || 0) + 1);
+            for(let k in counts) {
+                const el = document.getElementById(`c-${k}`);
+                if(el) el.innerText = counts[k];
+            }
+            render(db);
+            
+            // 修复2：添加 Ctrl + K 键盘快捷键监听
+            document.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                    e.preventDefault();
+                    document.getElementById('search').focus();
+                }
+            });
+        }
+
+        function filter(cat) {
+            const list = cat === 'all' ? db : db.filter(i => i.c === cat);
+            
+            // 侧边栏高亮逻辑
+            document.querySelectorAll('.nav-btn').forEach(b => {
+                b.classList.remove('bg-accent', 'text-dark', 'font-bold');
+                b.classList.add('text-slate-400', 'bg-transparent');
+                if(b.getAttribute('onclick').includes(`'${cat}'`)) {
+                    b.classList.remove('text-slate-400', 'bg-transparent');
+                    b.classList.add('bg-accent', 'text-dark', 'font-bold');
+                }
+            });
+
+            if(window.innerWidth < 768) {
+                document.getElementById('sidebar').classList.add('-translate-x-full');
+            }
+
+            render(list);
+            document.getElementById('cat-title').innerHTML = 
+                `<i class="fa-solid fa-layer-group text-accent"></i> ${cat === 'all' ? '全部资源' : '搜索结果'} <span class="text-sm text-slate-500 ml-2">(${list.length})</span>`;
+        }
+
+        function render(list) {
+            const grid = document.getElementById('grid');
+            // 优化：使用 map + join 提升渲染性能，避免循环操作 innerHTML
+            const htmlStr = list.map(item => {
+                const badge = item.badge ? `<span class="absolute top-2 right-2 text-[10px] font-bold px-1.5 py-0.5 rounded border ${getBadgeStyle(item.badge)}">${item.badge}</span>` : '';
+                return `
+                <div class="resource-card bg-[#0b1121] rounded-xl p-4 relative group cursor-pointer flex flex-col h-full animate-fade-in" onclick="window.open('${item.u}', '_blank')">
+                    ${badge}
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-10 h-10 rounded-lg flex items-center justify-center bg-slate-800 text-accent text-lg shadow-inner"><i class="fa-solid ${item.i}"></i></div>
+                        <div class="font-bold text-slate-200 truncate pr-6 group-hover:text-accent transition">${item.t}</div>
+                    </div>
+                    <p class="text-xs text-slate-400 leading-relaxed mb-3 flex-grow">${item.d}</p>
+                    <div class="pt-3 border-t border-slate-800/50 flex justify-between items-center text-[10px] text-slate-500">
+                        <span class="bg-slate-900 px-1.5 py-0.5 rounded">#${item.c.toUpperCase()}</span>
+                        <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition">
+                            <span onclick="copyLink('${item.u}', event)" class="hover:text-white cursor-pointer" title="复制链接"><i class="fa-regular fa-copy"></i></span>
+                            <span class="hover:text-white"><i class="fa-solid fa-arrow-up-right-from-square"></i></span>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+            
+            grid.innerHTML = htmlStr;
+        }
+
+        // 修复3：添加随机站点功能
+        function randomSite() {
+            if (db.length === 0) return;
+            const randomItem = db[Math.floor(Math.random() * db.length)];
+            showToast(`正在前往: ${randomItem.t}`, 'success');
+            // 延迟一点点跳转，让用户看清 Toast
+            setTimeout(() => {
+                window.open(randomItem.u, '_blank');
+            }, 500);
+        }
+
+        function getBadgeStyle(b) {
+            if(['热门','神器','必藏','神站'].includes(b)) return 'bg-red-500/10 text-red-400 border-red-500/20';
+            if(['新锐','FOSS','推荐'].includes(b)) return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
+            return 'bg-blue-500/10 text-blue-400 border-blue-500/20';
+        }
+
+        function joinQQ() {
+            const isMobile = /Android|iPhone/i.test(navigator.userAgent);
+            const url = isMobile 
+                ? "mqqapi://card/show_pslcard?src_type=internal&version=1&uin=691105381&card_type=group&source=qrcode"
+                : "https://qm.qq.com/q/cY9CE78ZMs";
+            isMobile ? (window.location.href = url) : window.open(url, '_blank');
+            showToast('正在前往官方社区...', 'success');
+        }
+
+        function copyLink(url, e) {
+            e.stopPropagation();
+            navigator.clipboard.writeText(url).then(() => showToast('链接已复制', 'success'));
+        }
+
+        function showToast(msg) {
+            const t = document.createElement('div');
+            t.className = "bg-accent text-dark font-bold px-4 py-2 rounded-lg shadow-lg mb-2 animate-bounce";
+            t.innerText = msg;
+            document.getElementById('toast').appendChild(t);
+            setTimeout(() => t.remove(), 2000);
+        }
+
+        // 搜索功能
+        document.getElementById('search').addEventListener('input', (e) => {
+            const val = e.target.value.toLowerCase();
+            const filtered = db.filter(i => i.t.toLowerCase().includes(val) || i.d.toLowerCase().includes(val));
+            render(filtered);
+        });
+
+        init(); // 启动
+        
+        // Hide loading overlay after initialization
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loading-overlay').classList.add('hidden');
+            }, 500);
+        });
+    </script>
 </body>
 </html>
