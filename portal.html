@@ -1,25 +1,25 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#05020a">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="description" content="风の魔法禁书录主控台 - 赛博朋克风格的终端界面，集成联系站长、社群、节点功能。">
-  <meta name="keywords" content="魔法禁书录,赛博朋克,终端,节点订阅">
+  <meta name="description" content="椋庛伄榄旀硶绂佷功褰曚富鎺у彴 - 璧涘崥鏈嬪厠椋庢牸鐨勭粓绔晫闈紝闆嗘垚鑱旂郴绔欓暱銆佺ぞ缇ゃ€佽妭鐐瑰姛鑳姐€?>
+  <meta name="keywords" content="榄旀硶绂佷功褰?璧涘崥鏈嬪厠,缁堢,鑺傜偣璁㈤槄">
   <meta name="author" content="Feng-180">
-  <meta property="og:title" content="风の魔法禁书录 | 主控台">
-  <meta property="og:description" content="赛博朋克风格的主控台终端，集成多功能模块导航。">
+  <meta property="og:title" content="椋庛伄榄旀硶绂佷功褰?| 涓绘帶鍙?>
+  <meta property="og:description" content="璧涘崥鏈嬪厠椋庢牸鐨勪富鎺у彴缁堢锛岄泦鎴愬鍔熻兘妯″潡瀵艰埅銆?>
   <meta property="og:type" content="website">
   <meta property="og:image" content="logo.png">
   <link rel="icon" type="image/png" href="logo.png">
   <link rel="apple-touch-icon" href="logo.png">
-  <title>风の魔法禁书录 | 主控台</title>
+  <title>椋庛伄榄旀硶绂佷功褰?| 涓绘帶鍙?/title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
-    /* --- 系统核心 --- */
+    /* --- 绯荤粺鏍稿績 --- */
     :root {
       --cyan: #00f2ff;
       --pink: #ff0055;
@@ -120,7 +120,7 @@
     .icon-arrow { width: 8px; height: 8px; border-top: 2px solid #555; border-right: 2px solid #555; transform: rotate(45deg); transition: 0.3s; }
     .nav-card:hover .icon-arrow { border-color: var(--cyan); transform: rotate(45deg) translate(3px, -3px); }
 
-    /* 联系站长卡片 */
+    /* 鑱旂郴绔欓暱鍗＄墖 */
     .nav-card.contact-card {
       border-left-color: #ffa500;
       background: linear-gradient(145deg, rgba(255,165,0,0.06), rgba(10,10,15,0.8));
@@ -131,7 +131,7 @@
     }
     .nav-card.contact-card .card-sub { color: #ffa500; }
 
-    /* 科学上网卡片 */
+    /* 绉戝涓婄綉鍗＄墖 */
     .nav-card.guide-card {
       border-left-color: #a855f7;
       background: linear-gradient(145deg, rgba(168,85,247,0.08), rgba(10,10,15,0.8));
@@ -219,15 +219,15 @@
   <canvas id="bg-canvas"></canvas>
 
   <div class="toast" id="sys-toast">
-    <span style="color:var(--pink)">[系统]</span> <span id="toast-msg">操作完成</span>
+    <span style="color:var(--pink)">[绯荤粺]</span> <span id="toast-msg">鎿嶄綔瀹屾垚</span>
   </div>
 
   <header class="header">
-    <h1 class="main-title">风の魔法禁书录</h1>
+    <h1 class="main-title">椋庛伄榄旀硶绂佷功褰?/h1>
     
     <div class="status-bar">
       <div class="status-dot"></div>
-      <div class="typewriter" id="typing-text">系统初始化中...</div>
+      <div class="typewriter" id="typing-text">绯荤粺鍒濆鍖栦腑...</div>
     </div>
 
     <div class="magic-wrapper">
@@ -247,61 +247,61 @@
       <div class="spectrum">
         <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
       </div>
-      <span class="typewriter" id="track-name" style="font-size:10px;">播放音乐</span>
+      <span class="typewriter" id="track-name" style="font-size:10px;">鎾斁闊充箰</span>
     </div>
     <audio id="bgm" src="bgm.mp3" loop></audio>
   </header>
 
   <nav class="nav-grid">
-    <div class="nav-card contact-card" onclick="contactOwner()">
+    <button class="nav-card contact-card" onclick="contactOwner()" style="width:100%; border:none; text-align:left;">
       <div class="card-head">
-        <span class="card-title">联系站长</span>
+        <span class="card-title">鑱旂郴绔欓暱</span>
         <div class="icon-arrow"></div>
       </div>
-      <span class="card-sub">站长QQ：2902939692</span>
+      <span class="card-sub">绔欓暱QQ锛?902939692</span>
     </div>
 
     <div class="nav-card" onclick="startLinkProtocol()">
       <div class="card-head">
-        <span class="card-title">魔法阵地</span>
+        <span class="card-title">榄旀硶闃靛湴</span>
         <div class="icon-arrow"></div>
       </div>
-      <span class="card-sub">群号：691105381</span>
+      <span class="card-sub">缇ゅ彿锛?91105381</span>
     </div>
 
     <div class="nav-card" onclick="toggleModal(true)">
       <div class="card-head">
-        <span class="card-title">神秘节点</span>
+        <span class="card-title">绁炵鑺傜偣</span>
         <div class="icon-arrow"></div>
       </div>
-      <span class="card-sub">需要口令验证</span>
+      <span class="card-sub">闇€瑕佸彛浠ら獙璇?/span>
     </div>
 
     <a href="guide.html" class="nav-card guide-card">
       <div class="card-head">
-        <span class="card-title">科学上网指南 <span class="hot-badge">热门</span></span>
+        <span class="card-title">绉戝涓婄綉鎸囧崡 <span class="hot-badge">鐑棬</span></span>
         <div class="icon-arrow"></div>
       </div>
-      <span class="card-sub">解锁互联网自由</span>
+      <span class="card-sub">瑙ｉ攣浜掕仈缃戣嚜鐢?/span>
     </a>
   </nav>
 
   <footer>
-    <div class="counter">访问次数：<span id="visitor-count">0000350859</span></div>
-    <div style="font-size:10px; color:#444; margin-top:8px;">风の魔法禁书录</div>
+    <div class="counter">璁块棶娆℃暟锛?span id="visitor-count">0000350859</span></div>
+    <div style="font-size:10px; color:#444; margin-top:8px;">椋庛伄榄旀硶绂佷功褰?/div>
   </footer>
 
   <div class="modal-overlay" id="secret-modal" onclick="if(event.target===this) toggleModal(false)">
     <div class="modal-box">
-      <div style="font-size:12px; color:var(--pink); letter-spacing:2px; margin-bottom:10px; font-weight:bold;">安全验证</div>
-      <div style="font-size:10px; color:#666;">请输入访问口令</div>
-      <input type="text" id="key-input" class="secret-input" placeholder="输入神秘口令" onkeydown="if(event.key==='Enter')verifyKey()">
-      <button class="btn-exec" onclick="verifyKey()">验证</button>
+      <div style="font-size:12px; color:var(--pink); letter-spacing:2px; margin-bottom:10px; font-weight:bold;">瀹夊叏楠岃瘉</div>
+      <div style="font-size:10px; color:#666;">璇疯緭鍏ヨ闂彛浠?/div>
+      <input type="text" id="key-input" class="secret-input" placeholder="杈撳叆绁炵鍙ｄ护" onkeydown="if(event.key==='Enter')verifyKey()">
+      <button class="btn-exec" onclick="verifyKey()">楠岃瘉</button>
     </div>
   </div>
 
   <script>
-    // --- 核心配置 ---
+    // --- 鏍稿績閰嶇疆 ---
     const CONFIG = {
       ownerQQ: "2902939692",
       qqGroup: "691105381",
@@ -309,8 +309,8 @@
       redirectUrl: "nodes.html"
     };
 
-    // --- 1. 打字机效果 ---
-    const phrases = ["系统状态：在线", "正在扫描网络...", "检测魔法中...", "欢迎，旅行者"];
+    // --- 1. 鎵撳瓧鏈烘晥鏋?---
+    const phrases = ["绯荤粺鐘舵€侊細鍦ㄧ嚎", "姝ｅ湪鎵弿缃戠粶...", "妫€娴嬮瓟娉曚腑...", "娆㈣繋锛屾梾琛岃€?];
     let pIndex = 0, charIndex = 0, isDeleting = false;
     const typeTarget = document.getElementById('typing-text');
 
@@ -333,7 +333,7 @@
     }
     typeLoop();
 
-    // --- 2. 粒子背景 ---
+    // --- 2. 绮掑瓙鑳屾櫙 ---
     const cvs = document.getElementById('bg-canvas'), ctx = cvs.getContext('2d');
     let w, h, particles = [];
     function initParticles() {
@@ -359,7 +359,7 @@
     }
     window.addEventListener('resize', initParticles); initParticles(); draw();
 
-    // --- 3. 交互逻辑 ---
+    // --- 3. 浜や簰閫昏緫 ---
     function showToast(msg) {
       const t = document.getElementById('sys-toast');
       document.getElementById('toast-msg').innerText = msg;
@@ -370,10 +370,10 @@
     async function startLinkProtocol() {
       try {
         await navigator.clipboard.writeText(CONFIG.qqGroup);
-        showToast(`群号 ${CONFIG.qqGroup} 已复制`);
+        showToast(`缇ゅ彿 ${CONFIG.qqGroup} 宸插鍒禶);
       } catch (err) {
         const ta = document.createElement('textarea'); ta.value = CONFIG.qqGroup; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
-        showToast("群号已复制到剪贴板");
+        showToast("缇ゅ彿宸插鍒跺埌鍓创鏉?);
       }
       setTimeout(() => {
         const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
@@ -382,7 +382,7 @@
       }, 1000);
     }
 
-    // --- SHA-256 哈希函数 ---
+    // --- SHA-256 鍝堝笇鍑芥暟 ---
     async function sha256(message) {
       const msgBuffer = new TextEncoder().encode(message);
       const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
@@ -390,7 +390,7 @@
       return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     }
 
-    // --- 4. 模态框与验证 ---
+    // --- 4. 妯℃€佹涓庨獙璇?---
     function toggleModal(show) {
       const m = document.getElementById('secret-modal');
       m.style.display = show ? 'flex' : 'none';
@@ -405,41 +405,41 @@
       const btn = document.querySelector('.btn-exec');
       const inputHash = await sha256(input.value.trim());
       if(inputHash === CONFIG.accessKeyHash) {
-        btn.style.background = "#0f0"; btn.innerText = "验证通过";
-        showToast("身份验证通过");
+        btn.style.background = "#0f0"; btn.innerText = "楠岃瘉閫氳繃";
+        showToast("韬唤楠岃瘉閫氳繃");
         setTimeout(() => window.location.href = CONFIG.redirectUrl, 800);
       } else {
-        input.value = ""; btn.style.background = "var(--pink)"; btn.innerText = "验证失败";
-        input.placeholder = "口令错误";
-        setTimeout(() => { btn.style.background = "var(--cyan)"; btn.innerText = "验证"; }, 1500);
+        input.value = ""; btn.style.background = "var(--pink)"; btn.innerText = "楠岃瘉澶辫触";
+        input.placeholder = "鍙ｄ护閿欒";
+        setTimeout(() => { btn.style.background = "var(--cyan)"; btn.innerText = "楠岃瘉"; }, 1500);
       }
     }
 
-    // --- 5. 音乐控制 ---
+    // --- 5. 闊充箰鎺у埗 ---
     const audio = document.getElementById('bgm');
     const playerDeck = document.getElementById('player-deck');
     const trackName = document.getElementById('track-name');
     function toggleAudio() {
       if(audio.paused) {
-        audio.play().then(() => { playerDeck.classList.add('active'); trackName.innerText = "正在播放..."; }).catch(() => showToast("请先点击页面以激活音频"));
-      } else { audio.pause(); playerDeck.classList.remove('active'); trackName.innerText = "已暂停"; }
+        audio.play().then(() => { playerDeck.classList.add('active'); trackName.innerText = "姝ｅ湪鎾斁..."; }).catch(() => showToast("璇峰厛鐐瑰嚮椤甸潰浠ユ縺娲婚煶棰?));
+      } else { audio.pause(); playerDeck.classList.remove('active'); trackName.innerText = "宸叉殏鍋?; }
     }
 
-    // --- 6. 随机访客数 ---
+    // --- 6. 闅忔満璁垮鏁?---
     setInterval(() => {
       const el = document.getElementById('visitor-count');
       let count = parseInt(el.innerText);
       el.innerText = (count + Math.floor(Math.random() * 3)).toString().padStart(10, '0');
     }, 5000);
 
-    // --- 7. 联系站长 ---
+    // --- 7. 鑱旂郴绔欓暱 ---
     async function contactOwner() {
       try {
         await navigator.clipboard.writeText(CONFIG.ownerQQ);
-        showToast(`站长QQ ${CONFIG.ownerQQ} 已复制`);
+        showToast(`绔欓暱QQ ${CONFIG.ownerQQ} 宸插鍒禶);
       } catch (err) {
         const ta = document.createElement('textarea'); ta.value = CONFIG.ownerQQ; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
-        showToast("站长QQ已复制到剪贴板");
+        showToast("绔欓暱QQ宸插鍒跺埌鍓创鏉?);
       }
       setTimeout(() => {
         const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
@@ -451,10 +451,11 @@
       }, 1000);
     }
 
-    // --- 8. 键盘快捷键 ---
+    // --- 8. 閿洏蹇嵎閿?---
     document.addEventListener('keydown', (e) => {
       if(e.key === 'Escape') toggleModal(false);
     });
   </script>
 </body>
 </html>
+

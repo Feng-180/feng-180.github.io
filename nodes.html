@@ -1,13 +1,13 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#05020a">
-  <meta name="description" content="全球节点订阅库 - 实时更新的高速节点列表，支持一键复制和Clash导入。">
+  <meta name="description" content="鍏ㄧ悆鑺傜偣璁㈤槄搴?- 瀹炴椂鏇存柊鐨勯珮閫熻妭鐐瑰垪琛紝鏀寔涓€閿鍒跺拰Clash瀵煎叆銆?>
   <meta name="author" content="Feng-180">
-  <meta property="og:title" content="风の数据流 | 节点订阅库">
-  <meta property="og:description" content="全球节点订阅库，Matrix代码雨风格界面。">
+  <meta property="og:title" content="椋庛伄鏁版嵁娴?| 鑺傜偣璁㈤槄搴?>
+  <meta property="og:description" content="鍏ㄧ悆鑺傜偣璁㈤槄搴擄紝Matrix浠ｇ爜闆ㄩ鏍肩晫闈€?>
   <meta property="og:type" content="website">
   <meta property="og:image" content="logo.png">
   <link rel="icon" type="image/png" href="logo.png">
@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700;900&display=swap" rel="stylesheet">
-  <title>风の数据流 | 节点订阅库</title>
+  <title>椋庛伄鏁版嵁娴?| 鑺傜偣璁㈤槄搴?/title>
   <style>
     :root { --cyan: #00f2ff; --pink: #ff0055; --void: #05020a; --card-bg: rgba(16, 20, 30, 0.7); --font-code: "Consolas", monospace; --font-main: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; }
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
@@ -51,7 +51,7 @@
     #toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-100%); background: rgba(10,15,20,0.9); border: 1px solid var(--cyan); color: var(--cyan); padding: 10px 20px; border-radius: 4px; font-size: 12px; z-index: 999; opacity: 0; transition: 0.3s; }
     #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
-    /* 搜索框 */
+    /* 鎼滅储妗?*/
     .search-box {
       width: 90%; max-width: 600px; z-index: 2; margin-bottom: 15px;
       position: relative;
@@ -69,7 +69,7 @@
       color: #555; font-size: 14px; pointer-events: none;
     }
 
-    /* 统计栏 */
+    /* 缁熻鏍?*/
     .stats-bar {
       width: 90%; max-width: 600px; z-index: 2;
       display: flex; justify-content: space-between; align-items: center;
@@ -84,7 +84,7 @@
     }
     .btn-copy-all:hover { border-color: var(--pink); color: var(--pink); background: rgba(255,0,85,0.05); }
 
-    /* 回到顶部按钮 */
+    /* 鍥炲埌椤堕儴鎸夐挳 */
     .scroll-top {
       position: fixed; bottom: 30px; right: 20px; z-index: 100;
       width: 40px; height: 40px; border-radius: 50%;
@@ -96,7 +96,7 @@
     .scroll-top:hover { background: var(--cyan); color: #000; box-shadow: 0 0 20px var(--cyan); }
     .scroll-top.visible { display: flex; }
 
-    /* 卡片入场动画 */
+    /* 鍗＄墖鍏ュ満鍔ㄧ敾 */
     @keyframes cardFadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     .card { opacity: 0; animation: cardFadeIn 0.4s ease forwards; }
     .card:nth-child(1) { animation-delay: 0.05s; }
@@ -106,113 +106,113 @@
     .card:nth-child(5) { animation-delay: 0.25s; }
     .card:nth-child(6) { animation-delay: 0.3s; }
 
-    /* 无结果提示 */
+    /* 鏃犵粨鏋滄彁绀?*/
     .no-results { display: none; text-align: center; color: #555; font-family: var(--font-code); font-size: 12px; padding: 40px 0; z-index: 2; }
   </style>
 </head>
 <body>
   <canvas id="matrix-canvas"></canvas>
-  <div id="toast">链接已复制</div>
+  <div id="toast">閾炬帴宸插鍒?/div>
 
   <div class="header-group">
-    <div class="status-badge">系统在线</div>
-    <div class="page-title">全球节点订阅库</div>
-    <div class="update-time">最后更新：2026-02-23 22:42:26</div>
+    <div class="status-badge">绯荤粺鍦ㄧ嚎</div>
+    <div class="page-title">鍏ㄧ悆鑺傜偣璁㈤槄搴?/div>
+    <div class="update-time">鏈€鍚庢洿鏂帮細2026-02-23 22:42:26</div>
   </div>
 
-  <!-- 搜索框 -->
+  <!-- 鎼滅储妗?-->
   <div class="search-box">
     <span class="search-icon">&#9906;</span>
-    <input type="text" class="search-input" id="searchInput" placeholder="搜索节点..." oninput="filterNodes()">
+    <input type="text" class="search-input" id="searchInput" placeholder="鎼滅储鑺傜偣..." oninput="filterNodes()">
   </div>
 
-  <!-- 统计栏 -->
+  <!-- 缁熻鏍?-->
   <div class="stats-bar">
-    <div class="stats-info">节点：<span id="nodeCount">6</span> / <span id="totalCount">6</span></div>
-    <button class="btn-copy-all" onclick="copyAllLinks()">复制全部链接</button>
+    <div class="stats-info">鑺傜偣锛?span id="nodeCount">6</span> / <span id="totalCount">6</span></div>
+    <button class="btn-copy-all" onclick="copyAllLinks()">澶嶅埗鍏ㄩ儴閾炬帴</button>
   </div>
 
   <div class="card-grid" id="cardGrid">
     
     <div class="card">
       <div class="c-top">
-        <span class="c-name">FreeFQ_高频更新</span>
-        <span class="c-tag">在线</span>
+        <span class="c-name">FreeFQ_楂橀鏇存柊</span>
+        <span class="c-tag">鍦ㄧ嚎</span>
       </div>
-      <div class="link-box" onclick="copyText('https://raw.githubusercontent.com/freefq/free/master/v2')">https://raw.githubusercontent.com/freefq/free/master/v2</div>
+      <button class="link-box" style="width:100%; border:none; text-align:left; background:transparent;" onclick="copyText('https://raw.githubusercontent.com/freefq/free/master/v2')">https://raw.githubusercontent.com/freefq/free/master/v2</div>
       <div class="btn-row">
-        <div class="btn" onclick="copyText('https://raw.githubusercontent.com/freefq/free/master/v2')">复制链接</div>
-        <a class="btn clash" href="clash://install-config?url=https://raw.githubusercontent.com/freefq/free/master/v2">导入 Clash</a>
+        <div class="btn" onclick="copyText('https://raw.githubusercontent.com/freefq/free/master/v2')">澶嶅埗閾炬帴</div>
+        <a class="btn clash" href="clash://install-config?url=https://raw.githubusercontent.com/freefq/free/master/v2">瀵煎叆 Clash</a>
       </div>
     </div>
 
     <div class="card">
       <div class="c-top">
-        <span class="c-name">Pawdroid_修正源</span>
-        <span class="c-tag">在线</span>
+        <span class="c-name">Pawdroid_淇婧?/span>
+        <span class="c-tag">鍦ㄧ嚎</span>
       </div>
-      <div class="link-box" onclick="copyText('https://raw.githubusercontent.com/Pawdroid/Free-servers/main/sub')">https://raw.githubusercontent.com/Pawdroid/Free-servers/main/sub</div>
+      <button class="link-box" style="width:100%; border:none; text-align:left; background:transparent;" onclick="copyText('https://raw.githubusercontent.com/Pawdroid/Free-servers/main/sub')">https://raw.githubusercontent.com/Pawdroid/Free-servers/main/sub</div>
       <div class="btn-row">
-        <div class="btn" onclick="copyText('https://raw.githubusercontent.com/Pawdroid/Free-servers/main/sub')">复制链接</div>
-        <a class="btn clash" href="clash://install-config?url=https://raw.githubusercontent.com/Pawdroid/Free-servers/main/sub">导入 Clash</a>
+        <div class="btn" onclick="copyText('https://raw.githubusercontent.com/Pawdroid/Free-servers/main/sub')">澶嶅埗閾炬帴</div>
+        <a class="btn clash" href="clash://install-config?url=https://raw.githubusercontent.com/Pawdroid/Free-servers/main/sub">瀵煎叆 Clash</a>
       </div>
     </div>
 
     <div class="card">
       <div class="c-top">
-        <span class="c-name">CyanBird_公益池</span>
-        <span class="c-tag">在线</span>
+        <span class="c-name">CyanBird_鍏泭姹?/span>
+        <span class="c-tag">鍦ㄧ嚎</span>
       </div>
-      <div class="link-box" onclick="copyText('https://raw.githubusercontent.com/vpei/Free-Node-Merge/main/out/nodes.txt')">https://raw.githubusercontent.com/vpei/Free-Node-Merge/main/out/nodes.txt</div>
+      <button class="link-box" style="width:100%; border:none; text-align:left; background:transparent;" onclick="copyText('https://raw.githubusercontent.com/vpei/Free-Node-Merge/main/out/nodes.txt')">https://raw.githubusercontent.com/vpei/Free-Node-Merge/main/out/nodes.txt</div>
       <div class="btn-row">
-        <div class="btn" onclick="copyText('https://raw.githubusercontent.com/vpei/Free-Node-Merge/main/out/nodes.txt')">复制链接</div>
-        <a class="btn clash" href="clash://install-config?url=https://raw.githubusercontent.com/vpei/Free-Node-Merge/main/out/nodes.txt">导入 Clash</a>
+        <div class="btn" onclick="copyText('https://raw.githubusercontent.com/vpei/Free-Node-Merge/main/out/nodes.txt')">澶嶅埗閾炬帴</div>
+        <a class="btn clash" href="clash://install-config?url=https://raw.githubusercontent.com/vpei/Free-Node-Merge/main/out/nodes.txt">瀵煎叆 Clash</a>
       </div>
     </div>
 
     <div class="card">
       <div class="c-top">
-        <span class="c-name">Ermaozi_Clash精选</span>
-        <span class="c-tag">在线</span>
+        <span class="c-name">Ermaozi_Clash绮鹃€?/span>
+        <span class="c-tag">鍦ㄧ嚎</span>
       </div>
-      <div class="link-box" onclick="copyText('https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml')">https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml</div>
+      <button class="link-box" style="width:100%; border:none; text-align:left; background:transparent;" onclick="copyText('https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml')">https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml</div>
       <div class="btn-row">
-        <div class="btn" onclick="copyText('https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml')">复制链接</div>
-        <a class="btn clash" href="clash://install-config?url=https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml">导入 Clash</a>
+        <div class="btn" onclick="copyText('https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml')">澶嶅埗閾炬帴</div>
+        <a class="btn clash" href="clash://install-config?url=https://raw.githubusercontent.com/ermaozi/get_subscribe/main/subscribe/clash.yml">瀵煎叆 Clash</a>
       </div>
     </div>
 
     <div class="card">
       <div class="c-top">
-        <span class="c-name">Mahdi_全球聚合</span>
-        <span class="c-tag">在线</span>
+        <span class="c-name">Mahdi_鍏ㄧ悆鑱氬悎</span>
+        <span class="c-tag">鍦ㄧ嚎</span>
       </div>
-      <div class="link-box" onclick="copyText('https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/sub/sub_merge.txt')">https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/sub/sub_merge.txt</div>
+      <button class="link-box" style="width:100%; border:none; text-align:left; background:transparent;" onclick="copyText('https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/sub/sub_merge.txt')">https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/sub/sub_merge.txt</div>
       <div class="btn-row">
-        <div class="btn" onclick="copyText('https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/sub/sub_merge.txt')">复制链接</div>
-        <a class="btn clash" href="clash://install-config?url=https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/sub/sub_merge.txt">导入 Clash</a>
+        <div class="btn" onclick="copyText('https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/sub/sub_merge.txt')">澶嶅埗閾炬帴</div>
+        <a class="btn clash" href="clash://install-config?url=https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/sub/sub_merge.txt">瀵煎叆 Clash</a>
       </div>
     </div>
 
     <div class="card">
       <div class="c-top">
-        <span class="c-name">Anaer_高速节点</span>
-        <span class="c-tag">在线</span>
+        <span class="c-name">Anaer_楂橀€熻妭鐐?/span>
+        <span class="c-tag">鍦ㄧ嚎</span>
       </div>
-      <div class="link-box" onclick="copyText('https://raw.githubusercontent.com/anaer/Sub/main/clash.yaml')">https://raw.githubusercontent.com/anaer/Sub/main/clash.yaml</div>
+      <button class="link-box" style="width:100%; border:none; text-align:left; background:transparent;" onclick="copyText('https://raw.githubusercontent.com/anaer/Sub/main/clash.yaml')">https://raw.githubusercontent.com/anaer/Sub/main/clash.yaml</div>
       <div class="btn-row">
-        <div class="btn" onclick="copyText('https://raw.githubusercontent.com/anaer/Sub/main/clash.yaml')">复制链接</div>
-        <a class="btn clash" href="clash://install-config?url=https://raw.githubusercontent.com/anaer/Sub/main/clash.yaml">导入 Clash</a>
+        <div class="btn" onclick="copyText('https://raw.githubusercontent.com/anaer/Sub/main/clash.yaml')">澶嶅埗閾炬帴</div>
+        <a class="btn clash" href="clash://install-config?url=https://raw.githubusercontent.com/anaer/Sub/main/clash.yaml">瀵煎叆 Clash</a>
       </div>
     </div>
 
   </div>
 
-  <div class="no-results" id="noResults">未找到匹配的节点</div>
+  <div class="no-results" id="noResults">鏈壘鍒板尮閰嶇殑鑺傜偣</div>
 
-  <a href="portal.html" class="back-btn">返回主控台</a>
+  <a href="portal.html" class="back-btn">杩斿洖涓绘帶鍙?/a>
 
-  <!-- 回到顶部按钮 -->
+  <!-- 鍥炲埌椤堕儴鎸夐挳 -->
   <div class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">&#8593;</div>
 
   <script>
@@ -245,7 +245,7 @@
       const t = document.getElementById('toast');
       try {
         await navigator.clipboard.writeText(text);
-        t.innerText = "复制成功";
+        t.innerText = "澶嶅埗鎴愬姛";
       } catch (err) {
         const ta = document.createElement("textarea");
         ta.value = text;
@@ -253,13 +253,13 @@
         ta.select();
         document.execCommand('copy');
         document.body.removeChild(ta);
-        t.innerText = "复制成功（备用方式）";
+        t.innerText = "澶嶅埗鎴愬姛锛堝鐢ㄦ柟寮忥級";
       }
       t.classList.add('show');
       setTimeout(()=>t.classList.remove('show'), 2000);
     }
 
-    // --- 搜索过滤 ---
+    // --- 鎼滅储杩囨护 ---
     function filterNodes() {
       const keyword = document.getElementById('searchInput').value.toLowerCase();
       const cards = document.querySelectorAll('#cardGrid .card');
@@ -277,7 +277,7 @@
       document.getElementById('noResults').style.display = visibleCount === 0 ? 'block' : 'none';
     }
 
-    // --- 一键复制全部链接 ---
+    // --- 涓€閿鍒跺叏閮ㄩ摼鎺?---
     async function copyAllLinks() {
       const cards = document.querySelectorAll('#cardGrid .card');
       const links = [];
@@ -288,17 +288,17 @@
       });
       await copyText(links.join('\n'));
       const t = document.getElementById('toast');
-      t.innerText = `已复制 ${links.length} 条链接`;
+      t.innerText = `宸插鍒?${links.length} 鏉￠摼鎺;
       t.classList.add('show');
       setTimeout(() => t.classList.remove('show'), 2000);
     }
 
-    // --- 初始化节点计数 ---
+    // --- 鍒濆鍖栬妭鐐硅鏁?---
     const totalNodes = document.querySelectorAll('#cardGrid .card').length;
     document.getElementById('totalCount').textContent = totalNodes;
     document.getElementById('nodeCount').textContent = totalNodes;
 
-    // --- 回到顶部按钮 ---
+    // --- 鍥炲埌椤堕儴鎸夐挳 ---
     window.addEventListener('scroll', () => {
       const btn = document.getElementById('scrollTop');
       if (window.scrollY > 300) btn.classList.add('visible');
@@ -307,3 +307,4 @@
   </script>
 </body>
 </html>
+

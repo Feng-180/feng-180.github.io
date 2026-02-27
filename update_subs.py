@@ -3,6 +3,9 @@ import os
 import sys
 import urllib.request
 import urllib.error
+import html
+import concurrent.futures
+from typing import Tuple, List, Dict, Any
 
 # ================= 配置区域 =================
 SOURCE_FILE = "sources.txt"      # 输入：源文件
@@ -24,7 +27,7 @@ DEFAULT_SOURCES = """
 # ===========================================
 
 
-def get_html_template(cards_html, update_time, total_count):
+def get_html_template(cards_html: str, update_time: str, total_count: int) -> str:
     """
     【赛博矩阵 V3.0】网页模板 - 含搜索、统计、回到顶部
     """
@@ -230,15 +233,18 @@ def get_html_template(cards_html, update_time, total_count):
 """
 
 
-def init_sources_if_missing():
+def init_sources_if_missing() -> None:
     """初始化源文件"""
     if not os.path.exists(SOURCE_FILE):
         print(f"[WARN] {SOURCE_FILE} 不存在，生成默认源...")
-        with open(SOURCE_FILE, "w", encoding="utf-8") as f:
-            f.write(DEFAULT_SOURCES.strip())
+        try:
+            with open(SOURCE_FILE, "w", encoding="utf-8") as f:
+                f.write(DEFAULT_SOURCES.strip())
+        except OSError as e:
+            print(f"[ERROR] 无法写入 {SOURCE_FILE}: {e}")
 
 
-def check_url(url):
+def check_url(url: str) -> Tuple[bool, Any]:
     """
     检测 URL 是否可达
     返回: (bool, int|str) -> (是否可达, HTTP状态码或错误信息)
@@ -255,6 +261,8 @@ def check_url(url):
             req.add_header('User-Agent', 'Mozilla/5.0 (compatible; NodeChecker/1.0)')
             with urllib.request.urlopen(req, timeout=CHECK_TIMEOUT) as resp:
                 return True, resp.status
+        except urllib.error.HTTPError as e2:
+            return False, e2.code
         except Exception:
             return False, e.code
     except urllib.error.URLError as e:
@@ -263,73 +271,98 @@ def check_url(url):
         return False, str(e)[:30]
 
 
-def process_data():
+def process_data() -> Tuple[str, List[str], Dict[str, int]]:
     """核心处理逻辑"""
-    cards_html = ""
-    all_urls = []
-    stats = {"total": 0, "active": 0, "offline": 0}
-    
+    tasks = []
     with open(SOURCE_FILE, "r", encoding="utf-8") as f:
         for line_num, line in enumerate(f, 1):
             line = line.strip()
-            if not line or line.startswith("#"): continue
-                
+            if not line or line.startswith("#"):
+                continue
+
             try:
                 # 解析 Name#URL 或 Name,URL
-                if "#" in line: parts = line.split("#", 1)
-                elif "," in line: parts = line.split(",", 1)
+                if "#" in line:
+                    parts = line.split("#", 1)
+                elif "," in line:
+                    parts = line.split(",", 1)
                 else:
                     print(f"  [SKIP] 行 {line_num}: 格式无效 -> {line[:50]}")
                     continue
 
                 name = parts[0].strip()
                 url = parts[1].strip()
-                
+
                 if not url.startswith(("http://", "https://")):
                     print(f"  [SKIP] 行 {line_num}: 无效URL -> {url[:50]}")
                     continue
 
-                stats["total"] += 1
-                all_urls.append(url)
-
-                # 检测 URL 可用性
-                print(f"  [{stats['total']}] 检测: {name} ...", end=" ", flush=True)
-                is_active, status = check_url(url)
-                
-                if is_active:
-                    stats["active"] += 1
-                    tag_class = "active"
-                    tag_text = "在线"
-                    card_class = ""
-                    print(f"OK ({status})")
-                else:
-                    stats["offline"] += 1
-                    tag_class = "offline"
-                    tag_text = "离线"
-                    card_class = " offline"
-                    print(f"FAIL ({status})")
-
-                # 生成HTML卡片
-                cards_html += f"""
-    <div class="card{card_class}">
-      <div class="c-top">
-        <span class="c-name">{name}</span>
-        <span class="c-tag {tag_class}">{tag_text}</span>
-      </div>
-      <div class="link-box" onclick="copyText('{url}')">{url}</div>
-      <div class="btn-row">
-        <div class="btn" onclick="copyText('{url}')">复制链接</div>
-        <a class="btn clash" href="clash://install-config?url={url}">导入 Clash</a>
-      </div>
-    </div>
-"""
+                tasks.append({"name": name, "url": url, "line_num": line_num})
             except Exception as e:
                 print(f"  [ERROR] 行 {line_num}: {e}")
 
+    results = [None] * len(tasks)
+    stats = {"total": len(tasks), "active": 0, "offline": 0}
+    
+    print(f"  开始并发检测 {len(tasks)} 个订阅源...")
+    
+    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+        future_to_index = {executor.submit(check_url, task["url"]): i for i, task in enumerate(tasks)}
+        
+        completed_count = 0
+        for future in concurrent.futures.as_completed(future_to_index):
+            index = future_to_index[future]
+            task = tasks[index]
+            completed_count += 1
+            
+            try:
+                is_active, status = future.result()
+            except Exception as e:
+                is_active, status = False, str(e)[:30]
+            
+            results[index] = (is_active, status)
+            
+            status_str = f"OK ({status})" if is_active else f"FAIL ({status})"
+            print(f"  [{completed_count}/{stats['total']}] 检测: {task['name']} ... {status_str}")
+
+    cards_html = ""
+    all_urls = []
+    
+    for i, task in enumerate(tasks):
+        is_active, status = results[i]
+        name_escaped = html.escape(task["name"])
+        url_escaped = html.escape(task["url"])
+        
+        if is_active:
+            stats["active"] += 1
+            tag_class = "active"
+            tag_text = "在线"
+            card_class = ""
+        else:
+            stats["offline"] += 1
+            tag_class = "offline"
+            tag_text = "离线"
+            card_class = " offline"
+        
+        all_urls.append(task["url"])
+        
+        cards_html += f"""
+    <div class="card{card_class}">
+      <div class="c-top">
+        <span class="c-name">{name_escaped}</span>
+        <span class="c-tag {tag_class}">{tag_text}</span>
+      </div>
+      <div class="link-box" onclick="copyText('{url_escaped}')">{url_escaped}</div>
+      <div class="btn-row">
+        <div class="btn" onclick="copyText('{url_escaped}')">复制链接</div>
+        <a class="btn clash" href="clash://install-config?url={url_escaped}">导入 Clash</a>
+      </div>
+    </div>
+"""
     return cards_html, all_urls, stats
 
 
-def main():
+def main() -> None:
     print("=" * 50)
     print("  风の数据流 - 节点更新工具 v3.0")
     print("=" * 50)
@@ -347,15 +380,21 @@ def main():
     print(f"\n[STEP 2] 生成网页文件...")
     now = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     final_html = get_html_template(cards_html, now, stats["total"])
-    with open(HTML_FILE, "w", encoding="utf-8") as f:
-        f.write(final_html)
-    print(f"  -> {HTML_FILE}")
+    try:
+        with open(HTML_FILE, "w", encoding="utf-8") as f:
+            f.write(final_html)
+        print(f"  -> {HTML_FILE}")
+    except OSError as e:
+        print(f"[ERROR] 无法写入 {HTML_FILE}: {e}")
 
     # 2. 生成 sub_all.txt (聚合文件)
     print(f"[STEP 3] 生成聚合订阅文件...")
-    with open(TXT_FILE, "w", encoding="utf-8") as f:
-        f.write("\n".join(all_urls))
-    print(f"  -> {TXT_FILE}")
+    try:
+        with open(TXT_FILE, "w", encoding="utf-8") as f:
+            f.write("\n".join(all_urls))
+        print(f"  -> {TXT_FILE}")
+    except OSError as e:
+        print(f"[ERROR] 无法写入 {TXT_FILE}: {e}")
 
     # 3. 输出统计报告
     print(f"\n{'=' * 50}")
