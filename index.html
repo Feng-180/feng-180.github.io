@@ -275,7 +275,20 @@
             localStorage.setItem('theme', newTheme);
         });
 
-        // Hide loading after page loads
+        // Hide loading after page loads with a safety timeout
+        function hideLoading() {
+            const loader = document.getElementById('loading');
+            if (loader) {
+                loader.classList.add('hidden');
+                // Remove from DOM after transition to prevent interaction issues
+                setTimeout(() => loader.style.display = 'none', 500);
+            }
+        }
+
+        window.addEventListener('load', hideLoading);
+        
+        // Safety timeout: if page doesn't fire 'load' in 5 seconds, hide anyway
+        setTimeout(hideLoading, 5000);
         window.addEventListener('load', () => {
             setTimeout(() => {
                 document.getElementById('loading').classList.add('hidden');
@@ -328,12 +341,14 @@
         });
 
         function activatePortal() {
-            if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+            if (navigator.vibrate) try { navigator.vibrate([100, 50, 100]); } catch(e){}
             document.body.classList.add('glitch-mode');
-            document.body.style.backgroundColor = document.documentElement.getAttribute('data-theme') === 'light' ? '#fff' : '#111';
-            clockEl.style.color = '#00f2ff';
-            clockEl.innerText = "认证通过";
-            dateEl.innerText = "正在接入系统...";
+            const theme = document.documentElement.getAttribute('data-theme');
+            document.body.style.backgroundColor = theme === 'light' ? '#ffffff' : '#050505';
+            clockEl.style.color = 'var(--accent)';
+            clockEl.innerText = "ACCESS GRANTED";
+            dateEl.innerText = "INITIALIZING SYSTEM...";
+            
             setTimeout(() => {
                 document.body.style.opacity = '0';
                 setTimeout(() => {
@@ -345,8 +360,8 @@
             document.body.classList.add('glitch-mode');
             document.body.style.backgroundColor = document.documentElement.getAttribute('data-theme') === 'light' ? '#fff' : '#111';
             clockEl.style.color = '#00f2ff';
-            clockEl.innerText = "楠岃瘉閫氳繃";
-            dateEl.innerText = "姝ｅ湪璺宠浆...";
+            clockEl.innerText = "认证通过";
+            dateEl.innerText = "正在接入系统...";
             setTimeout(() => {
                 document.body.style.opacity = '0';
                 setTimeout(() => {
