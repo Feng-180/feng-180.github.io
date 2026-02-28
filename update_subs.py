@@ -263,6 +263,16 @@ def check_url(url: str) -> Tuple[bool, Any]:
                 return True, resp.status
         except urllib.error.HTTPError as e2:
             return False, e2.code
+        except Exception as e3:
+            return False, e.code  # 使用外部的 HTTPError code
+        # 某些服务器不支持 HEAD，尝试 GET
+        try:
+            req = urllib.request.Request(url)
+            req.add_header('User-Agent', 'Mozilla/5.0 (compatible; NodeChecker/1.0)')
+            with urllib.request.urlopen(req, timeout=CHECK_TIMEOUT) as resp:
+                return True, resp.status
+        except urllib.error.HTTPError as e2:
+            return False, e2.code
         except Exception:
             return False, e.code
     except urllib.error.URLError as e:

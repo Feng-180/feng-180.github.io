@@ -3,18 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">n    <title>椋庛伄榄旀硶绂佷功褰?/title>
-    <meta name="description" content="椋庛伄榄旀硶绂佷功褰?- 璧涘崥鏈嬪厠椋庢牸鐨勬暟瀛楁椂閽熶笌绉樺瘑鍏ュ彛">
-    <meta name="keywords" content="鏃堕挓,璧涘崥鏈嬪厠,鏁板瓧鏃堕挓,榄旀硶绂佷功褰?>
+    <title>风の魔法禁书录</title>
+    <meta name="description" content="风の魔法禁书录 - 赛博朋克风格的数字时钟与秘密入口">
+    <meta name="keywords" content="时钟,赛博朋克,数字时钟,魔法禁书录">
     <meta name="author" content="Feng-180">
-    <meta property="og:title" content="椋庛伄榄旀硶绂佷功褰?>
-    <meta property="og:description" content="鏋佺畝璧涘崥鏈嬪厠鏁板瓧鏃堕挓锛岄殣钘忕潃閫氬線榄旀硶绂佷功褰曠殑绉樺瘑鍏ュ彛銆?>
+    <meta property="og:title" content="风の魔法禁书录">
+    <meta property="og:description" content="极简赛博朋克数字时钟，隐藏着通往魔法禁书录的秘密入口。">
     <meta property="og:type" content="website">
     <meta property="og:image" content="logo.png">
     <meta name="theme-color" content="#000000">
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="apple-touch-icon" href="logo.png">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg: #000000;
@@ -250,7 +249,8 @@
     <div id="clock">00:00:00</div>
 
     <div class="meta-group">
-        <div id="date">鍔犺浇涓?..</div>
+        <div id="date">加载中...</div>
+        <div class="motto">我曾经来过这个世界</div>
         <div class="motto">鎴戞浘缁忔潵杩囪繖涓笘鐣?/div>
     </div>
 
@@ -258,7 +258,7 @@
         <div class="secret-line" id="line"></div>
     </div>
 
-    <div id="tips">椋庛伄榄旀硶绂佷功褰?/div>
+    <div id="tips">风の魔法禁书录</div>
 
     <script>
         // Theme Toggle Functionality
@@ -282,7 +282,7 @@
 
         const clockEl = document.getElementById('clock');
         const dateEl = document.getElementById('date');
-        const dayNames = ['鏄熸湡鏃?, '鏄熸湡涓€', '鏄熸湡浜?, '鏄熸湡涓?, '鏄熸湡鍥?, '鏄熸湡浜?, '鏄熸湡鍏?];
+        const dayNames = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
 
         function updateTime() {
             const now = new Date();
@@ -295,7 +295,7 @@
             const day = dayNames[now.getDay()];
 
             clockEl.innerText = `${h}:${m}:${s}`;
-            dateEl.innerText = `${y}骞?{mo}鏈?{d}鏃?${day}`;
+            dateEl.innerText = `${y}年${mo}月${d}日 ${day}`;
 
             requestAnimationFrame(updateTime);
         }
