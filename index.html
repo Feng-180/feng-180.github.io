@@ -249,7 +249,9 @@
     <div id="clock">00:00:00</div>
 
     <div class="meta-group">
-        <div id="date">加载中...</div>
+        <div id="date">2026年3月1日 星期日</div>
+        <div class="motto">我曾经来过这个世界</div>
+        <div class="motto">I was here.</div>
         <div class="motto">我曾经来过这个世界</div>
         <div class="motto">鎴戞浘缁忔潵杩囪繖涓笘鐣?/div>
     </div>
@@ -296,6 +298,7 @@
 
             clockEl.innerText = `${h}:${m}:${s}`;
             dateEl.innerText = `${y}年${mo}月${d}日 ${day}`;
+            dateEl.innerText = `${y}年${mo}月${d}日 ${day}`;
 
             requestAnimationFrame(updateTime);
         }
@@ -325,6 +328,19 @@
         });
 
         function activatePortal() {
+            if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
+            document.body.classList.add('glitch-mode');
+            document.body.style.backgroundColor = document.documentElement.getAttribute('data-theme') === 'light' ? '#fff' : '#111';
+            clockEl.style.color = '#00f2ff';
+            clockEl.innerText = "认证通过";
+            dateEl.innerText = "正在接入系统...";
+            setTimeout(() => {
+                document.body.style.opacity = '0';
+                setTimeout(() => {
+                    window.location.href = REAL_HOMEPAGE;
+                }, 500);
+            }, 1200);
+        }
             if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
             document.body.classList.add('glitch-mode');
             document.body.style.backgroundColor = document.documentElement.getAttribute('data-theme') === 'light' ? '#fff' : '#111';
