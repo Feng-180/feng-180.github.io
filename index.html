@@ -252,9 +252,6 @@
         <div id="date">2026年3月1日 星期日</div>
         <div class="motto">我曾经来过这个世界</div>
         <div class="motto">I was here.</div>
-        <div class="motto">我曾经来过这个世界</div>
-        <div class="motto">鎴戞浘缁忔潵杩囪繖涓笘鐣?/div>
-    </div>
 
     <div class="trigger-area" id="trigger">
         <div class="secret-line" id="line"></div>
@@ -276,24 +273,25 @@
         });
 
         // Hide loading after page loads with a safety timeout
+        // Robust Loading Handler
         function hideLoading() {
             const loader = document.getElementById('loading');
             if (loader) {
-                loader.classList.add('hidden');
-                // Remove from DOM after transition to prevent interaction issues
-                setTimeout(() => loader.style.display = 'none', 500);
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                }, 500);
             }
         }
 
+        // Trigger loading hide on various events
         window.addEventListener('load', hideLoading);
-        
-        // Safety timeout: if page doesn't fire 'load' in 5 seconds, hide anyway
-        setTimeout(hideLoading, 5000);
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                document.getElementById('loading').classList.add('hidden');
-            }, 800);
+        document.addEventListener('DOMContentLoaded', () => {
+            // Also set a safety timeout in case 'load' takes too long
+            setTimeout(hideLoading, 3000);
         });
+        // Immediate safety fallback
+        setTimeout(hideLoading, 5000);
 
         const clockEl = document.getElementById('clock');
         const dateEl = document.getElementById('date');
@@ -310,7 +308,6 @@
             const day = dayNames[now.getDay()];
 
             clockEl.innerText = `${h}:${m}:${s}`;
-            dateEl.innerText = `${y}年${mo}月${d}日 ${day}`;
             dateEl.innerText = `${y}年${mo}月${d}日 ${day}`;
 
             requestAnimationFrame(updateTime);
@@ -356,20 +353,6 @@
                 }, 500);
             }, 1200);
         }
-            if (navigator.vibrate) navigator.vibrate([100, 50, 100]);
-            document.body.classList.add('glitch-mode');
-            document.body.style.backgroundColor = document.documentElement.getAttribute('data-theme') === 'light' ? '#fff' : '#111';
-            clockEl.style.color = '#00f2ff';
-            clockEl.innerText = "认证通过";
-            dateEl.innerText = "正在接入系统...";
-            setTimeout(() => {
-                document.body.style.opacity = '0';
-                setTimeout(() => {
-                    window.location.href = REAL_HOMEPAGE;
-                }, 500);
-            }, 1200);
-        }
-
         // Enhanced Particle Animation with Canvas
         const cvs = document.getElementById('bg-canvas'), ctx = cvs.getContext('2d');
         let w, h, particles = [];
