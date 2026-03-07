@@ -1,1 +1,96 @@
-:root { --bg: #000000; --text: #f5f5f7; --sub-text: #86868b; --accent: #00f2ff; --cyan: #00f2ff; --pink: #ff0055; --void: #05020a; --transition: cubic-bezier(0.25, 0.46, 0.45, 0.94); --font-main: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif; --font-code: 'Consolas', monospace; } body { margin: 0; background-color: var(--bg); color: var(--text); font-family: var(--font-main); } * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+/* ========================================
+   风の魔法禁书录 - 公共样式系统 v5.0
+   ======================================== */
+
+/* CSS Variables */
+:root {
+  --bg: #000000;
+  --text: #f5f5f7;
+  --sub-text: #86868b;
+  --accent: #00f2ff;
+  --cyan: #00f2ff;
+  --pink: #ff0055;
+  --purple: #a855f7;
+  --void: #05020a;
+  --card-bg: rgba(16, 20, 30, 0.7);
+  --transition: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --font-main: 'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-code: 'Consolas', 'Courier New', monospace;
+}
+
+/* Reset */
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-main);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--void);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 242, 255, 0.2);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 242, 255, 0.4);
+}
+
+/* Selection */
+::selection {
+  background: rgba(0, 242, 255, 0.3);
+  color: #fff;
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Focus visible for accessibility */
+:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+}
+
+/* Common animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes glow {
+  0%, 100% { text-shadow: 0 0 10px rgba(0, 242, 255, 0.5); }
+  50% { text-shadow: 0 0 20px rgba(0, 242, 255, 0.8), 0 0 40px rgba(0, 242, 255, 0.3); }
+}
+
+/* noscript fallback */
+noscript {
+  display: block;
+  text-align: center;
+  padding: 20px;
+  color: var(--pink);
+  font-size: 14px;
+}

@@ -1,118 +1,601 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>风の魔法禁书录 | 主控台</title>
+  <meta name="theme-color" content="#050505">
+  <meta name="description" content="风の魔法禁书录 - 主控台 | 联系站长、魔法阵地、神秘节点、科学上网指南">
+  <meta name="author" content="Feng-180">
+  <meta property="og:title" content="风の魔法禁书录 | 主控台">
+  <meta property="og:description" content="赛博朋克风格的个人导航主控台">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="logo.png">
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="apple-touch-icon" href="logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <title>风の魔法禁书録 | 主控台</title>
   <style>
-    :root {
-      --cyan: #00f2ff;
-      --pink: #ff0055;
-      --bg: #050505;
-    }
     body {
       margin: 0;
-      background: var(--bg);
+      background: #050505;
       color: #fff;
-      font-family: "Noto Sans SC", sans-serif;
+      font-family: var(--font-main);
       display: flex;
       flex-direction: column;
       align-items: center;
       min-height: 100vh;
       padding: 20px;
+      overflow-x: hidden;
     }
-    .header { text-align: center; margin-bottom: 40px; margin-top: 40px; }
-    .title { font-size: 2rem; letter-spacing: 4px; color: var(--cyan); text-shadow: 0 0 10px var(--cyan); }
-    .nav-grid { display: grid; gap: 20px; width: 100%; max-width: 400px; }
-    .card {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      padding: 20px;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: 0.3s;
-      text-decoration: none;
-      color: inherit;
-    }
-    .card:hover { border-color: var(--cyan); background: rgba(0, 242, 255, 0.05); }
-    .card-title { font-weight: bold; margin-bottom: 5px; display: block; }
-    .card-sub { font-size: 0.8rem; color: #888; }
-    .footer { margin-top: auto; padding: 40px 0; font-size: 0.8rem; color: #444; }
 
-    #toast {
-      position: fixed; top: 20px; background: var(--cyan); color: #000;
-      padding: 10px 20px; border-radius: 5px; opacity: 0; transition: 0.3s;
+    /* Particle background */
+    #bg-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
       pointer-events: none;
     }
-    #toast.show { opacity: 1; top: 40px; }
-    
-    .modal {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.9);
-      display: none; align-items: center; justify-content: center; z-index: 100;
+
+    /* Loading */
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: #050505;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.6s ease, visibility 0.6s ease;
     }
-    .modal-box { background: #111; padding: 30px; border-radius: 10px; text-align: center; border: 1px solid var(--pink); }
-    input { background: #000; border: 1px solid #333; color: var(--cyan); padding: 10px; margin: 20px 0; width: 100%; box-sizing: border-box; text-align: center; }
-    button.btn { background: var(--cyan); border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; width: 100%; }
+
+    .loading-overlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .loader {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(0, 242, 255, 0.1);
+      border-top-color: var(--cyan);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      margin-top: 40px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .title {
+      font-size: 2rem;
+      letter-spacing: 4px;
+      color: var(--cyan);
+      text-shadow: 0 0 10px var(--cyan), 0 0 30px rgba(0, 242, 255, 0.3);
+      font-weight: 900;
+      animation: titleGlow 3s ease-in-out infinite;
+    }
+
+    @keyframes titleGlow {
+
+      0%,
+      100% {
+        text-shadow: 0 0 10px var(--cyan), 0 0 30px rgba(0, 242, 255, 0.3);
+      }
+
+      50% {
+        text-shadow: 0 0 20px var(--cyan), 0 0 50px rgba(0, 242, 255, 0.5);
+      }
+    }
+
+    .status-line {
+      color: #666;
+      font-size: 0.8rem;
+      margin-top: 8px;
+      font-family: var(--font-code);
+      letter-spacing: 1px;
+    }
+
+    .status-dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      background: #00ff88;
+      border-radius: 50%;
+      margin-right: 6px;
+      animation: dotPulse 2s infinite;
+    }
+
+    @keyframes dotPulse {
+
+      0%,
+      100% {
+        opacity: 1;
+        box-shadow: 0 0 4px #00ff88;
+      }
+
+      50% {
+        opacity: 0.4;
+        box-shadow: none;
+      }
+    }
+
+    /* Navigation grid */
+    .nav-grid {
+      display: grid;
+      gap: 16px;
+      width: 100%;
+      max-width: 420px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Cards */
+    .card {
+      display: block;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 22px 20px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      color: inherit;
+      position: relative;
+      overflow: hidden;
+      animation: cardSlide 0.5s ease forwards;
+      opacity: 0;
+    }
+
+    .card:nth-child(1) {
+      animation-delay: 0.1s;
+    }
+
+    .card:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .card:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+
+    .card:nth-child(4) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes cardSlide {
+      from {
+        opacity: 0;
+        transform: translateY(15px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      padding: 1px;
+      background: linear-gradient(135deg, transparent 40%, var(--cyan) 100%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .card:hover::before {
+      opacity: 1;
+    }
+
+    .card:hover {
+      background: rgba(0, 242, 255, 0.05);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0, 242, 255, 0.1);
+    }
+
+    .card-icon {
+      font-size: 1.4rem;
+      margin-bottom: 8px;
+    }
+
+    .card-title {
+      font-weight: 700;
+      margin-bottom: 5px;
+      display: block;
+      font-size: 1rem;
+    }
+
+    .card-sub {
+      font-size: 0.78rem;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: auto;
+      padding: 40px 0 20px;
+      font-size: 0.75rem;
+      color: #333;
+      position: relative;
+      z-index: 1;
+      letter-spacing: 1px;
+    }
+
+    /* Toast */
+    #toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-100%);
+      background: rgba(10, 15, 20, 0.95);
+      border: 1px solid var(--cyan);
+      color: var(--cyan);
+      padding: 10px 24px;
+      border-radius: 6px;
+      font-size: 13px;
+      z-index: 1000;
+      opacity: 0;
+      transition: 0.3s ease;
+      font-family: var(--font-code);
+      pointer-events: none;
+      backdrop-filter: blur(10px);
+    }
+
+    #toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* Modal */
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      backdrop-filter: blur(5px);
+    }
+
+    .modal-box {
+      background: #0a0a0f;
+      padding: 35px 30px;
+      border-radius: 14px;
+      text-align: center;
+      border: 1px solid rgba(255, 0, 85, 0.3);
+      width: 90%;
+      max-width: 340px;
+      animation: modalIn 0.3s ease;
+    }
+
+    @keyframes modalIn {
+      from {
+        transform: scale(0.9);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .modal-title {
+      color: var(--pink);
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 20px;
+      letter-spacing: 2px;
+    }
+
+    .modal-input {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid #333;
+      color: var(--cyan);
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      width: 100%;
+      box-sizing: border-box;
+      text-align: center;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: var(--font-code);
+      transition: 0.3s;
+    }
+
+    .modal-input:focus {
+      border-color: var(--pink);
+      box-shadow: 0 0 15px rgba(255, 0, 85, 0.15);
+      outline: none;
+    }
+
+    .modal-input::placeholder {
+      color: #555;
+    }
+
+    .modal-btn {
+      background: linear-gradient(135deg, var(--pink), #ff3377);
+      border: none;
+      padding: 12px 24px;
+      cursor: pointer;
+      font-weight: 700;
+      width: 100%;
+      color: #fff;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: 0.3s;
+      font-family: var(--font-main);
+    }
+
+    .modal-btn:hover {
+      box-shadow: 0 5px 20px rgba(255, 0, 85, 0.3);
+      transform: translateY(-1px);
+    }
+
+    /* Scanline overlay */
+    .scanlines {
+      position: fixed;
+      inset: 0;
+      z-index: 900;
+      pointer-events: none;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%,
+          rgba(0, 0, 0, 0.12) 50%);
+      background-size: 100% 3px;
+      opacity: 0.2;
+    }
   </style>
+  <noscript>
+    <style>
+      .loading-overlay {
+        display: none !important;
+      }
+
+      .card {
+        opacity: 1 !important;
+      }
+    </style>
+  </noscript>
 </head>
+
 <body>
+  <!-- Loading -->
+  <div class="loading-overlay" id="loading">
+    <div class="loader"></div>
+  </div>
+
+  <div class="scanlines"></div>
+  <canvas id="bg-canvas"></canvas>
   <div id="toast">已复制</div>
+
   <header class="header">
-    <h1 class="title">风の魔法禁书录</h1>
-    <p style="color: #666; font-size: 0.8rem;">SYSTEM STATUS: ONLINE</p>
+    <h1 class="title">风の魔法禁书録</h1>
+    <p class="status-line"><span class="status-dot"></span>SYSTEM STATUS: ONLINE</p>
   </header>
 
-  <nav class="nav-grid">
-    <div class="card" onclick="copy('2902939692', '站长 QQ')">
+  <nav class="nav-grid" aria-label="主导航">
+    <button class="card" onclick="copyInfo('2902939692', '站长 QQ')" aria-label="联系站长，点击复制QQ号">
+      <div class="card-icon">📡</div>
       <span class="card-title">联系站长</span>
       <span class="card-sub">站长 QQ：2902939692</span>
-    </div>
-    <div class="card" onclick="copy('691105381', '群号'); window.open('https://qm.qq.com/q/UZVqUAkC8m')">
+    </button>
+
+    <button class="card" onclick="copyInfo('691105381', '群号'); window.open('https://qm.qq.com/q/UZVqUAkC8m')"
+      aria-label="加入魔法阵地QQ群">
+      <div class="card-icon">🔮</div>
       <span class="card-title">魔法阵地</span>
-      <span class="card-sub">群号：691105381 (点击复制)</span>
-    </div>
-    <div class="card" onclick="document.getElementById('modal').style.display='flex'">
+      <span class="card-sub">群号：691105381（点击加入）</span>
+    </button>
+
+    <button class="card" onclick="openModal()" aria-label="访问神秘节点，需要口令验证">
+      <div class="card-icon">🔐</div>
       <span class="card-title">神秘节点</span>
       <span class="card-sub">需要口令验证</span>
-    </div>
-    <a href="guide.html" class="card">
+    </button>
+
+    <a href="guide.html" class="card" aria-label="查看科学上网指南">
+      <div class="card-icon">📖</div>
       <span class="card-title">科学上网指南</span>
       <span class="card-sub">解锁互联网自由</span>
     </a>
   </nav>
 
-  <footer class="footer">风の魔法禁书录 &copy; 2026</footer>
+  <footer class="footer">风の魔法禁书録 &copy; 2026</footer>
 
-  <div class="modal" id="modal" onclick="if(event.target===this) this.style.display='none'">
+  <!-- Password Modal -->
+  <div class="modal" id="modal" onclick="if(event.target===this) closeModal()" role="dialog" aria-modal="true"
+    aria-label="安全验证">
     <div class="modal-box">
-      <div style="color: var(--pink); font-weight: bold;">安全验证</div>
-      <input type="text" id="pw" placeholder="输入口令" />
-      <button class="btn" onclick="verify()">验证</button>
+      <div class="modal-title">🔒 安全验证</div>
+      <input type="password" class="modal-input" id="pw" placeholder="输入口令" autocomplete="off" />
+      <button class="modal-btn" onclick="verify()">验 证</button>
     </div>
   </div>
 
+  <noscript>
+    <p style="text-align:center;color:#ff0055;padding:20px;">本站需要 JavaScript 支持才能正常运行。</p>
+  </noscript>
+
   <script>
-    const hash = "7ba42c5088a273f88721285565edbdd83dced31328a8fb2a9b48c593a0890673";
-    async function sha256(m) {
-      const b = new TextEncoder().encode(m);
-      const h = await crypto.subtle.digest('SHA-256', b);
-      return Array.from(new Uint8Array(h)).map(x => x.toString(16).padStart(2, '0')).join('');
+    // Loading
+    window.addEventListener('load', function () {
+      setTimeout(function () {
+        document.getElementById('loading').classList.add('hidden');
+      }, 600);
+    });
+
+    // Password verification
+    var hash = "7ba42c5088a273f88721285565edbdd83dced31328a8fb2a9b48c593a0890673";
+
+    function sha256(message) {
+      var encoder = new TextEncoder();
+      var data = encoder.encode(message);
+      return crypto.subtle.digest('SHA-256', data).then(function (hashBuffer) {
+        var hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(function (b) { return b.toString(16).padStart(2, '0'); }).join('');
+      });
     }
-    async function verify() {
-      const v = document.getElementById('pw').value;
-      if (await sha256(v) === hash) {
-        window.location.href = 'nodes.html';
+
+    function openModal() {
+      document.getElementById('modal').style.display = 'flex';
+      setTimeout(function () {
+        document.getElementById('pw').focus();
+      }, 100);
+    }
+
+    function closeModal() {
+      document.getElementById('modal').style.display = 'none';
+      document.getElementById('pw').value = '';
+    }
+
+    function verify() {
+      var v = document.getElementById('pw').value;
+      if (!v) return;
+      sha256(v).then(function (result) {
+        if (result === hash) {
+          window.location.href = 'nodes.html';
+        } else {
+          showToast('口令错误', true);
+          document.getElementById('pw').value = '';
+          document.getElementById('pw').focus();
+        }
+      });
+    }
+
+    // Enter key support for password
+    document.getElementById('pw').addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        verify();
+      }
+    });
+
+    // Escape to close modal
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    // Copy function with fallback
+    function copyInfo(text, label) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () {
+          showToast(label + ' 已复制');
+        }).catch(function () {
+          fallbackCopy(text, label);
+        });
       } else {
-        alert('口令错误');
+        fallbackCopy(text, label);
       }
     }
-    function copy(text, label) {
-      navigator.clipboard.writeText(text);
-      const t = document.getElementById('toast');
-      t.innerText = label + ' 已复制';
-      t.classList.add('show');
-      setTimeout(() => t.classList.remove('show'), 2000);
+
+    function fallbackCopy(text, label) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.left = '-9999px';
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+        showToast(label + ' 已复制');
+      } catch (err) {
+        showToast('复制失败，请手动复制');
+      }
+      document.body.removeChild(ta);
     }
+
+    function showToast(msg, isError) {
+      var t = document.getElementById('toast');
+      t.textContent = msg;
+      t.style.borderColor = isError ? 'var(--pink)' : 'var(--cyan)';
+      t.style.color = isError ? 'var(--pink)' : 'var(--cyan)';
+      t.classList.add('show');
+      setTimeout(function () { t.classList.remove('show'); }, 2000);
+    }
+
+    // Particle background
+    var cvs = document.getElementById('bg-canvas');
+    var ctx = cvs.getContext('2d');
+    var w, h, pts = [];
+
+    function initBg() {
+      w = cvs.width = window.innerWidth;
+      h = cvs.height = window.innerHeight;
+      pts = [];
+      var count = w < 600 ? 20 : 40;
+      for (var i = 0; i < count; i++) {
+        pts.push({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          vx: (Math.random() - 0.5) * 0.3,
+          vy: (Math.random() - 0.5) * 0.3,
+          size: Math.random() * 1.2 + 0.3,
+          pulse: Math.random() * Math.PI * 2,
+          speed: Math.random() * 0.01 + 0.005
+        });
+      }
+    }
+
+    function drawBg() {
+      ctx.clearRect(0, 0, w, h);
+
+      for (var i = 0; i < pts.length; i++) {
+        var p = pts[i];
+        p.pulse += p.speed;
+        var alpha = 0.2 + Math.sin(p.pulse) * 0.15;
+
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0 || p.x > w) p.vx *= -1;
+        if (p.y < 0 || p.y > h) p.vy *= -1;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(0, 242, 255, ' + alpha + ')';
+        ctx.fill();
+
+        for (var j = i + 1; j < pts.length; j++) {
+          var p2 = pts[j];
+          var dx = p.x - p2.x, dy = p.y - p2.y;
+          var dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 140) {
+            ctx.beginPath();
+            ctx.strokeStyle = 'rgba(0, 242, 255, ' + (0.06 * (1 - dist / 140)) + ')';
+            ctx.lineWidth = 0.4;
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(drawBg);
+    }
+
+    window.addEventListener('resize', initBg);
+    initBg();
+    drawBg();
   </script>
 </body>
+
 </html>

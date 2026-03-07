@@ -1,41 +1,602 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>科学上网指南 | 风の魔法禁书录</title>
+  <meta name="theme-color" content="#050505">
+  <meta name="description" content="科学上网完全指南 - 从入门到上手，详细教程与客户端推荐">
+  <meta name="author" content="Feng-180">
+  <meta property="og:title" content="科学上网指南 | 风の魔法禁书録">
+  <meta property="og:description" content="科学上网从入门到上手的完整指南">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="logo.png">
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="apple-touch-icon" href="logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <title>科学上网指南 | 风の魔法禁书録</title>
   <style>
     body {
-      margin: 0; background: #050505; color: #fff;
-      font-family: sans-serif; padding: 20px; line-height: 1.6;
+      margin: 0;
+      background: #050505;
+      color: #e0e0e0;
+      font-family: var(--font-main);
+      line-height: 1.7;
+      overflow-x: hidden;
     }
-    .container { max-width: 600px; margin: 0 auto; }
-    h1 { color: #00f2ff; }
-    .section { background: #111; padding: 20px; border-radius: 10px; margin-bottom: 20px; }
-    .btn { display: inline-block; background: #00f2ff; color: #000; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold; margin-top: 10px; }
-    code { background: #222; padding: 2px 5px; border-radius: 3px; }
+
+    /* Particle canvas */
+    #bg-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Loading */
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: #050505;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.6s ease, visibility 0.6s ease;
+    }
+
+    .loading-overlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .loader {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(0, 242, 255, 0.1);
+      border-top-color: var(--cyan);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Layout */
+    .container {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 40px 20px 60px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      margin-bottom: 50px;
+      padding: 30px 0;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      font-size: 10px;
+      font-family: var(--font-code);
+      color: #000;
+      background: var(--cyan);
+      padding: 3px 10px;
+      border-radius: 3px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin-bottom: 15px;
+    }
+
+    .hero h1 {
+      font-size: clamp(1.5rem, 5vw, 2.2rem);
+      font-weight: 900;
+      margin: 0 0 12px;
+      background: linear-gradient(135deg, var(--purple), var(--cyan));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero-desc {
+      color: #888;
+      font-size: 0.9rem;
+    }
+
+    /* Section */
+    .section {
+      margin-bottom: 30px;
+      opacity: 0;
+      transform: translateY(25px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .section-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 25px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s;
+    }
+
+    .section-card:hover {
+      border-color: rgba(168, 85, 247, 0.3);
+    }
+
+    .section-card::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: linear-gradient(180deg, var(--purple), var(--cyan));
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .section-card:hover::before {
+      opacity: 1;
+    }
+
+    /* Step header */
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 15px;
+    }
+
+    .step-num {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--purple), var(--pink));
+      color: #fff;
+      font-weight: 900;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .step-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    /* Content */
+    .section-card p {
+      margin: 0 0 12px;
+      color: #aaa;
+      font-size: 0.88rem;
+    }
+
+    .section-card p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Client list */
+    .client-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .client-item {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 8px;
+      padding: 14px;
+      text-align: center;
+      transition: 0.3s;
+    }
+
+    .client-item:hover {
+      border-color: var(--purple);
+      background: rgba(168, 85, 247, 0.05);
+    }
+
+    .client-icon {
+      font-size: 1.4rem;
+      margin-bottom: 6px;
+    }
+
+    .client-name {
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: #fff;
+      margin-bottom: 3px;
+    }
+
+    .client-platform {
+      font-size: 0.72rem;
+      color: #666;
+    }
+
+    /* Highlight box */
+    .highlight-box {
+      background: rgba(0, 242, 255, 0.05);
+      border: 1px solid rgba(0, 242, 255, 0.15);
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-top: 12px;
+      font-size: 0.82rem;
+      color: var(--cyan);
+      line-height: 1.6;
+    }
+
+    .highlight-box strong {
+      color: #fff;
+    }
+
+    /* Tips */
+    .tip-list {
+      list-style: none;
+      padding: 0;
+      margin: 10px 0 0;
+    }
+
+    .tip-list li {
+      padding: 8px 0;
+      padding-left: 20px;
+      position: relative;
+      color: #aaa;
+      font-size: 0.85rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .tip-list li:last-child {
+      border-bottom: none;
+    }
+
+    .tip-list li::before {
+      content: "▸";
+      position: absolute;
+      left: 0;
+      color: var(--purple);
+      font-weight: bold;
+    }
+
+    /* FAQ */
+    .faq-item {
+      margin-bottom: 15px;
+    }
+
+    .faq-q {
+      font-weight: 700;
+      color: #fff;
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+    }
+
+    .faq-q::before {
+      content: "Q: ";
+      color: var(--cyan);
+    }
+
+    .faq-a {
+      color: #888;
+      font-size: 0.82rem;
+      padding-left: 22px;
+    }
+
+    .faq-a::before {
+      content: "A: ";
+      color: var(--purple);
+      font-weight: 700;
+      margin-left: -22px;
+    }
+
+    /* Separator */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.3), transparent);
+      margin: 20px 0;
+    }
+
+    /* Back button */
+    .back-link {
+      display: inline-block;
+      margin-top: 40px;
+      padding: 12px 30px;
+      border: 1px solid var(--purple);
+      color: var(--purple);
+      text-decoration: none;
+      border-radius: 50px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      transition: 0.3s;
+      text-align: center;
+    }
+
+    .back-link:hover {
+      background: var(--purple);
+      color: #fff;
+      box-shadow: 0 0 25px rgba(168, 85, 247, 0.3);
+    }
+
+    /* Code */
+    code {
+      background: rgba(255, 255, 255, 0.06);
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-family: var(--font-code);
+      font-size: 0.82rem;
+      color: var(--cyan);
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .client-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
+  <noscript>
+    <style>
+      .loading-overlay {
+        display: none !important;
+      }
+
+      .section {
+        opacity: 1 !important;
+        transform: none !important;
+      }
+    </style>
+  </noscript>
 </head>
+
 <body>
-  <div class="container">
-    <h1>科学上网指南</h1>
-    <div class="section">
-      <h3>1. 获取节点</h3>
-      <p>返回主控台，联系站长获取访问口令，解锁「神秘节点」。</p>
-    </div>
-    <div class="section">
-      <h3>2. 下载客户端</h3>
-      <ul>
-        <li>Windows: <code>Clash Verge</code></li>
-        <li>Android: <code>V2RayNG</code></li>
-        <li>iOS: <code>Shadowrocket</code></li>
-      </ul>
-    </div>
-    <div class="section">
-      <h3>3. 导入订阅</h3>
-      <p>在客户端中选择「导入订阅」，粘贴链接后更新节点列表即可。</p>
-    </div>
-    <a href="portal.html" class="btn">返回主控台</a>
+  <!-- Loading -->
+  <div class="loading-overlay" id="loading">
+    <div class="loader"></div>
   </div>
+
+  <canvas id="bg-canvas"></canvas>
+
+  <main class="container">
+    <!-- Hero -->
+    <div class="hero section" id="hero">
+      <div class="hero-badge">GUIDE v2.0</div>
+      <h1>科学上网指南</h1>
+      <p class="hero-desc">从零开始，三步搞定科学上网</p>
+    </div>
+
+    <!-- Step 1: Get nodes -->
+    <div class="section">
+      <div class="section-card">
+        <div class="step-header">
+          <div class="step-num">1</div>
+          <div class="step-title">获取节点</div>
+        </div>
+        <p>节点是科学上网的核心。你需要一个可用的订阅链接来获取服务器节点。</p>
+        <ul class="tip-list">
+          <li>返回主控台，联系站长获取访问口令</li>
+          <li>使用口令解锁「神秘节点」页面</li>
+          <li>复制你需要的订阅链接</li>
+        </ul>
+        <div class="highlight-box">
+          💡 <strong>提示：</strong>节点列表会自动更新，每天检测在线状态。建议优先选择标记为「在线」的节点源。
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Download client -->
+    <div class="section">
+      <div class="section-card">
+        <div class="step-header">
+          <div class="step-num">2</div>
+          <div class="step-title">下载客户端</div>
+        </div>
+        <p>根据你的设备选择对应的客户端：</p>
+
+        <div class="client-grid">
+          <div class="client-item">
+            <div class="client-icon">💻</div>
+            <div class="client-name">Clash Verge</div>
+            <div class="client-platform">Windows / macOS</div>
+          </div>
+          <div class="client-item">
+            <div class="client-icon">🖥️</div>
+            <div class="client-name">V2RayN</div>
+            <div class="client-platform">Windows</div>
+          </div>
+          <div class="client-item">
+            <div class="client-icon">📱</div>
+            <div class="client-name">V2RayNG</div>
+            <div class="client-platform">Android</div>
+          </div>
+          <div class="client-item">
+            <div class="client-icon">🍎</div>
+            <div class="client-name">Shadowrocket</div>
+            <div class="client-platform">iOS（需外区 Apple ID）</div>
+          </div>
+          <div class="client-item">
+            <div class="client-icon">🌊</div>
+            <div class="client-name">Surfboard</div>
+            <div class="client-platform">Android</div>
+          </div>
+          <div class="client-item">
+            <div class="client-icon">🐱</div>
+            <div class="client-name">NekoBox</div>
+            <div class="client-platform">Android</div>
+          </div>
+        </div>
+
+        <div class="highlight-box">
+          💡 <strong>推荐：</strong>Windows 用户首选 <code>Clash Verge</code>，Android 用户首选 <code>V2RayNG</code>，iOS 用户使用
+          <code>Shadowrocket</code>。
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3: Import subscription -->
+    <div class="section">
+      <div class="section-card">
+        <div class="step-header">
+          <div class="step-num">3</div>
+          <div class="step-title">导入订阅并使用</div>
+        </div>
+        <p>拿到订阅链接和客户端后，按以下步骤操作：</p>
+        <ul class="tip-list">
+          <li>打开客户端，找到「订阅管理」或「导入」功能</li>
+          <li>粘贴从节点页复制的订阅链接</li>
+          <li>点击「更新订阅」拉取最新节点列表</li>
+          <li>选择一个节点，点击「连接」或打开开关</li>
+          <li>尝试访问 <code>google.com</code> 验证是否生效</li>
+        </ul>
+
+        <div class="highlight-box">
+          💡 <strong>提示：</strong>如果某个节点连接失败，切换到其他节点重试。节点质量会随时间变化，建议定期更新订阅。
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- FAQ -->
+    <div class="section">
+      <div class="section-card">
+        <div class="step-header">
+          <div class="step-num">?</div>
+          <div class="step-title">常见问题</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">连不上节点怎么办？</div>
+          <div class="faq-a">尝试切换其他节点，或更新订阅拉取最新列表。部分节点可能已失效。</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">速度很慢怎么办？</div>
+          <div class="faq-a">选择距离更近的节点（如日本、香港、新加坡），或选择标记为「在线」的节点源。</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">iOS 没有 Shadowrocket 怎么办？</div>
+          <div class="faq-a">需要使用外区（如美区）Apple ID 下载，或联系站长获取帮助。</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">Clash 和 V2Ray 有什么区别？</div>
+          <div class="faq-a">Clash 是一个代理客户端框架，V2Ray 是一种代理协议。Clash 客户端可以使用 V2Ray 协议的节点。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Back -->
+    <div style="text-align: center;">
+      <a href="portal.html" class="back-link">返回主控台</a>
+    </div>
+  </main>
+
+  <noscript>
+    <p style="text-align:center;color:#ff0055;padding:20px;">本站需要 JavaScript 支持才能正常运行。</p>
+  </noscript>
+
+  <script>
+    // Loading
+    window.addEventListener('load', function () {
+      setTimeout(function () {
+        document.getElementById('loading').classList.add('hidden');
+      }, 600);
+    });
+
+    // Scroll reveal
+    var sections = document.querySelectorAll('.section');
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+    sections.forEach(function (s) { observer.observe(s); });
+
+    // Particle background
+    var cvs = document.getElementById('bg-canvas');
+    var ctx = cvs.getContext('2d');
+    var w, h, pts = [];
+
+    function init() {
+      w = cvs.width = window.innerWidth;
+      h = cvs.height = window.innerHeight;
+      pts = [];
+      var count = w < 600 ? 15 : 30;
+      for (var i = 0; i < count; i++) {
+        pts.push({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          vx: (Math.random() - 0.5) * 0.2,
+          vy: (Math.random() - 0.5) * 0.2,
+          size: Math.random() * 1.2 + 0.3,
+          pulse: Math.random() * Math.PI * 2,
+          speed: Math.random() * 0.01 + 0.003,
+          color: Math.random() > 0.5 ? '168, 85, 247' : '0, 242, 255'
+        });
+      }
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, w, h);
+
+      for (var i = 0; i < pts.length; i++) {
+        var p = pts[i];
+        p.pulse += p.speed;
+        var alpha = 0.15 + Math.sin(p.pulse) * 0.1;
+
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0 || p.x > w) p.vx *= -1;
+        if (p.y < 0 || p.y > h) p.vy *= -1;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(' + p.color + ', ' + alpha + ')';
+        ctx.fill();
+
+        for (var j = i + 1; j < pts.length; j++) {
+          var p2 = pts[j];
+          var dx = p.x - p2.x, dy = p.y - p2.y;
+          var dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 130) {
+            ctx.beginPath();
+            ctx.strokeStyle = 'rgba(168, 85, 247, ' + (0.05 * (1 - dist / 130)) + ')';
+            ctx.lineWidth = 0.3;
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(draw);
+    }
+
+    window.addEventListener('resize', init);
+    init();
+    draw();
+  </script>
 </body>
+
 </html>
