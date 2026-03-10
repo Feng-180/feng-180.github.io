@@ -89,10 +89,14 @@ def get_html_template(cards_html: str, update_time: str, total_count: int) -> st
     .link-box {{ font-family: var(--font-code); font-size: 10px; color: #666; background: #000; padding: 8px; border-radius: 4px; border: 1px dashed #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }}
     .card:hover .link-box {{ color: var(--cyan); border-color: rgba(0,242,255,0.3); }}
     
-    .btn-row {{ margin-top: 10px; display: flex; gap: 10px; }}
-    .btn {{ flex: 1; padding: 8px; font-size: 10px; text-align: center; border: 1px solid #333; color: #888; text-decoration: none; border-radius: 4px; transition: 0.2s; cursor: pointer; }}
+    .btn-row {{ margin-top: 10px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }}
+    .btn {{ padding: 8px 4px; font-size: 10px; text-align: center; border: 1px solid #333; color: #888; text-decoration: none; border-radius: 4px; transition: 0.2s; cursor: pointer; font-family: var(--font-code); white-space: nowrap; }}
     .btn:hover {{ border-color: var(--cyan); color: var(--cyan); background: rgba(0,242,255,0.05); }}
-    .btn.clash:hover {{ border-color: var(--pink); color: var(--pink); background: rgba(255,0,85,0.05); }}
+    .btn.clash:hover {{ border-color: #6272f1; color: #6272f1; background: rgba(98,114,241,0.08); }}
+    .btn.rocket:hover {{ border-color: #ff9500; color: #ff9500; background: rgba(255,149,0,0.08); }}
+    .btn.v2ray:hover {{ border-color: #58d68d; color: #58d68d; background: rgba(88,214,141,0.08); }}
+    .btn.surge:hover {{ border-color: #a855f7; color: #a855f7; background: rgba(168,85,247,0.08); }}
+    .btn.quanx:hover {{ border-color: #f472b6; color: #f472b6; background: rgba(244,114,182,0.08); }}
 
     .back-btn {{ margin-top: 40px; z-index: 5; padding: 10px 30px; border: 1px solid var(--cyan); color: var(--cyan); text-decoration: none; border-radius: 50px; font-size: 12px; transition: 0.3s; }}
     .back-btn:hover {{ background: var(--cyan); color: #000; box-shadow: 0 0 20px var(--cyan); }}
@@ -190,6 +194,23 @@ def get_html_template(cards_html: str, update_time: str, total_count: int) -> st
       }}
       t.classList.add('show');
       setTimeout(()=>t.classList.remove('show'), 2000);
+    }}
+
+    function openClient(scheme, url) {{
+      window.location.href = scheme + encodeURIComponent(url);
+      const t = document.getElementById('toast');
+      t.innerText = '正在唤起客户端...';
+      t.classList.add('show');
+      setTimeout(()=>t.classList.remove('show'), 2500);
+    }}
+
+    function openRocket(url) {{
+      const b64 = btoa(url);
+      window.location.href = 'sub://' + b64;
+      const t = document.getElementById('toast');
+      t.innerText = '正在唤起 Shadowrocket...';
+      t.classList.add('show');
+      setTimeout(()=>t.classList.remove('show'), 2500);
     }}
 
     function filterNodes() {{
@@ -356,8 +377,12 @@ def process_data() -> Tuple[str, List[str], Dict[str, int]]:
       </div>
       <div class="link-box" onclick="copyText('{url_escaped}')">{url_escaped}</div>
       <div class="btn-row">
-        <div class="btn" onclick="copyText('{url_escaped}')">复制链接</div>
-        <a class="btn clash" href="clash://install-config?url={url_escaped}">导入 Clash</a>
+        <div class="btn" onclick="copyText('{url_escaped}')">📋 复制链接</div>
+        <a class="btn clash" href="clash://install-config?url={url_escaped}">⚡ Clash</a>
+        <div class="btn rocket" onclick="openRocket('{url_escaped}')">🚀 小火箭</div>
+        <div class="btn v2ray" onclick="openClient('v2rayng://install-sub?url=','{url_escaped}')">🛡️ V2RayN</div>
+        <div class="btn surge" onclick="openClient('surge3:///install-config?url=','{url_escaped}')">🌊 Surge</div>
+        <div class="btn quanx" onclick="openClient('quantumult-x:///update-configuration?remote-resource=','{url_escaped}')">📡 QuanX</div>
       </div>
     </div>
 """
