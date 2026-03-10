@@ -1,8 +1,8 @@
 # 节点源配置
 # 格式：名称#订阅链接
-# 以下为经过筛选的高质量稳定源
+# 以下为 v5.1 全网精选高质量稳定源（12 源订阅池）
 
-# === 精选聚合源 ===
+# === 经典稳定源 ===
 SSR_高速订阅聚合#https://raw.githubusercontent.com/ssrsub/ssr/master/v2ray
 Rooster_精选节点#https://raw.githubusercontent.com/roosterkid/openproxylist/main/V2RAY_RAW.txt
 Pawdroid_节点池#https://raw.githubusercontent.com/Pawdroid/Free-servers/main/sub
@@ -11,3 +11,9 @@ Chengaopan_公共合并节点#https://raw.githubusercontent.com/chengaopan/AutoM
 FreeFQ_每日更新#https://raw.githubusercontent.com/freefq/free/master/v2
 Ripao_免费节点#https://raw.githubusercontent.com/ripaojiedian/freenode/main/sub
 全球节点_自动抓取#https://raw.githubusercontent.com/mfuu/v2ray/master/v2ray
+
+# === 新增高速源 ===
+Epodonios_全协议聚合#https://raw.githubusercontent.com/Epodonios/v2ray-configs/main/All_Configs_Sub.txt
+V2RayAggregator_聚合去重#https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/sub/sub_merge.txt
+NoMoreWalls_精选去墙#https://raw.githubusercontent.com/peasoft/NoMoreWalls/master/list_raw.txt
+Epodonios_Base64精简#https://raw.githubusercontent.com/Epodonios/v2ray-configs/main/All_Configs_base64_Sub.txt
